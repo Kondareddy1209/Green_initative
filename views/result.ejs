@@ -1,0 +1,29 @@
+<canvas id="usageChart" width="300" height="300"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const data = {
+    labels: ['Fan', 'TV', 'Fridge', 'Other'],
+    datasets: [{
+      data: [units * 0.2, units * 0.15, units * 0.25, units * 0.4],
+      backgroundColor: ['red','blue','green','purple'],
+    }]
+  };
+  new Chart(
+    document.getElementById('usageChart'),
+    {
+      type: 'pie',
+      data,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => `${ctx.label}: ${ctx.parsed}%`
+            }
+          }
+        }
+      }
+    }
+  );
+</script>
