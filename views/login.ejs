@@ -1,7 +1,59 @@
-<h2>Login</h2>
-<form action="/login" method="POST">
-  Username (email): <input name="username" type="email" required><br>
-  Password: <input name="password" type="password" required><br>
-  <button type="submit">Login</button>
-</form>
-<a href="/signup">Signup</a>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Login • MyGreenHome</title>
+  <link rel="stylesheet" href="/styles/auth.css">
+</head>
+<body>
+  <div class="auth-container">
+    <h2>🔐 Login to MyGreenHome</h2>
+    <form id="loginForm" action="/login" method="POST">
+      <div class="form-group">
+        <label for="username">Email</label>
+        <input id="username" name="username" type="email" placeholder="you@example.com" required autocomplete="username">
+      </div>
+      <div class="form-group password-group">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" placeholder="••••••••" required minlength="6" autocomplete="current-password">
+        <button type="button" class="toggle-pass" aria-label="Show password">Show</button>
+      </div>
+      <p id="errorMsg" style="color:#e74c3c;height:18px"></p>
+      <div class="form-actions">
+        <button type="submit" disabled>Login</button>
+        <a href="/signup" class="link">Sign up</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const submitBtn = loginForm.querySelector('button[type="submit"]');
+    const username = document.getElementById('username');
+    const password = document.getElementById('password');
+    const togglePass = document.querySelector('.toggle-pass');
+    const errorMsg = document.getElementById('errorMsg');
+
+    function updateSubmit() {
+      submitBtn.disabled = !loginForm.checkValidity();
+    }
+
+    loginForm.addEventListener('input', updateSubmit);
+
+    togglePass.addEventListener('click', () => {
+      const type = password.type === 'password' ? 'text' : 'password';
+      password.type = type;
+      togglePass.textContent = type === 'password' ? 'Show' : 'Hide';
+      togglePass.setAttribute('aria-label', type === 'password' ? 'Show password' : 'Hide password');
+    });
+
+    loginForm.addEventListener('invalid', e => {
+      e.preventDefault();
+      const field = e.target;
+      field.classList.add('error');
+      setTimeout(() => field.classList.remove('error'), 300);
+      errorMsg.textContent = field === username ? 'Enter a valid email.' : 'Password must be at least 6 characters.';
+    }, true);
+  </script>
+</body>
+</html>

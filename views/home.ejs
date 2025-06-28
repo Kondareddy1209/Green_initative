@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Home • MyGreenHome</title>
+  <link rel="stylesheet" href="/styles/dashboard.css">
+</head>
+<body>
+  <div class="main">
+    <div class="top-bar">
+      <button onclick="location.href='/dashboard'">📊 Dashboard</button>
+      <button onclick="location.href='/dashboard/logout'">🚪 Logout</button>
+    </div>
+
+    <h2>Welcome, <%= user.username %> 👋</h2>
+    <div class="cards">
+      <div class="card highlight"><strong>Email:</strong> <%= user.username %></div>
+      <div class="card highlight"><strong>Mobile:</strong> <%= user.mobile || 'Not provided' %></div>
+    </div>
+
+    <section class="tips-section">
+      <h3>💡 Power-saving Tips:</h3>
+      <ul>
+        <% tips.forEach(t => { %>
+          <li><%= t %></li>
+        <% }) %>
+      </ul>
+    </section>
+  </div>
+</body>
+</html>

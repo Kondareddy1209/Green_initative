@@ -1,8 +1,10 @@
+// routes/dashboard.js
 const express = require('express');
+const router = express.Router();
+const User = require('../models/user');
 const multer = require('multer');
 const path = require('path');
-const Tesseract = require('tesseract.js');
-const router = express.Router();
+const { parseEnergyBill } = require('../utils/mindee');
 
 function authCheck(req, res, next) {
   if (!req.session.userId) return res.redirect('/');
@@ -10,39 +12,59 @@ function authCheck(req, res, next) {
 }
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+  destination: 'uploads/',
+  filename: (req, file, cb) =>
+    cb(null, Date.now() + path.extname(file.originalname))
 });
 const upload = multer({ storage });
 
-router.get('/', authCheck, (req, res) => res.render('dashboard'));
+// GET Home with user info and tips
+router.get('/home', authCheck, async (req, res) => {
+  const user = await User.findById(req.session.userId).lean();
+  const tips = [
+    "Turn off lights when not in use.",
+    "Switch to LED bulbs.",
+    "Unplug chargers when idle.",
+    "Run appliances with full loads.",
+    "Use natural light during the day."
+  ];
+  res.render('home', { user, tips });
+});
 
+// GET Dashboard upload page
+router.get('/', authCheck, (req, res) => {
+  res.render('dashboard');
+});
+
+// POST analyze
 router.post('/analyze', authCheck, upload.single('photo'), async (req, res) => {
-  if (!req.file) return res.send("❌ No file uploaded");
+  if (!req.file) return res.send('❌ No file uploaded');
 
-  const imagePath = '/uploads/' + req.file.filename;
   const fullPath = path.join(__dirname, '..', 'uploads', req.file.filename);
+  const imagePath = '/uploads/' + req.file.filename;
 
   try {
-    const result = await Tesseract.recognize(fullPath, 'eng');
-    const text = result.data.text;
-    const analysis = `
-🧾 Extracted Text:
-${text}
+    const bill = await parseEnergyBill(fullPath);
+    if (!bill.totalAmount) {
+      return res.send("❌ Couldn't extract bill details.");
+    }
 
-📊 Sample usage: • Fan: 2.0 units/day
-💡 Tip: Save energy!
-    `;
-    res.render('result', { result: analysis, imagePath });
-  } catch (error) {
-    console.error(error);
-    res.send("❌ Error analyzing image");
+    const totalConsumption = bill.energyUsage.reduce((a, u) => a + u.consumption, 0);
+    const carbonKg = (totalConsumption * 0.82).toFixed(1);
+    const savingsTip = totalConsumption > 200
+      ? 'Shift high‑energy tasks to off‑peak hours.'
+      : 'Usage looks optimal—great job!';
+
+    res.render('result', { bill, imagePath, totalConsumption, carbonKg, savingsTip });
+  } catch (err) {
+    console.error('Error parsing bill:', err);
+    res.send('❌ Internal error during analysis.');
   }
 });
 
-router.get('/logout', (req, res) => {
-  req.session.destroy();
-  res.redirect('/');
+// GET Logout route
+router.get('/logout', authCheck, (req, res) => {
+  req.session.destroy(() => res.redirect('/'));
 });
 
 module.exports = router;

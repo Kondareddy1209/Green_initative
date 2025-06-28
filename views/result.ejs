@@ -1,29 +1,94 @@
-<canvas id="usageChart" width="300" height="300"></canvas>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  const data = {
-    labels: ['Fan', 'TV', 'Fridge', 'Other'],
-    datasets: [{
-      data: [units * 0.2, units * 0.15, units * 0.25, units * 0.4],
-      backgroundColor: ['red','blue','green','purple'],
-    }]
-  };
-  new Chart(
-    document.getElementById('usageChart'),
-    {
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Analysis</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="/styles/dashboard.css">
+</head>
+<body>
+  <div class="main">
+    <div class="cards">
+      <div class="card"><h3>Total Consumption</h3><p><%= totalConsumption %> kWh</p></div>
+      <div class="card"><h3>Bill Amount</h3><p>₹<%= bill.totalAmount %></p></div>
+      <div class="card"><h3>Estimated CO₂</h3><p><%= carbonKg %> kg/month</p></div>
+    </div>
+
+    <div class="charts">
+      <div class="chart-container">
+        <h4 onclick="toggleVisibility('usagePie')">Usage Breakdown (click to toggle)</h4>
+        <canvas id="usagePie"></canvas>
+      </div>
+      <div class="chart-container">
+        <h4 onclick="toggleVisibility('usageLine')">Consumption Trend</h4>
+        <canvas id="usageLine"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4>Suggested Tip</h4><p><%= savingsTip %></p>
+    </div>
+
+    <button onclick="downloadCSV()">📥 Export CSV</button>
+    <a href="/dashboard"><button>🔄 Analyze Another Bill</button></a>
+  </div>
+
+  <script>
+    const usageData = <%- JSON.stringify(bill.energyUsage) %>;
+    const labels = usageData.map((_, i) => 'Period ' + (i + 1));
+    const values = usageData.map(u => u.consumption);
+
+    // Pie Chart
+    const pieCtx = document.getElementById('usagePie');
+    const pieChart = new Chart(pieCtx, {
       type: 'pie',
-      data,
+      data: { labels, datasets:[{data: values, backgroundColor: ['#f39c12','#27ae60','#2980b9','#8e44ad']}]
+      },
+      options: { responsive: true, plugins: { tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.formattedValue} kWh` } } } }
+    });
+
+    // Line Chart
+    const lineCtx = document.getElementById('usageLine');
+    const lineChart = new Chart(lineCtx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'kWh Usage',
+          data: values,
+          borderColor: '#4A90E2',
+          tension: 0.3,
+          fill: false,
+          pointHoverRadius: 8,
+          pointHoverBackgroundColor: '#f39c12'
+        }]
+      },
       options: {
         responsive: true,
-        plugins: {
-          legend: { position: 'bottom' },
-          tooltip: {
-            callbacks: {
-              label: (ctx) => `${ctx.label}: ${ctx.parsed}%`
-            }
-          }
-        }
+        scales: { y: { beginAtZero: true, title: {display: true, text: 'kWh'} } },
+        plugins: { tooltip: { mode: 'index', intersect: false } }
       }
+    });
+
+    function toggleVisibility(id) {
+      const el = document.getElementById(id);
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
     }
-  );
-</script>
+
+    function downloadCSV() {
+      const rows = [['Period', 'Consumption (kWh)', 'Unit Price']];
+      usageData.forEach((u,i) => {
+        rows.push([`Period ${i+1}`, u.consumption, u.unitPrice]);
+      });
+      rows.push(['TotalConsumption', '<%= totalConsumption %>', '']);
+      rows.push(['BillAmount', '<%= bill.totalAmount %>', '']);
+      const csvContent = rows.map(r => r.join(',')).join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `bill_analysis_${Date.now()}.csv`;
+      a.click();
+    }
+  </script>
+</body>
+</html>

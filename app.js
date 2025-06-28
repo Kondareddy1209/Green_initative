@@ -1,3 +1,4 @@
+// app.js
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -10,35 +11,35 @@ const dashboardRoutes = require('./routes/dashboard');
 
 const app = express();
 
-// ✅ MongoDB connection (hardcoded URI)
-const mongoURI = "mongodb+srv://kondareddy2221:zCj0oOY7HarvbLH9@cluster0.woqwz.mongodb.net/";
-mongoose.connect(mongoURI, {
+// MongoDB setup
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/green_init', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log('✅ MongoDB connected'))
-.catch(err => console.error('❌ MongoDB connection error:', err));
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch(err => console.error('❌ MongoDB error', err));
 
+// Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
-
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET || 'mysecret',
   resave: false,
   saveUninitialized: false
 }));
 
+// Template engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Static & uploads
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-console.log("🔍 AuthRoutes type:", typeof authRoutes);
-console.log("🔍 DashboardRoutes type:", typeof dashboardRoutes);
-
+// Routes
 app.use('/', authRoutes);
 app.use('/dashboard', dashboardRoutes);
 
-const PORT = 3000;
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+// Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 Running on http://localhost:${PORT}`));

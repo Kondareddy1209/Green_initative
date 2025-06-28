@@ -1,57 +1,71 @@
+// routes/auth.js
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
-const Otp = require('../models/Otp');
+const Otp = require('../models/otp');
 const sendOTPEmail = require('../utils/mailer');
 
 function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-router.get('/', (req, res) => res.render('login'));
+// GET login
+router.get('/', (req, res) => {
+  res.render('login');
+});
 
+// POST login
 router.post('/login', async (req, res) => {
-  const user = await User.findOne(req.body);
+  const { username, password } = req.body;
+  const user = await User.findOne({ username, password });
   if (user) {
     req.session.userId = user._id;
-    return res.redirect('/dashboard');
+    return res.redirect('/dashboard/home');
   }
   res.send('❌ Invalid credentials. <a href="/">Try again</a>');
 });
 
-router.get('/signup', (req, res) => res.render('signup'));
+// GET signup
+router.get('/signup', (req, res) => {
+  res.render('signup');
+});
 
+// POST signup → generate and store OTP
 router.post('/signup', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, mobile } = req.body;
   if (await User.findOne({ username })) {
-    return res.send("❌ Username already exists");
+    return res.send('❌ Username already exists');
   }
   const otpCode = generateOTP();
-  await Otp.deleteMany({ username });
+  await Otp.deleteMany({ username }); // clear any previous
   await Otp.create({ username, otp: otpCode });
-  req.session.pendingUser = { username, password };
 
+  req.session.pendingUser = { username, password, mobile };
   await sendOTPEmail(username, otpCode);
-  console.log(`✅ OTP sent to ${username}: ${otpCode}`);
 
+  console.log(`✅ OTP ${otpCode} saved to DB and sent to ${username}`);
   res.render('verify_otp', { username });
 });
 
+// POST verify OTP
 router.post('/verify-otp', async (req, res) => {
   const { username, otp } = req.body;
-  const otpRecord = await Otp.findOne({ username, otp });
-  if (!otpRecord) return res.send("❌ Invalid or expired OTP.");
+  const otpRec = await Otp.findOne({ username, otp });
+  if (!otpRec) {
+    return res.send('❌ Invalid or expired OTP. <a href="/signup">Signup again</a>');
+  }
 
   const pending = req.session.pendingUser;
   if (!pending || pending.username !== username) {
-    return res.send("❌ Session expired");
+    return res.send('❌ Session expired. <a href="/signup">Signup again</a>');
   }
 
   await new User(pending).save();
-  await Otp.deleteOne({ _id: otpRecord._id });
+  await Otp.deleteOne({ _id: otpRec._id });
   delete req.session.pendingUser;
 
-  res.send("✅ Signup successful! <a href='/'>Login here</a>");
+  res.send('✅ Signup successful! <a href="/">Login here</a>');
 });
 
 module.exports = router;

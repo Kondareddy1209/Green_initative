@@ -1,6 +1,28 @@
-<h2>Signup</h2>
-<form action="/signup" method="POST">
-  Email: <input name="username" type="email" required><br>
-  Password: <input name="password" type="password" required><br>
-  <button type="submit">Send OTP</button>
-</form>
+<!-- views/signup.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Sign up • MyGreenHome</title>
+  <link rel="stylesheet" href="/styles/auth.css">
+</head>
+<body>
+  <div class="auth-container">
+    <h2>Create Account</h2>
+    <form id="signupForm" action="/signup" method="POST">
+      <div class="form-group">
+        <label for="username">Email</label>
+        <input id="username" name="username" type="email" placeholder="you@example.com" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password <small>(min 6 chars)</small></label>
+        <input id="password" name="password" type="password" placeholder="••••••••" required minlength="6">
+      </div>
+      <div class="form-actions">
+        <button type="submit">Send OTP</button>
+        <a href="/" class="link">Login</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

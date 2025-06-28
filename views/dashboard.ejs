@@ -1,6 +1,90 @@
-<h2>Dashboard</h2>
-<form action="/dashboard/analyze" method="POST" enctype="multipart/form-data">
-  Upload Bill Image: <input name="photo" type="file" accept="image/*" required><br><br>
-  <button type="submit">Analyze</button>
-</form>
-<a href="/dashboard/logout">Logout</a>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard – Upload Bill</title>
+  <link rel="stylesheet" href="/styles/dashboard.css">
+</head>
+<body>
+  <div class="main">
+    <div class="top-bar">
+      <button onclick="location.href='/dashboard/home'">🏠 Home</button>
+      <h2>Energy Bill Analyzer</h2>
+      <button onclick="location.href='/dashboard/logout'">🚪 Logout</button>
+    </div>
+
+    <form id="uploadForm" action="/dashboard/analyze" method="POST" enctype="multipart/form-data">
+      <div id="dropZone" class="file-uploader">
+        <input type="file" name="photo" id="fileInput" accept="image/*" hidden required>
+        <div class="file-placeholder">
+          📤 Drag & drop your bill here<br>or click to browse
+        </div>
+        <div id="fileName" class="file-name-display">No file selected</div>
+      </div>
+
+      <div id="progressContainer" class="upload-progress">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+
+      <button id="submitBtn" type="submit" disabled>Analyze</button>
+    </form>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const dropZone = document.getElementById('dropZone');
+    const fileNameDisplay = document.getElementById('fileName');
+    const submitBtn = document.getElementById('submitBtn');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const uploadForm = document.getElementById('uploadForm');
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      fileNameDisplay.textContent = file ? file.name : 'No file selected';
+      submitBtn.disabled = !file;
+    });
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    ['dragover', 'dragenter'].forEach(evt =>
+      dropZone.addEventListener(evt, e => {
+        e.preventDefault(); dropZone.classList.add('dragover');
+      }));
+    ['dragleave', 'drop'].forEach(evt =>
+      dropZone.addEventListener(evt, e => {
+        e.preventDefault(); dropZone.classList.remove('dragover');
+      }));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      fileInput.files = e.dataTransfer.files;
+      fileInput.dispatchEvent(new Event('change'));
+    });
+
+    uploadForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const formData = new FormData(uploadForm);
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', uploadForm.action, true);
+
+      xhr.upload.onprogress = event => {
+        if (event.lengthComputable) {
+          const pct = (event.loaded / event.total) * 100;
+          progressContainer.style.display = 'block';
+          progressBar.style.width = pct + '%';
+          progressBar.textContent = Math.floor(pct) + '%';
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          window.location = '';
+        } else {
+          alert('Upload failed, please try again.');
+        }
+      };
+
+      xhr.send(formData);
+    });
+  </script>
+</body>
+</html>

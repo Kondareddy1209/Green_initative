@@ -1,6 +1,58 @@
-<h2>Verify OTP for <%= username %></h2>
-<form action="/verify-otp" method="POST">
-  <input type="hidden" name="username" value="<%= username %>">
-  OTP: <input name="otp" required><br><br>
-  <button type="submit">Verify</button>
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Verify OTP • MyGreenHome</title>
+  <link rel="stylesheet" href="/styles/auth.css">
+</head>
+<body>
+  <div class="auth-container">
+    <h2>Enter OTP</h2>
+    <p>We've sent a 6-digit code to <strong><%= username %></strong></p>
+
+    <form id="otpForm" action="/verify-otp" method="POST" novalidate>
+      <input type="hidden" name="username" value="<%= username %>">
+
+      <div class="form-group">
+        <label for="otp">OTP Code</label>
+        <input
+          id="otp"
+          name="otp"
+          type="text"
+          minlength="6"
+          maxlength="6"
+          placeholder="123456"
+          required
+          autocomplete="one-time-code"
+        >
+      </div>
+      <p id="otpError" class="error-msg"></p>
+
+      <button type="submit" id="verifyBtn" disabled>Verify & Continue</button>
+    </form>
+  </div>
+
+  <script>
+    const otpInput = document.getElementById('otp');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const otpError = document.getElementById('otpError');
+
+    // Enable button when 6 digits entered
+    otpInput.addEventListener('input', () => {
+      otpError.textContent = '';
+      const val = otpInput.value;
+      verifyBtn.disabled = !( /^\d{6}$/.test(val) );
+    });
+
+    document.getElementById('otpForm').addEventListener('submit', e => {
+      const val = otpInput.value;
+      if (!/^\d{6}$/.test(val)) {
+        e.preventDefault();
+        otpError.textContent = 'Please enter exactly 6 digits.';
+        otpInput.classList.add('shake');
+        setTimeout(() => otpInput.classList.remove('shake'), 300);
+      }
+    });
+  </script>
+</body>
+</html>
