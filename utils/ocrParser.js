@@ -1,34 +1,33 @@
-// 🔧 Updated ocrParser.js
 const Tesseract = require('tesseract.js');
 const fs = require('fs');
 
-// Extract text from image
-async function extractTextFromImage(filePath) {
-  try {
-    const { data: { text } } = await Tesseract.recognize(filePath, 'eng+hin+tam+tel+kan+mal', {
-      logger: m => console.log("🔍 OCR status:", m.status)
-    });
-    console.log("✅ OCR Extracted Text:\n", text);
-    return text;
-  } catch (err) {
-    console.error('❌ OCR failed:', err);
-    return '';
+// 🔍 Clean up OCR text (remove extra whitespace and normalize)
+function cleanText(text) {
+  return text
+    .replace(/[\n\r]+/g, ' ')     // flatten newlines
+    .replace(/\s{2,}/g, ' ')       // remove extra spaces
+    .replace(/[^\x00-\x7F]/g, '')  // remove non-ASCII chars if needed
+    .trim();
+}
+
+// ✅ Extract number with flexible pattern and fallback
+function extractNumber(text, patterns) {
+  for (const regex of patterns) {
+    const match = text.match(regex);
+    if (match) {
+      return match[1].replace(/[₹,]/g, '').trim();
+    }
   }
+  return null;
 }
 
-// Extract number from text using regex
-function extractNumber(text, regex) {
-  const match = text.match(regex);
-  return match ? match[1].replace(/[,₹]/g, '') : null;
-}
-
-// Extract date in various formats
+// ✅ Extract dates in various formats
 function extractDate(text) {
   const match = text.match(/(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})/);
   return match ? match[1] : null;
 }
 
-// Generate savings tip based on usage
+// ⚡ Dynamic savings tip
 function getSavingsTip(units) {
   if (units > 300) return '⚠️ High usage! Consider reducing heavy-load appliances or going solar.';
   if (units > 200) return 'Shift high-energy tasks to off-peak hours for cost savings.';
@@ -36,17 +35,31 @@ function getSavingsTip(units) {
   return '✅ Great job! Your energy usage is efficient.';
 }
 
-// Parse extracted OCR text into structured data
-function parseBillText(text) {
-  // Match total amount using a broader pattern
-  const totalAmount = extractNumber(text, /(?:net bill|bill\s*amount|total\s*due|net\s*payable|amount\s*payable|bill\s*aft\s*sub|total\s*amount)[^\d₹]*₹?\s*([\d,.]+)/i);
+// 🧠 Text parsing logic
+function parseBillText(rawText) {
+  const text = cleanText(rawText);
 
-  // Match energy usage in kWh/units
-  const units = extractNumber(text, /(?:units\s*consumed|monthly\s*units|consumption|energy\s*charges|kwh\s*used|units|energy\s*org)[^\d]*([\d,.]+)/i);
+  const totalPatterns = [
+    /current\s*demand\s*payable[:\s]*₹?\s*([\d,.]+)/i,
+    /total\s*amount[:\s]*₹?\s*([\d,.]+)/i,
+    /bill\s*amount[:\s]*₹?\s*([\d,.]+)/i,
+    /net\s*payable[:\s]*₹?\s*([\d,.]+)/i,
+    /amount\s*payable[:\s]*₹?\s*([\d,.]+)/i,
+    /bill\s*tsb[:\s]*₹?\s*([\d,.]+)/i,
+    /bill[:\s]*₹?\s*([\d,.]+)/i,
+    /sub\s*total.*₹?\s*([\d,.]+)/i
+  ];
 
+  const unitPatterns = [
+    /(?:consumption|units\s*consumed|monthly\s*units|energy\s*used)[^\d]*([\d,.]+)/i,
+    /(?:energy\s*charges)[^\d]*([\d,.]+)/i,
+    /units:\s*\[?([\d,.]+)/i
+  ];
+
+  const totalAmount = extractNumber(text, totalPatterns);
+  const units = extractNumber(text, unitPatterns);
   const date = extractDate(text);
 
-  // Logs to debug pattern match
   if (!totalAmount) console.warn("⚠️ Total amount not matched in OCR text");
   if (!units) console.warn("⚠️ Energy usage not matched in OCR text");
 
@@ -61,6 +74,20 @@ function parseBillText(text) {
     carbonKg,
     savingsTip
   };
+}
+
+// 📷 OCR function
+async function extractTextFromImage(filePath) {
+  try {
+    const { data: { text } } = await Tesseract.recognize(filePath, 'eng+hin+tam+tel+kan+mal', {
+      logger: m => console.log("🔍 OCR status:", m.status)
+    });
+    console.log("✅ OCR Extracted Text:\n", text);
+    return text;
+  } catch (err) {
+    console.error('❌ OCR failed:', err);
+    return '';
+  }
 }
 
 module.exports = {

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Team • MyGreenHome</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #eef2f7;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    body.dark-mode {
+      background: #1e1e1e;
+      color: #fff;
+    }
+
+    .team-title {
+      color: #2ecc71;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .team-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .member-card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      width: 260px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    body.dark-mode .member-card {
+      background: #2e2e2e;
+      color: #eee;
+    }
+
+    .member-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .member-card img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 2px solid #2ecc71;
+    }
+
+    .member-card h4 {
+      margin: 10px 0 5px;
+      color: #2c3e50;
+    }
+
+    body.dark-mode .member-card h4 {
+      color: #fff;
+    }
+
+    .member-card .role {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    .member-card p {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .member-card a {
+      display: inline-block;
+      margin: 5px;
+      color: #2980b9;
+      text-decoration: none;
+    }
+
+    .member-card a:hover {
+      text-decoration: underline;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 30px;
+      background: #2ecc71;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+    }
+
+    .back-button:hover {
+      background: #27ae60;
+    }
+
+    @media (max-width: 768px) {
+      .team-grid {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2 class="team-title">🌱 Our Team</h2>
+
+  <div class="team-grid">
+    <% team.forEach(member => {
+      const githubUsername = member.github.split('/').pop();
+    %>
+      <div class="member-card">
+        <img src="https://github.com/<%= githubUsername %>.png" alt="<%= member.name %>'s profile picture">
+        <h4><%= member.name %></h4>
+        <div class="role"><%= member.role %></div>
+        <p><%= member.bio %></p>
+        <a href="<%= member.linkedin %>" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a><br>
+        <a href="<%= member.github %>" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+      </div>
+    <% }) %>
+  </div>
+
+  <div style="text-align: center;">
+    <a href="/dashboard/home" class="back-button"><i class="fas fa-arrow-left"></i> Back to Home</a>
+  </div>
+
+  <!-- Optional JS for theme -->
+  <script>
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+    }
+  </script>
+</body>
+</html>
