@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>👤 Profile • MyGreenHome</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 30px;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #27ae60;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 15px;
+      background: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #219150;
+    }
+    a.back {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: #3498db;
+      text-decoration: none;
+    }
+    a.back:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>👤 Update Profile</h2>
+
+    <form action="/dashboard/update-profile" method="POST">
+      <label>Email:</label>
+      <p><%= user.username %></p>
+
+      <label for="mobile">Mobile Number:</label>
+      <input type="text" name="mobile" id="mobile" value="<%= user.mobile || '' %>" placeholder="Enter mobile number" required>
+
+      <button type="submit">Update</button>
+    </form>
+
+    <a href="/dashboard/home" class="back">← Back to Home</a>
+  </div>
+</body>
+</html>

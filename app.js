@@ -1,4 +1,5 @@
 // app.js
+
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -6,12 +7,14 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const path = require('path');
 
+// Route imports
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
 
+// ✅ Initialize app BEFORE using it
 const app = express();
 
-// MongoDB setup
+// ✅ MongoDB connection
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/green_init', {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -19,7 +22,7 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/green_init'
   .then(() => console.log('✅ MongoDB connected'))
   .catch(err => console.error('❌ MongoDB error', err));
 
-// Middleware
+// ✅ Middleware setup
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(session({
@@ -28,18 +31,18 @@ app.use(session({
   saveUninitialized: false
 }));
 
-// Template engine
+// ✅ View engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Static & uploads
+// ✅ Static files
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routes
+// ✅ Routes
 app.use('/', authRoutes);
 app.use('/dashboard', dashboardRoutes);
 
-// Start server
+// ✅ Start server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
