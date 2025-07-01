@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Edit Profile • MyGreenHome</title>
@@ -58,6 +59,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="edit-profile-container">
     <h2>✏️ Edit Profile</h2>
@@ -66,13 +68,23 @@
       <input type="email" name="email" value="<%= user.username %>" readonly>
 
       <label>First Name</label>
-      <input type="text" name="firstName" value="<%= user.firstName %>" required>
+      <input type="text" name="firstName" value="<%= user.firstName || '' %>" required>
 
       <label>Last Name</label>
-      <input type="text" name="lastName" value="<%= user.lastName %>" required>
+      <input type="text" name="lastName" value="<%= user.lastName || '' %>" required>
 
       <label>Mobile Number</label>
-      <input type="text" name="mobile" value="<%= user.mobile %>" required>
+      <input type="text" name="mobile" value="<%= user.mobile || '' %>" required>
+
+      <label>Gender</label>
+      <select name="gender" required>
+        <option value="">-- Select --</option>
+        <option value="Male" <%=user.gender==='Male' ? 'selected' : '' %>>Male</option>
+        <option value="Female" <%=user.gender==='Female' ? 'selected' : '' %>>Female</option>
+        <option value="Other" <%=user.gender==='Other' ? 'selected' : '' %>>Other</option>
+      </select>
+      
+
 
       <div class="actions">
         <button type="submit" class="save-btn">Save</button>
@@ -81,4 +93,5 @@
     </form>
   </div>
 </body>
+
 </html>

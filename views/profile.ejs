@@ -1,3 +1,4 @@
+<!-- views/profile.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +9,7 @@
     .profile-container {
       max-width: 500px;
       margin: 100px auto;
-      background: #fff;
+      background: #ffffff;
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -21,12 +22,12 @@
     }
 
     .profile-info p {
-      margin: 12px 0;
+      margin: 10px 0;
     }
 
     .profile-info strong {
       display: inline-block;
-      width: 130px;
+      width: 120px;
       color: #2c3e50;
     }
 
@@ -36,7 +37,7 @@
       margin-top: 30px;
     }
 
-    .buttons button {
+    button {
       padding: 10px 20px;
       border: none;
       border-radius: 6px;
@@ -64,10 +65,11 @@
       <p><strong>First Name:</strong> <%= user.firstName || 'Not provided' %></p>
       <p><strong>Last Name:</strong> <%= user.lastName || 'Not provided' %></p>
       <p><strong>Mobile:</strong> <%= user.mobile || 'Not provided' %></p>
+      <p><strong>Gender:</strong> <%= user.gender || 'Not specified' %></p>
     </div>
 
     <div class="buttons">
-      <a href="/dashboard"><button class="back-btn">🔙 Dashboard</button></a>
+      <a href="/dashboard"><button class="back-btn">🔙 Back to Dashboard</button></a>
       <a href="/dashboard/edit-profile"><button class="edit-btn">✏️ Edit Profile</button></a>
     </div>
   </div>

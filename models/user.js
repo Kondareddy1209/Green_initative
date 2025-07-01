@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
   mobile: String,
   firstName: String,
   lastName: String,
+  gender: String,
   lastResult: {
     totalConsumption: Number,
     carbonKg: Number,

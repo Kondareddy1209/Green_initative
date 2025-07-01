@@ -1,3 +1,4 @@
+// routes/dashboard.js
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
@@ -7,13 +8,13 @@ const { extractTextFromImage, parseBillText } = require('../utils/ocrParser');
 const { generateTips } = require('../utils/tips');
 const sendEmail = require('../utils/mailer');
 
-// Middleware to check authentication
+// ✅ Middleware: check if user is authenticated
 function authCheck(req, res, next) {
   if (!req.session.userId) return res.redirect('/');
   next();
 }
 
-// Multer setup for uploads
+// ✅ Multer setup
 const storage = multer.diskStorage({
   destination: 'uploads/',
   filename: (req, file, cb) =>
@@ -21,8 +22,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-/* ========== DASHBOARD ROUTES ========== */
-
+/* ========== Dashboard ========== */
 router.get('/', authCheck, async (req, res) => {
   try {
     const user = await User.findById(req.session.userId).lean();
@@ -54,11 +54,10 @@ router.get('/', authCheck, async (req, res) => {
   }
 });
 
+/* ========== OCR Upload Route ========== */
 router.post('/analyze', authCheck, upload.single('photo'), async (req, res) => {
   if (!req.file) return res.send('❌ No file uploaded');
-
   const fullPath = path.join(__dirname, '..', 'uploads', req.file.filename);
-  console.log("📄 OCR starting for:", fullPath);
 
   try {
     const rawText = await extractTextFromImage(fullPath);
@@ -102,12 +101,11 @@ router.post('/analyze', authCheck, upload.single('photo'), async (req, res) => {
   }
 });
 
-/* ========== HOME PAGE (NO CHART HERE) ========== */
-
+/* ========== Home Page ========== */
 router.get('/home', authCheck, async (req, res) => {
   const user = await User.findById(req.session.userId).lean();
 
-  const tips = user?.lastResult?.totalConsumption
+  const tipsList = user?.lastResult?.totalConsumption
     ? generateTips(user.lastResult.totalConsumption)
     : [
         "Turn off lights when not in use.",
@@ -126,11 +124,10 @@ router.get('/home', authCheck, async (req, res) => {
       }
     : null;
 
-  res.render('home', { user, tips, summary });
+  res.render('home', { user, tips: tipsList, summary });
 });
 
-/* ========== PROFILE ROUTES ========== */
-
+/* ========== Profile ========== */
 router.get('/profile', authCheck, async (req, res) => {
   const user = await User.findById(req.session.userId).lean();
   res.render('profile', { user });
@@ -143,8 +140,14 @@ router.get('/edit-profile', authCheck, async (req, res) => {
 
 router.post('/update-profile', authCheck, async (req, res) => {
   try {
-    const { mobile } = req.body;
-    await User.findByIdAndUpdate(req.session.userId, { mobile });
+    const { firstName, lastName, mobile, gender } = req.body;
+
+    await User.findByIdAndUpdate(
+      req.session.userId,
+      { firstName, lastName, mobile, gender },
+      { new: true }
+    );
+
     res.redirect('/dashboard/profile');
   } catch (err) {
     console.error('❌ Profile Update Error:', err);
@@ -152,8 +155,9 @@ router.post('/update-profile', authCheck, async (req, res) => {
   }
 });
 
-/* ========== TEAM PAGE ROUTE ========== */
 
+
+/* ========== Team Page ========== */
 router.get('/team', authCheck, (req, res) => {
   res.render('team', {
     team: [
@@ -189,8 +193,7 @@ router.get('/team', authCheck, (req, res) => {
   });
 });
 
-
-/* ========== LOGOUT ========== */
+/* ========== Logout ========== */
 router.get('/logout', authCheck, (req, res) => {
   req.session.destroy(() => res.redirect('/'));
 });
