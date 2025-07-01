@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Edit Profile</title>
+  <title>Edit Profile • MyGreenHome</title>
   <link rel="stylesheet" href="/styles/dashboard.css">
   <style>
     .edit-profile-container {
       max-width: 400px;
       margin: 100px auto;
-      background: #ffffff;
+      background: #fff;
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -37,7 +37,6 @@
     .actions {
       display: flex;
       justify-content: space-between;
-      align-items: center;
     }
 
     button {
@@ -62,13 +61,18 @@
 <body>
   <div class="edit-profile-container">
     <h2>✏️ Edit Profile</h2>
-
     <form action="/dashboard/update-profile" method="POST">
-      <label>Email:</label>
+      <label>Email</label>
       <input type="email" name="email" value="<%= user.username %>" readonly>
 
-      <label>Mobile Number:</label>
-      <input type="text" name="mobile" value="<%= user.mobile || '' %>" required>
+      <label>First Name</label>
+      <input type="text" name="firstName" value="<%= user.firstName %>" required>
+
+      <label>Last Name</label>
+      <input type="text" name="lastName" value="<%= user.lastName %>" required>
+
+      <label>Mobile Number</label>
+      <input type="text" name="mobile" value="<%= user.mobile %>" required>
 
       <div class="actions">
         <button type="submit" class="save-btn">Save</button>

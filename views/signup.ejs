@@ -1,9 +1,8 @@
-<!-- views/signup.ejs -->
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Sign up • MyGreenHome</title>
+  <title>Sign Up • MyGreenHome</title>
   <link rel="stylesheet" href="/styles/auth.css">
 </head>
 <body>
@@ -11,18 +10,38 @@
     <h2>Create Account</h2>
     <form id="signupForm" action="/signup" method="POST">
       <div class="form-group">
-        <label for="username">Email</label>
-        <input id="username" name="username" type="email" placeholder="you@example.com" required>
+        <label for="firstName">First Name</label>
+        <input id="firstName" name="firstName" type="text" required>
       </div>
+
       <div class="form-group">
-        <label for="password">Password <small>(min 6 chars)</small></label>
-        <input id="password" name="password" type="password" placeholder="••••••••" required minlength="6">
+        <label for="lastName">Last Name</label>
+        <input id="lastName" name="lastName" type="text" required>
       </div>
+
+      <div class="form-group">
+        <label for="username">Email</label>
+        <input id="username" name="username" type="email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="mobile">Mobile Number</label>
+        <input id="mobile" name="mobile" type="text" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password <small>(min 6 characters)</small></label>
+        <input id="password" name="password" type="password" required minlength="6">
+        <div id="capsAlert" hidden style="color:red;">Caps Lock is ON</div>
+      </div>
+
       <div class="form-actions">
         <button type="submit">Send OTP</button>
-        <a href="/" class="link">Login</a>
+        <a href="/" class="link">Already have an account? Login</a>
       </div>
     </form>
   </div>
+
+  <script src="/scripts/auth.js"></script>
 </body>
 </html>

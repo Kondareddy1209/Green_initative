@@ -156,6 +156,23 @@
       margin-bottom: 10px;
     }
 
+    .download-button-wrapper {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .download-button-wrapper a {
+      padding: 12px 25px;
+      background-color: #2ecc71;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+
+    .download-button-wrapper a:hover {
+      background-color: #27ae60;
+    }
+
     /* ✅ Dark Mode Styles */
     body.dark-mode {
       background: #1e1e1e;
@@ -255,6 +272,13 @@
           <li><%= t %></li>
         <% }) %>
       </ul>
+    </div>
+
+    <!-- ✅ Download Button Positioned at Bottom -->
+    <div class="download-button-wrapper">
+      <a href="/dashboard/download-report">
+        <i class="fas fa-file-download"></i> Download Report (PDF)
+      </a>
     </div>
   </div>
 

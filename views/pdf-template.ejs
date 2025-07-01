@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MyGreenHome Report</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 30px;
+      background: #fff;
+      color: #333;
+    }
+    h2 { color: #2ecc71; }
+    .section {
+      margin-bottom: 25px;
+    }
+    .label {
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    .value {
+      color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <h2>🌿 MyGreenHome Usage Report</h2>
+
+  <div class="section">
+    <p><span class="label">User:</span> <%= user.username %></p>
+    <p><span class="label">Mobile:</span> <%= user.mobile %></p>
+  </div>
+
+  <div class="section">
+    <p><span class="label">Total Consumption:</span> <span class="value"><%= summary.totalConsumption %> kWh</span></p>
+    <p><span class="label">CO₂ Emitted:</span> <span class="value"><%= summary.carbonKg %> kg/month</span></p>
+    <p><span class="label">Estimated Bill:</span>
+      <% if (summary.totalAmount && summary.totalAmount < 100000) { %>
+        <span class="value">₹<%= summary.totalAmount.toFixed(2) %></span>
+      <% } else { %>
+        <span style="color: red;">Unrealistic</span>
+      <% } %>
+    </p>
+  </div>
+
+  <div class="section">
+    <p><span class="label">💡 Tip:</span> <%= summary.savingsTip %></p>
+  </div>
+
+  <p style="font-size: 13px; color: gray;">Generated on: <%= new Date().toLocaleString() %></p>
+</body>
+</html>

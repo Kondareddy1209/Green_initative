@@ -1,20 +1,19 @@
-// models/user.js
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  username: { type: String, required: true },
-  password: String,
+  username: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
   mobile: String,
+  firstName: String,
+  lastName: String,
   lastResult: {
     totalConsumption: Number,
     carbonKg: Number,
     totalAmount: Number,
     energyUsage: [
       {
-        value: {
-          consumption: Number,
-          unitPrice: Number
-        }
+        month: String,
+        consumption: Number
       }
     ],
     savingsTip: String
