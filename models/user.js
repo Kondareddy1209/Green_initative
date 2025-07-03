@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        lowercase: true // Store emails in lowercase
+        lowercase: true
     },
     email: { // Explicit email field, also unique
         type: String,
@@ -26,9 +26,8 @@ const userSchema = new mongoose.Schema({
     gender: String,
     profilePicture: { // New field for profile picture URL/path
         type: String,
-        default: '/images/default_image.png' // Default image path
+        default: '/images/default_image.png' // Ensure this matches your default image filename
     },
-    // Modified lastResult to be an array for historical tracking
     historicalResults: [
         {
             totalConsumption: { type: Number, default: 0 },
@@ -44,7 +43,6 @@ const userSchema = new mongoose.Schema({
             analysisDate: { type: Date, default: Date.now } // When this analysis was done
         }
     ],
-    // 'lastResult' will now point to the most recent entry in historicalResults
     lastResult: { // For easy access to the most recent analysis
         totalConsumption: { type: Number, default: 0 },
         carbonKg: { type: Number, default: 0 },
@@ -58,13 +56,33 @@ const userSchema = new mongoose.Schema({
         savingsTip: String,
         analysisDate: { type: Date, default: Date.now }
     },
+    points: {
+        type: Number,
+        default: 0
+    },
+    badges: [
+        {
+            type: String // Store badge identifiers (e.g., "first-bill", "eco-champion")
+        }
+    ],
+    achievementsTracker: {
+        billsAnalyzedCount: { type: Number, default: 0 },
+        totalConsumptionReduced: { type: Number, default: 0 }, // Sum of consumption decreases across analyses
+    },
+    // --- NEW: User Role Field ---
+    role: {
+        type: String,
+        enum: ['user', 'admin'], // Define allowed roles
+        default: 'user' // Default role for new users
+    },
+    // --- End User Role Field ---
     createdAt: {
         type: Date,
         default: Date.now
     }
 });
 
-// Pre-save hook to hash the password before saving a new user or updating password
+// Hash password before saving
 userSchema.pre('save', async function(next) {
     if (this.isModified('password')) {
         this.password = await bcrypt.hash(this.password, 10);
@@ -72,7 +90,7 @@ userSchema.pre('save', async function(next) {
     next();
 });
 
-// Method to compare passwords for login
+// Method to compare password
 userSchema.methods.comparePassword = async function(candidatePassword) {
     return bcrypt.compare(candidatePassword, this.password);
 };

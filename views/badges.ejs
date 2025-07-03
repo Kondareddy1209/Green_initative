@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Badges • MyGreenHome</title>
+    <link rel="stylesheet" href="/styles/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        body {
+            background-color: #eef2f7;
+            font-family: Arial, sans-serif;
+        }
+        .badges-container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .section-header {
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            justify-content: center;
+        }
+        .badge-card {
+            background-color: #f8f8f8;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease-in-out;
+        }
+        .badge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .badge-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+        .badge-card h5 {
+            margin: 5px 0;
+            color: #333;
+            font-size: 1.1em;
+        }
+        .badge-card p {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.4;
+        }
+        .no-badges {
+            text-align: center;
+            padding: 40px;
+            color: #777;
+            font-style: italic;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <div class="badges-container">
+        <h2 class="section-header">🏆 Your Earned Badges</h2>
+
+        <% if (earnedBadges && earnedBadges.length > 0) { %>
+            <div class="badge-grid">
+                <% earnedBadges.forEach(badge => { %>
+                    <% if (badge) { %> <div class="badge-card">
+                            <img src="<%= badge.image %>" alt="<%= badge.name %> Badge">
+                            <h5><%= badge.name %></h5>
+                            <p><%= badge.description %></p>
+                        </div>
+                    <% } %>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div class="no-badges">
+                You haven't earned any badges yet! Analyze your first bill to get started.
+            </div>
+        <% } %>
+
+        <a href="/dashboard" class="btn" style="background-color: #6c757d; margin-top: 30px;">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

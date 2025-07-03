@@ -1,262 +1,278 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset="UTF-8">
-  <title>Upload Bill • MyGreenHome</title>
-  <link rel="stylesheet" href="/styles/dashboard.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <style>
-    .dashboard-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      padding: 20px;
-    }
-    .upload-section {
-      flex: 2;
-      min-width: 300px;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .results-section {
-      flex: 1;
-      min-width: 280px;
-      background: #f9f9f9;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
-    #previewImage {
-      margin-top: 15px;
-      max-width: 100%;
-      max-height: 200px;
-      display: none;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    .file-name-display {
-      margin-top: 8px;
-      font-size: 14px;
-      color: #555;
-    }
-    .error-msg {
-      color: red;
-      font-size: 14px;
-    }
-    .result-card {
-      margin-bottom: 10px;
-      padding: 10px;
-      background: white;
-      border-left: 6px solid #2ecc71;
-      border-radius: 6px;
-    }
-    .tips-box {
-      margin-top: 20px;
-      padding: 15px;
-      background: #fff9e6;
-      border-left: 6px solid #f39c12;
-      border-radius: 8px;
-    }
-    .tips-box ul {
-      padding-left: 20px;
-    }
-    .tips-box li {
-      margin-bottom: 8px;
-    }
-    .no-analysis {
-      background: #f8f8f8;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-      font-style: italic;
-      color: #777;
-    }
-    .tracking-link-btn {
-        display: block;
-        width: fit-content;
-        margin: 20px auto 0;
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: white;
-        text-align: center;
-        border-radius: 5px;
-        text-decoration: none;
-        font-size: 16px;
-        transition: background-color 0.3s ease;
-    }
-    .tracking-link-btn:hover {
-        background-color: #0056b3;
-    }
-  </style>
+     
+    <meta charset="UTF-8">
+      <title>Upload Bill • MyGreenHome</title>
+     
+    <link rel="stylesheet" href="/styles/dashboard.css">
+     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+      <style>
+        .dashboard-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .upload-section {
+            flex: 2;
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .results-section {
+            flex: 1;
+            min-width: 280px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        #previewImage {
+            margin-top: 15px;
+            max-width: 100%;
+            max-height: 200px;
+            display: none;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .file-name-display {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .error-msg {
+            color: red;
+            font-size: 14px;
+        }
+
+        .result-card {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-left: 6px solid #2ecc71;
+            border-radius: 6px;
+        }
+
+        .tips-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff9e6;
+            border-left: 6px solid #f39c12;
+            border-radius: 8px;
+        }
+
+        .tips-box ul {
+            padding-left: 20px;
+        }
+
+        .tips-box li {
+            margin-bottom: 8px;
+        }
+
+        .no-analysis {
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-style: italic;
+            color: #777;
+        }
+
+        .tracking-link-btn {
+            display: block;
+            width: fit-content;
+            margin: 20px auto 0;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .tracking-link-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="top-bar">
-    <button onclick="location.href='/dashboard/home'">
-      <i class="fas fa-house"></i> Home
-    </button>
-    <h2>🔍 Analyze Your Electricity Bill</h2>
-    <button onclick="location.href='/dashboard/logout'">
-      <i class="fas fa-right-from-bracket"></i> Logout
-    </button>
-  </div>
+      <%- include('partials/navbar') %>
 
-  <div class="dashboard-container">
-        <div class="upload-section">
-      <h3>📤 Upload a New Bill</h3>
-      <form id="uploadForm" action="/dashboard/analyze" method="POST" enctype="multipart/form-data">
-        <input type="file" name="photo" id="fileInput" accept="image/*" required hidden>
-        <div id="dropZone" class="file-uploader">
-          <div class="file-placeholder">
-            Drag & drop or click to select an image (JPG, PNG, max 5MB)
-          </div>
-          <div id="fileName" class="file-name-display">No file selected</div>
-          <img id="previewImage" src="#" alt="Preview" />
-          <p id="errorMsg" class="error-msg"></p>
-        </div>
+          <div class="dashboard-container">
+                    <div class="upload-section">
+                      <h3>📤 Upload a New Bill</h3>
+                      <form id="uploadForm" action="/dashboard/analyze" method="POST" enctype="multipart/form-data">
+                            <input type="file" name="photo" id="fileInput" accept="image/*" required hidden>
+                            <div id="dropZone" class="file-uploader">
+                                  <div class="file-placeholder">
+                                        Drag & drop or click to select an image (JPG, PNG, max 5MB)
+                                      </div>
+                                  <div id="fileName" class="file-name-display">No file selected</div>
+                                  <img id="previewImage" src="#" alt="Preview" />
+                                  <p id="errorMsg" class="error-msg"></p>
+                                </div>
 
-        <div id="progressContainer" class="upload-progress">
-          <div id="progressBar" class="progress-bar"></div>
-        </div>
+                            <div id="progressContainer" class="upload-progress">
+                                  <div id="progressBar" class="progress-bar"></div>
+                                </div>
 
-        <button id="submitBtn" type="submit" disabled>
-          <i class="fas fa-magnifying-glass-chart"></i> Analyze Bill
-        </button>
-      </form>
+                            <button id="submitBtn" type="submit" disabled>
+                                  <i class="fas fa-magnifying-glass-chart"></i> Analyze Bill
+                                </button>
+                          </form>
 
-      <% if (tips && tips.length > 0) { %>
-      <div class="tips-box">
-        <h4>💡 Power-Saving Tips:</h4>
-        <ul>
-          <% tips.forEach(tip => { %>
-            <li><%= tip %></li>
-          <% }) %>
-        </ul>
-      </div>
-      <% } %>
-    </div>
+                      <% if (tips && tips.length> 0) { %>
+                          <div class="tips-box">
+                                <h4>💡 Power-Saving Tips:</h4>
+                                <ul>
+                                      <% tips.forEach(tip=> { %>
+                                            <li>
+                                    <%= tip %>
+                                </li>
+                                          <% }) %>
+                                            </ul>
+                              </div>
+                          <% } %>
+                            </div>
 
-        <div class="results-section">
-      <h4>📊 Last Analysis Summary</h4>
+                    <div class="results-section">
+                      <h4>📊 Last Analysis Summary</h4>
 
-      <% if (user && user.lastResult && user.lastResult.totalConsumption !== undefined) { %>
-        <div class="result-card">
-          <strong>Total Consumption:</strong><br/>
-          <%= user.lastResult.totalConsumption %> kWh
-        </div>
-        <div class="result-card">
-          <strong>CO₂ Emissions:</strong><br/>
-          <%= user.lastResult.carbonKg %> kg/month
-        </div>
-        <div class="result-card">
-          <strong>Bill Amount:</strong><br/>
-          ₹<%= user.lastResult.totalAmount.toFixed(2) %>
-        </div>
-        <div class="result-card" style="border-left-color: #f39c12;">
-          <strong>Tip:</strong><br/>
-          <%= user.lastResult.savingsTip %>
-        </div>
-      <% } else { %>
-        <div class="no-analysis">
-          ⚠️ No analysis yet. Upload a bill to see results here.
-        </div>
-      <% } %>
+                      <% // Check if there's valid analysis data to display %>
+                          <% if (user && user.lastResult && user.lastResult.totalConsumption !==undefined &&
+                        user.lastResult.totalConsumption !==0) { %>
+                                <div class="result-card">
+                                      <strong>Total Consumption:</strong><br />
+                                      <%= user.lastResult.totalConsumption %> kWh
+                                        </div>
+                                <div class="result-card">
+                                      <strong>CO₂ Emissions:</strong><br />
+                                      <%= user.lastResult.carbonKg %> kg/month
+                                        </div>
+                                <div class="result-card">
+                                      <strong>Bill Amount:</strong><br />
+                                      ₹<%= user.lastResult.totalAmount.toFixed(2) %>
+                                        </div>
+                                <div class="result-card" style="border-left-color: #f39c12;">
+                                      <strong>Tip:</strong><br />
+                                      <%= user.lastResult.savingsTip %>
+                                        </div>
+                              <% } else { %>
+                                    <div class="no-analysis">
+                                          ⚠️ No analysis yet. Upload your first bill to see results here!
+                                        </div>
+                                  <% } %>
 
-      <a href="/dashboard/tracking" class="tracking-link-btn">View Historical Tracking & Comparison</a>
-    </div>
-  </div>
+                                      <a href="/dashboard/tracking" class="tracking-link-btn">View Historical Tracking &
+                                    Comparison</a>
+                                    </div>
+              </div>
 
-  <script>
-    const fileInput = document.getElementById('fileInput');
-    const dropZone = document.getElementById('dropZone');
-    const fileNameDisplay = document.getElementById('fileName');
-    const submitBtn = document.getElementById('submitBtn');
-    const previewImage = document.getElementById('previewImage');
-    const errorMsg = document.getElementById('errorMsg');
-    const uploadForm = document.getElementById('uploadForm');
-    const progressBar = document.getElementById('progressBar');
-    const progressContainer = document.getElementById('progressContainer');
+         
+        <script>
+            const fileInput = document.getElementById('fileInput');
+            const dropZone = document.getElementById('dropZone');
+            const fileNameDisplay = document.getElementById('fileName');
+            const submitBtn = document.getElementById('submitBtn');
+            const previewImage = document.getElementById('previewImage');
+            const errorMsg = document.getElementById('errorMsg');
+            const uploadForm = document.getElementById('uploadForm');
+            const progressBar = document.getElementById('progressBar');
+            const progressContainer = document.getElementById('progressContainer');
 
-    dropZone.addEventListener('click', () => fileInput.click());
+            dropZone.addEventListener('click', () => fileInput.click());
 
-    fileInput.addEventListener('change', () => {
-      const file = fileInput.files[0];
-      if (!file) return;
+            fileInput.addEventListener('change', () => {
+                const file = fileInput.files[0];
+                if (!file) return;
 
-      if (!file.type.startsWith('image/')) {
-        errorMsg.textContent = "Please upload an image file only.";
-        fileInput.value = '';
-        previewImage.style.display = 'none';
-        submitBtn.disabled = true;
-        return;
-      }
+                if (!file.type.startsWith('image/')) {
+                    errorMsg.textContent = "Please upload an image file only.";
+                    fileInput.value = '';
+                    previewImage.style.display = 'none';
+                    submitBtn.disabled = true;
+                    return;
+                }
 
-      if (file.size > 5 * 1024 * 1024) {
-        errorMsg.textContent = "Image too large. Max 5MB allowed.";
-        fileInput.value = '';
-        previewImage.style.display = 'none';
-        submitBtn.disabled = true;
-        return;
-      }
+                if (file.size > 5 * 1024 * 1024) {
+                    errorMsg.textContent = "Image too large. Max 5MB allowed.";
+                    fileInput.value = '';
+                    previewImage.style.display = 'none';
+                    submitBtn.disabled = true;
+                    return;
+                }
 
-      errorMsg.textContent = "";
-      fileNameDisplay.textContent = file.name;
-      submitBtn.disabled = false;
+                errorMsg.textContent = "";
+                fileNameDisplay.textContent = file.name;
+                submitBtn.disabled = false;
 
-      const reader = new FileReader();
-      reader.onload = e => {
-        previewImage.src = e.target.result;
-        previewImage.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
-    });
+                const reader = new FileReader();
+                reader.onload = e => {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            });
 
-    ['dragover', 'dragenter'].forEach(evt => {
-      dropZone.addEventListener(evt, e => {
-        e.preventDefault();
-        dropZone.classList.add('dragover');
-      });
-    });
+            ['dragover', 'dragenter'].forEach(evt => {
+                dropZone.addEventListener(evt, e => {
+                    e.preventDefault();
+                    dropZone.classList.add('dragover');
+                });
+            });
 
-    ['dragleave', 'drop'].forEach(evt => {
-      dropZone.addEventListener(evt, e => {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-      });
-    });
+            ['dragleave', 'drop'].forEach(evt => {
+                dropZone.addEventListener(evt, e => {
+                    e.preventDefault();
+                    dropZone.classList.remove('dragover');
+                });
+            });
 
-    dropZone.addEventListener('drop', e => {
-      e.preventDefault();
-      fileInput.files = e.dataTransfer.files;
-      fileInput.dispatchEvent(new Event('change'));
-    });
+            dropZone.addEventListener('drop', e => {
+                e.preventDefault();
+                fileInput.files = e.dataTransfer.files;
+                fileInput.dispatchEvent(new Event('change'));
+            });
 
-    uploadForm.addEventListener('submit', e => {
-      e.preventDefault();
-      const formData = new FormData(uploadForm);
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', uploadForm.action, true);
+            uploadForm.addEventListener('submit', e => {
+                e.preventDefault();
+                const formData = new FormData(uploadForm);
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', uploadForm.action, true);
 
-      xhr.upload.onprogress = event => {
-        if (event.lengthComputable) {
-          const percent = (event.loaded / event.total) * 100;
-          progressContainer.style.display = 'block';
-          progressBar.style.width = percent + '%';
-          progressBar.textContent = Math.floor(percent) + '%';
-        }
-      };
+                xhr.upload.onprogress = event => {
+                    if (event.lengthComputable) {
+                        const percent = (event.loaded / event.total) * 100;
+                        progressContainer.style.display = 'block';
+                        progressBar.style.width = percent + '%';
+                        progressBar.textContent = Math.floor(percent) + '%';
+                    }
+                };
 
-      xhr.onload = () => {
-        if (xhr.status === 200) {
-          location.reload();
-        } else {
-          errorMsg.textContent = 'Upload failed. Try again.';
-        }
-      };
+                xhr.onload = () => {
+                    if (xhr.status === 200) {
+                        location.reload();
+                    } else {
+                        errorMsg.textContent = 'Upload failed. Try again.';
+                    }
+                };
 
-      xhr.send(formData);
-    });
-  </script>
+                xhr.send(formData);
+            });
+        </script>
 </body>
+
 </html>

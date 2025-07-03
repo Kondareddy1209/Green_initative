@@ -52,6 +52,22 @@
         margin-right: 15px;
     }
 
+    .navbar-points {
+        background-color: #f39c12; /* Orange for points */
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        font-weight: bold;
+        color: white;
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .navbar-points i {
+        font-size: 1.1em;
+    }
+
     .navbar-logout {
         background-color: #d9534f; /* Red logout button */
         color: white;
@@ -75,10 +91,20 @@
         <a href="/dashboard">Analyze Bill</a>
         <a href="/dashboard/tracking">Tracking</a>
         <a href="/dashboard/profile">Profile</a>
+        <a href="/dashboard/badges">Badges</a>
+        <a href="/dashboard/leaderboard">Leaderboard</a>
         <a href="/dashboard/team">Team</a>
+        <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+            <a href="/admin" class="action-btn" style="background-color: #4A90E2;">
+                <i class="fas fa-screwdriver-wrench"></i> Admin Panel
+            </a>
+        <% } %>
     </div>
     <div class="navbar-user-info">
         <% if (typeof user !== 'undefined' && user) { %>
+            <div class="navbar-points">
+                <i class="fas fa-star"></i> <%= user.points || 0 %>
+            </div>
             <img src="<%= user.profilePicture || '/images/default_image.png' %>" alt="<%= user.username %>'s Profile Pic">
             <span><%= user.firstName || user.username %></span>
             <a href="/dashboard/logout" class="navbar-logout">Logout</a>

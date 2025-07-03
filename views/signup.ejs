@@ -23,14 +23,15 @@
         /* Auth Container */
         .auth-container {
             position: relative;
-            max-width: 320px; /* Keeping it compact as per your last request */
+            max-width: 480px; /* As per your latest code snippet */
             margin: 0 auto;
-            padding: 18px 18px; /* Compact padding */
+            padding: 30px 30px; /* As per your latest code snippet */
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            /* Important: use a fixed background here if you want it distinct from body */
-            background: url("/images/download.jpeg") no-repeat center center;
+            /* Important: This background image is for the container itself,
+               make sure the path and image exist if different from body bg */
+            background: url("/images/download.jpeg") no-repeat center center; /* Keeping download.jpeg for container */
             background-size: cover;
         }
 
@@ -39,7 +40,7 @@
             content: "";
             position: absolute;
             inset: 0;
-            background-color: rgba(255, 255, 255, 0.75);
+            background-color: rgba(255, 255, 255, 0.75); /* Slightly more opaque overlay for better contrast */
             backdrop-filter: blur(3px);
             z-index: 0;
             border-radius: 12px;
@@ -53,35 +54,35 @@
 
         /* Green Heading */
         h2 {
-            margin-top: 5px;
-            margin-bottom: 10px;
+            margin-top: 5px; /* Reduced top margin for heading */
+            margin-bottom: 10px; /* Reduced margin */
             text-align: center;
             color: green;
-            font-size: 19px;
+            font-size: 19px; /* Slightly smaller font for compactness */
         }
 
         .form-group {
             position: relative;
-            margin-bottom: 6px;
+            margin-bottom: 6px; /* Significantly reduced margin between form groups */
             text-align: left;
         }
 
         label {
             display: block;
-            margin-bottom: 1px;
+            margin-bottom: 1px; /* Minimal margin below label */
             font-weight: bold;
-            font-size: 12px;
+            font-size: 12px; /* Smallest font for labels */
         }
 
         input,
         select {
             width: 100%;
-            padding: 7px 34px 7px 9px;
-            font-size: 13px;
+            padding: 7px 34px 7px 9px; /* Minimized padding */
+            font-size: 13px; /* Slightly smaller font */
             border: 1.5px solid #ccc;
             border-radius: 5px;
             box-sizing: border-box;
-            height: 36px;
+            height: 36px; /* Fixed height for inputs/selects for even more consistency */
         }
 
         input:invalid:focus,
@@ -95,8 +96,8 @@
 
         .password-group .toggle-pass {
             position: absolute;
-            right: 8px;
-            top: 26px;
+            right: 8px; /* Adjusted right position */
+            top: 26px; /* Adjusted top to match new input padding/height */
             background: none;
             border: none;
             cursor: pointer;
@@ -108,8 +109,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 12px;
-            margin-bottom: 5px;
+            margin-top: 12px; /* Reduced margin */
+            margin-bottom: 5px; /* Added a small margin to bottom of actions */
         }
 
         button[type="submit"]:disabled {
@@ -119,9 +120,9 @@
 
         /* Login button (blue) */
         button {
-            padding: 8px 15px;
+            padding: 8px 15px; /* Minimized padding */
             border: none;
-            font-size: 12px;
+            font-size: 12px; /* Minimized font size */
             color: white;
             background-color: #4A90E2;
             text-decoration: none;
@@ -135,9 +136,9 @@
 
         /* Sign up link styled as green button */
         .link {
-            padding: 8px 15px;
+            padding: 8px 15px; /* Minimized padding */
             border: none;
-            font-size: 12px;
+            font-size: 12px; /* Minimized font size */
             color: white;
             background-color: #2ecc71;
             text-decoration: none;
@@ -152,10 +153,10 @@
         .error-msg,
         #errorMsg {
             color: #e74c3c;
-            font-size: 10px;
+            font-size: 10px; /* Smallest font */
             height: 1em;
-            margin-top: -3px;
-            margin-bottom: 3px;
+            margin-top: -3px; /* Adjusted negative margin */
+            margin-bottom: 3px; /* Adjusted margin */
             text-align: left;
         }
 
@@ -241,7 +242,8 @@
         // Toggle password visibility
         const pwInput = document.getElementById('password');
         const toggle = document.getElementById('togglePass');
-        if (pwInput && toggle) { // Check if elements exist before adding listeners
+        // Added null checks to prevent errors if elements aren't found (e.g., on other pages if this JS was external)
+        if (pwInput && toggle) {
             toggle.addEventListener('click', () => {
                 pwInput.type = pwInput.type === 'password' ? 'text' : 'password';
                 toggle.textContent = pwInput.type === 'password' ? 'Show' : 'Hide';
@@ -251,7 +253,7 @@
 
         // Caps Lock alert
         const capsAlert = document.getElementById('capsAlert');
-        if (pwInput && capsAlert) { // Check if elements exist
+        if (pwInput && capsAlert) {
             pwInput.addEventListener('keydown', e => {
                 if (e.getModifierState && e.getModifierState('CapsLock')) capsAlert.hidden = false;
             });
@@ -263,7 +265,7 @@
 
         // Client-side form validation before submission to server
         document.getElementById('signupForm').addEventListener('submit', function (e) {
-            // No e.preventDefault() here unless a validation fails, allowing normal form submission
+            // No e.preventDefault() here initially, allowing HTML5 validation to run
             
             const firstName = document.getElementById('firstName');
             const lastName = document.getElementById('lastName');
@@ -275,30 +277,34 @@
             // Basic client-side validation
             let isValid = true;
 
-            if (!firstName.value.trim()) {
+            // Using reportValidity() to trigger native browser validation messages
+            if (!firstName.checkValidity()) {
                 isValid = false;
                 firstName.reportValidity();
-            } else if (!lastName.value.trim()) {
+            } else if (!lastName.checkValidity()) {
                 isValid = false;
                 lastName.reportValidity();
-            } else if (!email.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+            } else if (!email.checkValidity() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) { // Also custom email regex
                 isValid = false;
                 email.reportValidity();
-            } else if (!mobile.value.trim() || !/^[0-9]{10}$/.test(mobile.value)) {
+            } else if (!mobile.checkValidity()) { // Pattern attribute handles regex
                 isValid = false;
                 mobile.reportValidity();
-            } else if (!password.value.trim() || password.value.length < 6) {
+            } else if (!password.checkValidity()) { // minlength attribute handles length
                 isValid = false;
                 password.reportValidity();
-            } else if (!gender.value.trim()) {
+            } else if (!gender.checkValidity()) { // required attribute handles selection
                 isValid = false;
                 gender.reportValidity();
             }
 
             if (!isValid) {
                 e.preventDefault(); // Prevent form submission if client-side validation fails
-                // Optionally, add a general alert here
-                // alert('Please fill in all required fields and correct any errors.');
+                // Optionally, focus on the first invalid field or show a general message
+                const firstInvalid = document.querySelector('#signupForm :invalid');
+                if (firstInvalid) {
+                    firstInvalid.focus();
+                }
             }
             // If isValid is true, the form will submit normally to the action="/auth/signup"
         });

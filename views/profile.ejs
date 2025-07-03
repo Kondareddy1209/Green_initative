@@ -93,7 +93,7 @@
                 <p><strong>Email:</strong> <%= user.email || 'N/A' %></p>
                 <p><strong>Mobile:</strong> <%= user.mobile || 'N/A' %></p>
                 <p><strong>Gender:</strong> <%= user.gender || 'N/A' %></p>
-                <% if (user.createdAt) { %>
+                <p><strong>Role:</strong> <%= user.role || 'user' %></p> <% if (user.createdAt) { %>
                     <p><strong>Member Since:</strong> <%= new Date(user.createdAt).toDateString() %></p>
                 <% } %>
             </div>

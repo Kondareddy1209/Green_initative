@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard • MyGreenHome</title>
+    <link rel="stylesheet" href="/styles/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        .leaderboard-container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .section-header {
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .leaderboard-table th, .leaderboard-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .leaderboard-table th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-size: 1.1em;
+        }
+        .leaderboard-table tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+        .leaderboard-table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        .leaderboard-table td:first-child {
+            font-weight: bold;
+            text-align: center;
+            width: 50px;
+        }
+        .leaderboard-table td:nth-child(2) {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .leaderboard-table td img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #eee;
+        }
+        .leaderboard-table td:last-child {
+            font-weight: bold;
+            color: #f39c12; /* Orange for points */
+            text-align: right;
+        }
+        .no-users {
+            padding: 30px;
+            font-style: italic;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <div class="leaderboard-container">
+        <h2 class="section-header">🥇 Top Green Heroes</h2>
+
+        <% if (leaderboard && leaderboard.length > 0) { %>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% leaderboard.forEach((user, index) => { %>
+                        <tr>
+                            <td><%= index + 1 %></td>
+                            <td>
+                                <img src="<%= user.profilePicture || '/images/default_image.png' %>" alt="<%= user.username %>'s Profile Pic">
+                                <%= user.firstName || user.username %> <%= user.lastName || '' %>
+                            </td>
+                            <td><%= user.points %> <i class="fas fa-star" style="color: #f39c12;"></i></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <div class="no-users">
+                No users on the leaderboard yet. Be the first to analyze a bill!
+            </div>
+        <% } %>
+
+        <a href="/dashboard" class="btn" style="background-color: #6c757d; margin-top: 30px;">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

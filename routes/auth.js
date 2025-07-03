@@ -6,16 +6,17 @@ const User = require('../models/user');
 const Otp = require('../models/Otp');
 const { sendOTPEmail } = require('../utils/mailer');
 const bcrypt = require('bcryptjs');
+const { initializeNewUserGamification } = require('../utils/gamification'); // NEW IMPORT for gamification
 
 function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
 // Middleware to log session for debugging (REMOVE IN PRODUCTION)
-router.use((req, res, next) => {
-    // console.log('Auth Route: Current Session:', req.session);
-    next();
-});
+// router.use((req, res, next) => {
+//     console.log('Auth Route: Current Session:', req.session);
+//     next();
+// });
 
 // GET login page (now accessible at /auth)
 router.get('/', (req, res) => {
@@ -24,17 +25,18 @@ router.get('/', (req, res) => {
 
 // POST login
 router.post('/login', async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password } = req.body; // 'username' from login form is expected to be the email
     try {
-        const user = await User.findOne({ email: username });
+        const user = await User.findOne({ email: username }); // Find user by email
         if (!user) {
             console.log(`Login failed: User not found for email ${username}`);
             return res.redirect('/auth?error=' + encodeURIComponent('Invalid email or password.'));
         }
+
         const isMatch = await user.comparePassword(password);
         if (isMatch) {
             req.session.userId = user._id;
-            req.session.user = user;
+            req.session.user = user; // Store full user object in session for easy access in templates
             console.log(`Login successful for user ${username}`);
             return res.redirect('/dashboard/home');
         } else {
@@ -56,29 +58,38 @@ router.get('/signup', (req, res) => {
 router.post('/signup', async (req, res) => {
     const { firstName, lastName, email, mobile, password, gender } = req.body;
     try {
+        // Check if email already exists
         if (await User.findOne({ email: email })) {
             console.log(`Signup failed: Email already exists ${email}`);
             return res.redirect('/auth/signup?error=' + encodeURIComponent('Email already exists.'));
         }
 
         const otpCode = generateOTP();
+        // Delete any old signup OTPs for this email, then create a new one
         await Otp.deleteMany({ email: email, type: 'signup' });
         await Otp.create({ email: email, otp: otpCode, type: 'signup' });
 
+        // Initialize gamification data for the new user
+        const gamificationData = initializeNewUserGamification(); // NEW
+
         // Store full user data in session for pending verification
         req.session.pendingUser = {
-            username: email,
+            username: email, // Store email as username for the new user (for consistency with your current schema)
             email,
             password, // This password will be hashed when new User(pending).save() is called
             mobile,
             firstName,
             lastName,
-            gender
+            gender,
+            points: gamificationData.points, // NEW
+            badges: gamificationData.badges, // NEW
+            achievementsTracker: gamificationData.achievementsTracker // NEW
         };
         console.log(`Signup OTP generated and sent to ${email}`);
 
         await sendOTPEmail(email, otpCode, 'signup');
 
+        // Pass message as null here to avoid "message is not defined" error in verify_otp.ejs
         res.render('verify_otp', { username: email, error: null, message: null, isPasswordReset: false });
     } catch (error) {
         console.error("Signup error:", error);
@@ -88,7 +99,7 @@ router.post('/signup', async (req, res) => {
 
 // POST verify OTP (for signup and password reset)
 router.post('/verify-otp', async (req, res) => {
-    const { username, otp, isPasswordReset } = req.body; // 'username' here is the email from the form
+    const { username, otp, isPasswordReset } = req.body; // 'username' from form is the email
     const otpType = isPasswordReset === 'true' ? 'password_reset' : 'signup';
 
     console.log(`Attempting OTP verification for ${username}, type: ${otpType}, OTP: ${otp}`);
@@ -98,6 +109,7 @@ router.post('/verify-otp', async (req, res) => {
 
         if (!otpRec) {
             console.log(`OTP verification failed: Invalid or expired OTP for ${username}, type ${otpType}`);
+            // Ensure message is passed as null for consistency
             return res.render('verify_otp', { username: username, error: 'Invalid or expired OTP.', message: null, isPasswordReset: isPasswordReset === 'true' });
         }
         console.log(`OTP record found for ${username}, type ${otpType}. ID: ${otpRec._id}`);
@@ -110,7 +122,7 @@ router.post('/verify-otp', async (req, res) => {
                 return res.redirect('/auth/signup?error=' + encodeURIComponent('Session expired. Please sign up again.'));
             }
 
-            const newUser = new User(pending);
+            const newUser = new User(pending); // 'pending' now includes gamification data
             await newUser.save(); // Password will be hashed by pre-save hook
             console.log(`New user created: ${newUser.email}`);
 
@@ -126,13 +138,14 @@ router.post('/verify-otp', async (req, res) => {
                 return res.redirect('/auth/forgot-password?error=' + encodeURIComponent('Session expired. Please request a new password reset.'));
             }
 
-            // OTP is valid and session is good, proceed to reset password page
+            // OTP is valid, proceed to reset password page (via GET)
             await Otp.deleteOne({ _id: otpRec._id });
             console.log(`OTP deleted for password reset for ${username}. Redirecting to reset password.`);
-            res.redirect('/auth/reset-password');
+            res.redirect('/auth/reset-password'); // Redirect to GET reset-password route
         }
     } catch (error) {
         console.error("OTP verification caught error:", error);
+        // Ensure message is passed as null for consistency
         res.render('verify_otp', { username: username, error: 'An error occurred during verification. Please try again later.', message: null, isPasswordReset: isPasswordReset === 'true' });
     }
 });
@@ -151,6 +164,7 @@ router.post('/forgot-password', async (req, res) => {
         const user = await User.findOne({ email });
         if (!user) {
             console.log(`Forgot password: User not found for email ${email}. Sending generic message.`);
+            // Send a generic message to prevent email enumeration
             return res.render('forgot_password', { message: 'If an account with that email exists, an OTP has been sent.', error: null });
         }
 
@@ -163,6 +177,7 @@ router.post('/forgot-password', async (req, res) => {
 
         await sendOTPEmail(email, otpCode, 'password_reset');
 
+        // Pass message and error as null for consistency
         res.render('verify_otp', { username: email, message: 'OTP sent to your email for password reset.', error: null, isPasswordReset: true });
     } catch (error) {
         console.error("Forgot password OTP send error:", error);

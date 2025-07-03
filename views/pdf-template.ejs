@@ -1,52 +1,90 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+   
   <meta charset="UTF-8">
-  <title>MyGreenHome Report</title>
-  <style>
+    <title>MyGreenHome Report</title>
+    <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       padding: 30px;
       background: #fff;
       color: #333;
     }
-    h2 { color: #2ecc71; }
+
+    h2 {
+      color: #2ecc71;
+    }
+
     .section {
       margin-bottom: 25px;
     }
+
     .label {
       font-weight: bold;
       color: #2c3e50;
     }
+
     .value {
       color: #2980b9;
     }
+
+    .note {
+      font-size: 0.9em;
+      color: gray;
+      margin-top: 10px;
+    }
   </style>
 </head>
+
 <body>
-  <h2>🌿 MyGreenHome Usage Report</h2>
+    <h2>🌿 MyGreenHome Usage Report</h2>
 
-  <div class="section">
-    <p><span class="label">User:</span> <%= user.username %></p>
-    <p><span class="label">Mobile:</span> <%= user.mobile %></p>
-  </div>
-
-  <div class="section">
-    <p><span class="label">Total Consumption:</span> <span class="value"><%= summary.totalConsumption %> kWh</span></p>
-    <p><span class="label">CO₂ Emitted:</span> <span class="value"><%= summary.carbonKg %> kg/month</span></p>
-    <p><span class="label">Estimated Bill:</span>
-      <% if (summary.totalAmount && summary.totalAmount < 100000) { %>
-        <span class="value">₹<%= summary.totalAmount.toFixed(2) %></span>
-      <% } else { %>
-        <span style="color: red;">Unrealistic</span>
-      <% } %>
+    <div class="section">
+        <p><span class="label">User:</span>
+      <%= user.username %>
     </p>
-  </div>
+        <p><span class="label">Email:</span>
+      <%= user.email %>
+    </p>
+        <p><span class="label">Mobile:</span>
+      <%= user.mobile %>
+    </p>
+      </div>
 
-  <div class="section">
-    <p><span class="label">💡 Tip:</span> <%= summary.savingsTip %></p>
-  </div>
+    <div class="section">
+        <p><span class="label">Total Consumption:</span> <span class="value">
+        <%= summary.totalConsumption !==undefined ? summary.totalConsumption + ' kWh' : 'N/A' %>
+      </span></p>
+        <p><span class="label">CO₂ Emitted:</span> <span class="value">
+        <%= summary.carbonKg !==undefined ? summary.carbonKg + ' kg/month' : 'N/A' %>
+      </span></p>
+        <p><span class="label">Estimated Bill:</span>
+            <% if (summary.totalAmount !==undefined && summary.totalAmount> 0 && summary.totalAmount < 100000) { %>
+                  <span class="value">₹<%= summary.totalAmount.toFixed(2) %></span>
+                <% } else if (summary.totalAmount===0) { %>
+                    <span style="color: gray;">₹0.00 (No cost for 0 consumption)</span>
+            <% } else if (summary.totalAmount>= 100000) { %>
+                      <span style="color: red;">Unrealistic (Value too high)</span>
+                    <% } else { %>
+                <span style="color: gray;">N/A (No bill amount data)</span>
+                <% } %>
+                      </p>
+      </div>
 
-  <p style="font-size: 13px; color: gray;">Generated on: <%= new Date().toLocaleString() %></p>
+    <div class="section">
+        <p><span class="label">💡 Tip:</span>
+      <%= summary.savingsTip || 'No specific tip available yet.' %>
+    </p>
+      </div>
+
+    <p style="font-size: 13px; color: gray;">Generated on: <%= new Date().toLocaleString() %>
+  </p>
+  <% if (!summary || summary.totalConsumption===0) { %>
+    <p class="note">Note: This report is based on initial or zero consumption data. Please upload a bill for a detailed
+      analysis.</p>
+    <% } %>
 </body>
+
 </html>
