@@ -4,14 +4,27 @@ body {
   background-size: cover;
   margin: 0;
   font-family: Arial, sans-serif;
+  background-color: #eef2f7;
+  /* Consistent background for all auth pages */
+  display: flex;
+  /* Use flexbox to center content vertically */
+  justify-content: center;
+  /* Center horizontally */
+  align-items: center;
+  /* Center vertically */
+  min-height: 100vh;
+  /* Ensure body takes full viewport height */
 }
 
-/* ✅ Smaller Container with internal background image */
+/* Auth Container */
 .auth-container {
   position: relative;
-  max-width: 340px; /* Reduced width */
-  margin: 80px auto;
-  padding: 30px 25px; /* Reduced padding */
+  max-width: 320px;
+  /* Keeping width compact */
+  margin: 0 auto;
+  /* Removed top/bottom margin from here, handled by body flex */
+  padding: 18px 18px;
+  /* Further reduced overall padding */
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -19,51 +32,64 @@ body {
   background-size: cover;
 }
 
-/* ✅ Overlay for readability */
+/* Overlay for readability */
 .auth-container::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0.75);
+  /* Slightly more opaque overlay for better contrast */
   backdrop-filter: blur(3px);
   z-index: 0;
   border-radius: 12px;
 }
 
-/* ✅ Ensure content is above overlay */
+/* Ensure content is above overlay */
 .auth-container * {
   position: relative;
   z-index: 1;
 }
 
-/* ✅ Green Heading */
+/* Green Heading */
 h2 {
-  margin-bottom: 20px;
+  margin-top: 5px;
+  /* Reduced top margin for heading */
+  margin-bottom: 10px;
+  /* Reduced margin */
   text-align: center;
   color: green;
-  font-size: 22px;
+  font-size: 19px;
+  /* Slightly smaller font for compactness */
 }
 
 .form-group {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 6px;
+  /* Significantly reduced margin between form groups */
   text-align: left;
 }
 
 label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 1px;
+  /* Minimal margin below label */
   font-weight: bold;
-  font-size: 14px;
+  font-size: 12px;
+  /* Smallest font for labels */
 }
 
-input {
+input,
+select {
   width: 100%;
-  padding: 12px 36px 12px 10px;
-  font-size: 15px;
+  padding: 7px 34px 7px 9px;
+  /* Minimized padding */
+  font-size: 13px;
+  /* Slightly smaller font */
   border: 1.5px solid #ccc;
   border-radius: 5px;
   box-sizing: border-box;
+  height: 36px;
+  /* Fixed height for inputs/selects for even more consistency */
 }
 
 input:invalid:focus,
@@ -77,20 +103,25 @@ input:valid {
 
 .password-group .toggle-pass {
   position: absolute;
-  right: 10px;
-  top: 38px;
+  right: 8px;
+  /* Adjusted right position */
+  top: 26px;
+  /* Adjusted top to match new input padding/height */
   background: none;
   border: none;
   cursor: pointer;
   color: #4A90E2;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .form-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 12px;
+  /* Reduced margin */
+  margin-bottom: 5px;
+  /* Added a small margin to bottom of actions */
 }
 
 button[type="submit"]:disabled {
@@ -98,11 +129,13 @@ button[type="submit"]:disabled {
   cursor: not-allowed;
 }
 
-/* ✅ Login button (blue) */
+/* Login button (blue) */
 button {
-  padding: 10px 20px;
+  padding: 8px 15px;
+  /* Minimized padding */
   border: none;
-  font-size: 14px;
+  font-size: 12px;
+  /* Minimized font size */
   color: white;
   background-color: #4A90E2;
   text-decoration: none;
@@ -114,11 +147,13 @@ button:hover:not(:disabled) {
   background: #357ab8;
 }
 
-/* ✅ Sign up link styled as green button */
+/* Sign up link styled as green button */
 .link {
-  padding: 10px 20px;
+  padding: 8px 15px;
+  /* Minimized padding */
   border: none;
-  font-size: 14px;
+  font-size: 12px;
+  /* Minimized font size */
   color: white;
   background-color: #2ecc71;
   text-decoration: none;
@@ -133,10 +168,13 @@ button:hover:not(:disabled) {
 .error-msg,
 #errorMsg {
   color: #e74c3c;
-  font-size: 13px;
+  font-size: 10px;
+  /* Smallest font */
   height: 1em;
-  margin-top: -6px;
-  margin-bottom: 8px;
+  margin-top: -3px;
+  /* Adjusted negative margin */
+  margin-bottom: 3px;
+  /* Adjusted margin */
   text-align: left;
 }
 
@@ -146,7 +184,31 @@ input.shake {
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20%, 60% { transform: translateX(-6px); }
-  40%, 80% { transform: translateX(6px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+/* Small text below password field */
+.password-group small {
+  font-size: 9px;
+  /* Smallest font for hints */
+  color: #666;
+  display: block;
+  margin-top: -7px;
+  /* Pull it up closer to input */
+  margin-bottom: 3px;
+  /* Add some space below */
 }

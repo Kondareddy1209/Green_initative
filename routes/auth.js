@@ -31,7 +31,6 @@ router.post('/login', async (req, res) => {
             console.log(`Login failed: User not found for email ${username}`);
             return res.redirect('/auth?error=' + encodeURIComponent('Invalid email or password.'));
         }
-
         const isMatch = await user.comparePassword(password);
         if (isMatch) {
             req.session.userId = user._id;
