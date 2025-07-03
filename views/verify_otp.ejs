@@ -1,73 +1,285 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Verify OTP • MyGreenHome</title>
-  <link rel="stylesheet" href="/styles/auth.css">
+  <meta charset="UTF-8">
+  <title>Verify OTP • MyGreenHome</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    } body {
+            background: url("/images/green.jpg") no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #eef2f7; /* Consistent background for all auth pages */
+            display: flex; /* Use flexbox to center content vertically */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            min-height: 100vh; /* Ensure body takes full viewport height */
+        }
+
+        /* Auth Container */
+        .auth-container {
+            position: relative;
+            max-width: 320px; /* Keeping it compact as per your last request */
+            margin: 0 auto;
+            padding: 18px 18px; /* Compact padding */
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            /* Important: use a fixed background here if you want it distinct from body */
+            background: url("/images/download.jpeg") no-repeat center center;
+            background-size: cover;
+        }
+
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .auth-container {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 320px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 8px;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    p {
+      color: #666;
+      margin-bottom: 20px;
+      line-height: 1.4;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #333;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e1e5e9;
+      border-radius: 8px;
+      font-size: 16px;
+      text-align: center;
+      letter-spacing: 3px;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    input[type="text"].shake {
+      animation: shake 0.3s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .error-msg {
+      color: #e74c3c;
+      font-size: 14px;
+      margin-top: 5px;
+      min-height: 20px;
+    }
+
+    .message-success {
+      color: #27ae60;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .resend-container {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #e1e5e9;
+    }
+
+    .resend-link {
+      color: #667eea;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .resend-link:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-  <div class="auth-container">
-    <h2>Verify OTP</h2>
-    <p>We've sent a 6-digit code to <strong><%= username %></strong></p>
+  <div class="auth-container">
+    <h2>Verify OTP</h2>
+    <p>We've sent a 6-digit code to <strong id="username">user@example.com</strong></p>
 
-    <% if (error) { %>
-        <p id="serverError" class="error-msg" style="text-align: center;"><%= error %></p>
-    <% } %>
-    <% if (message) { %>
-        <p class="message-success" style="text-align: center; color: green;"><%= message %></p>
-    <% } %>
+    <div id="serverError" class="error-msg" style="text-align: center;"></div>
+    <div id="successMessage" class="message-success" style="text-align: center;"></div>
 
-    <form id="otpForm" action="/auth/verify-otp" method="POST" novalidate>
-      <input type="hidden" name="username" value="<%= username %>">
-      <input type="hidden" name="isPasswordReset" value="<%= typeof isPasswordReset !== 'undefined' && isPasswordReset ? 'true' : 'false' %>">
+    <form id="otpForm" novalidate>
+      <input type="hidden" name="username" id="hiddenUsername" value="user@example.com">
+      <input type="hidden" name="isPasswordReset" id="isPasswordResetInput" value="false">
 
-      <div class="form-group">
-        <label for="otp">OTP Code</label>
-        <input
-          id="otp"
-          name="otp"
-          type="text"
-          minlength="6"
-          maxlength="6"
-          placeholder="123456"
-          required
-          autocomplete="one-time-code"
-        >
-      </div>
-      <p id="otpError" class="error-msg"></p>
+      <div class="form-group">
+        <label for="otp">OTP Code</label>
+        <input
+          id="otp"
+          name="otp"
+          type="text"
+          minlength="6"
+          maxlength="6"
+          placeholder="123456"
+          required
+          autocomplete="one-time-code"
+        >
+      </div>
+      <p id="otpError" class="error-msg"></p>
 
-      <button type="submit" id="verifyBtn" disabled>Verify & Continue</button>
-    </form>
+      <button type="submit" id="verifyBtn" disabled>Verify & Continue</button>
+    </form>
 
-  <script>
-    const otpInput = document.getElementById('otp');
-    const verifyBtn = document.getElementById('verifyBtn');
-    const otpError = document.getElementById('otpError');
-    const isPasswordResetInput = document.querySelector('input[name="isPasswordReset"]');
-    const isPasswordReset = isPasswordResetInput && isPasswordResetInput.value === 'true';
+    <div class="resend-container">
+      <a href="#" class="resend-link" id="resendLink">Didn't receive the code? Resend OTP</a>
+    </div>
+  </div>
+
+  <script>
+    const otpInput = document.getElementById('otp');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const otpError = document.getElementById('otpError');
+    const serverError = document.getElementById('serverError');
+    const successMessage = document.getElementById('successMessage');
+    const isPasswordResetInput = document.getElementById('isPasswordResetInput');
     const otpForm = document.getElementById('otpForm');
+    const resendLink = document.getElementById('resendLink');
 
-    // Enable button when 6 digits entered
-    otpInput.addEventListener('input', () => {
-      otpError.textContent = '';
-      if (document.getElementById('serverError')) {
-          document.getElementById('serverError').textContent = ''; // Clear server error on input
+    // Demo data - in real app this would come from server
+    const demoUsername = 'user@example.com';
+    const isPasswordReset = false;
+
+    // Set demo values
+    document.getElementById('username').textContent = demoUsername;
+    document.getElementById('hiddenUsername').value = demoUsername;
+    isPasswordResetInput.value = isPasswordReset.toString();
+
+    // Enable button when 6 digits entered
+    otpInput.addEventListener('input', () => {
+      otpError.textContent = '';
+      serverError.textContent = '';
+      successMessage.textContent = '';
+      
+      const val = otpInput.value.replace(/\D/g, ''); // Remove non-digits
+      otpInput.value = val; // Update input with cleaned value
+      
+      verifyBtn.disabled = val.length !== 6;
+    });
+
+    // Handle form submission
+    otpForm.addEventListener('submit', e => {
+      e.preventDefault();
+      
+      const val = otpInput.value;
+      if (!/^\d{6}$/.test(val)) {
+        otpError.textContent = 'Please enter exactly 6 digits.';
+        otpInput.classList.add('shake');
+        setTimeout(() => otpInput.classList.remove('shake'), 300);
+        return;
       }
-      const val = otpInput.value;
-      verifyBtn.disabled = !( /^\d{6}$/.test(val) );
-    });
 
-    otpForm.addEventListener('submit', e => {
-      const val = otpInput.value;
-      if (!/^\d{6}$/.test(val)) {
-        e.preventDefault();
-        otpError.textContent = 'Please enter exactly 6 digits.';
-        otpInput.classList.add('shake');
-        setTimeout(() => otpInput.classList.remove('shake'), 300);
-      }
-      // The backend route '/auth/verify-otp' now handles the redirect logic based on isPasswordReset
-      // No need to change form action.
-    });
-  </script>
+      // Simulate verification process
+      verifyBtn.disabled = true;
+      verifyBtn.textContent = 'Verifying...';
+      
+      setTimeout(() => {
+        // Demo: simulate successful verification
+        if (val === '123456') {
+          successMessage.textContent = 'OTP verified successfully! Redirecting...';
+          setTimeout(() => {
+            if (isPasswordReset) {
+              alert('Redirecting to password reset page...');
+            } else {
+              alert('Redirecting to dashboard...');
+            }
+          }, 1000);
+        } else {
+          serverError.textContent = 'Invalid OTP. Please try again.';
+          otpInput.classList.add('shake');
+          setTimeout(() => otpInput.classList.remove('shake'), 300);
+        }
+        
+        verifyBtn.disabled = false;
+        verifyBtn.textContent = 'Verify & Continue';
+      }, 1500);
+    });
+
+    // Handle resend OTP
+    resendLink.addEventListener('click', e => {
+      e.preventDefault();
+      resendLink.textContent = 'Sending...';
+      
+      setTimeout(() => {
+        successMessage.textContent = 'New OTP sent successfully!';
+        resendLink.textContent = "Didn't receive the code? Resend OTP";
+        otpInput.value = '';
+        verifyBtn.disabled = true;
+      }, 1000);
+    });
+
+    // Auto-focus on OTP input
+    otpInput.focus();
+  </script>
 </body>
 </html>
