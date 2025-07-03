@@ -1,66 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Login • MyGreenHome</title>
-  <link rel="stylesheet" href="/styles/auth.css">
+    <meta charset="UTF-8">
+    <title>Login • MyGreenHome</title>
+    <link rel="stylesheet" href="/styles/auth.css">
 </head>
 <body>
-  <div class="auth-container">
-    <!-- ✅ Inserted login image here -->
-    
+    <div class="auth-container">
+        <h2>Login to Your Account</h2>
+        
+        <% if (error) { %>
+            <p class="error-msg" style="text-align: center;"><%= error %></p>
+        <% } %>
+        <% if (message) { %>
+            <p class="message-success" style="text-align: center; color: green;"><%= message %></p>
+        <% } %>
 
-    <h2>🔐 Login to MyGreenHome</h2>
+        <form id="loginForm" action="/auth/login" method="POST">
+            <div class="form-group">
+                <label for="username">Email</label>
+                <input id="username" name="username" type="email" required>
+            </div>
+            <div class="form-group password-group">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" required>
+                <button type="button" id="togglePass" class="toggle-pass">Show</button>
+                <div id="capsAlert" hidden style="color:red; font-size: 12px; margin-top: 5px;">Caps Lock is ON</div>
+            </div>
 
-    <form id="loginForm" action="/login" method="POST">
-      <div class="form-group">
-        <label for="username">Email</label>
-        <input id="username" name="username" type="email" placeholder="you@example.com" required autocomplete="username">
-      </div>
-
-      <div class="form-group password-group">
-        <label for="password">Password</label>
-        <input id="password" name="password" type="password" placeholder="••••••••" required minlength="6" autocomplete="current-password">
-        <button type="button" class="toggle-pass" aria-label="Show password">Show</button>
-      </div>
-
-      <p id="errorMsg" style="color:#e74c3c;height:18px"></p>
-
-      <div class="form-actions">
-        <button type="submit" disabled>Login</button>
-        <a href="/signup" class="link">Sign up</a>
-      </div>
-    </form>
-  </div>
-
-  <script>
-    const loginForm = document.getElementById('loginForm');
-    const submitBtn = loginForm.querySelector('button[type="submit"]');
-    const username = document.getElementById('username');
-    const password = document.getElementById('password');
-    const togglePass = document.querySelector('.toggle-pass');
-    const errorMsg = document.getElementById('errorMsg');
-
-    function updateSubmit() {
-      submitBtn.disabled = !loginForm.checkValidity();
-    }
-
-    loginForm.addEventListener('input', updateSubmit);
-
-    togglePass.addEventListener('click', () => {
-      const type = password.type === 'password' ? 'text' : 'password';
-      password.type = type;
-      togglePass.textContent = type === 'password' ? 'Show' : 'Hide';
-      togglePass.setAttribute('aria-label', type === 'password' ? 'Show password' : 'Hide password');
-    });
-
-    loginForm.addEventListener('invalid', e => {
-      e.preventDefault();
-      const field = e.target;
-      field.classList.add('error');
-      setTimeout(() => field.classList.remove('error'), 300);
-      errorMsg.textContent = field === username ? 'Enter a valid email.' : 'Password must be at least 6 characters.';
-    }, true);
-  </script>
+            <div class="form-actions">
+                <button type="submit">Login</button>
+                <a href="/auth/signup" class="link">Sign Up</a>
+            </div>
+            <p style="text-align: center; margin-top: 20px; font-size: 14px;">
+                <a href="/auth/forgot-password" style="color: #4A90E2; text-decoration: none;">Forgot Password?</a>
+            </p>
+        </form>
+    </div>
+    <script src="/scripts/auth.js"></script>
 </body>
 </html>

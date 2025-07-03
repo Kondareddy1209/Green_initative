@@ -1,0 +1,89 @@
+<style>
+    /* Basic Navbar Styling - you can integrate this into your dashboard.css or style.css */
+    .navbar {
+        background-color: #4CAF50; /* Green background */
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .navbar .logo {
+        font-size: 1.8em;
+        font-weight: bold;
+        color: white;
+        text-decoration: none;
+    }
+
+    .navbar-links a {
+        color: white;
+        text-decoration: none;
+        padding: 8px 15px;
+        margin-left: 15px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .navbar-links a:hover {
+        background-color: #5cb85c; /* Lighter green on hover */
+    }
+
+    .navbar-user-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .navbar-user-info img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+        border: 2px solid white;
+    }
+
+    .navbar-user-info span {
+        font-weight: bold;
+        margin-right: 15px;
+    }
+
+    .navbar-logout {
+        background-color: #d9534f; /* Red logout button */
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none; /* Make it look like a button but acts as link */
+        transition: background-color 0.3s ease;
+    }
+
+    .navbar-logout:hover {
+        background-color: #c9302c;
+    }
+</style>
+
+<nav class="navbar">
+    <a href="/dashboard/home" class="logo">MyGreenHome</a>
+    <div class="navbar-links">
+        <a href="/dashboard/home">Home</a>
+        <a href="/dashboard">Analyze Bill</a>
+        <a href="/dashboard/tracking">Tracking</a>
+        <a href="/dashboard/profile">Profile</a>
+        <a href="/dashboard/team">Team</a>
+    </div>
+    <div class="navbar-user-info">
+        <% if (typeof user !== 'undefined' && user) { %>
+            <img src="<%= user.profilePicture || '/images/default_image.png' %>" alt="<%= user.username %>'s Profile Pic">
+            <span><%= user.firstName || user.username %></span>
+            <a href="/dashboard/logout" class="navbar-logout">Logout</a>
+        <% } else { %>
+            <a href="/auth" class="navbar-logout" style="background-color: #007bff;">Login</a>
+        <% } %>
+    </div>
+</nav>
