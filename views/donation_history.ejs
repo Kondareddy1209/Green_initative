@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation History • MyGreenHome</title>
+    <link rel="stylesheet" href="/styles/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        body {
+            background-color: #eef2f7;
+            font-family: Arial, sans-serif;
+        }
+        .history-container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .section-header {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .history-table th, .history-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        .history-table th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-size: 1em;
+        }
+        .history-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .history-table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        .status-succeeded {
+            color: #28a745; /* Green */
+            font-weight: bold;
+        }
+        .status-failed {
+            color: #dc3545; /* Red */
+            font-weight: bold;
+        }
+        .status-pending {
+            color: #ffc107; /* Yellow/Orange */
+            font-weight: bold;
+        }
+        .no-donations {
+            text-align: center;
+            padding: 40px;
+            color: #777;
+            font-style: italic;
+            font-size: 1.1em;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .back-link:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <div class="history-container">
+        <h2 class="section-header">💸 Your Donation History</h2>
+
+        <% if (donations && donations.length > 0) { %>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Stripe ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% donations.forEach(donation => { %>
+                        <tr>
+                            <td><%= new Date(donation.transactionDate).toLocaleDateString() %></td>
+                            <td><%= donation.currency.toUpperCase() %> <%= (donation.amount).toFixed(2) %></td>
+                            <td class="status-<%= donation.status %>"><%= donation.status %></td>
+                            <td><%= donation.stripePaymentIntentId %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <div class="no-donations">
+                You haven't made any donations yet. Why not support a green cause today?
+            </div>
+        <% } %>
+
+        <a href="/dashboard" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

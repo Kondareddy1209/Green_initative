@@ -4,13 +4,17 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const Otp = require('../models/Otp');
-const { sendOTPEmail } = require('../utils/mailer');
+const { sendOTPEmail } = require('../utils/mailer'); // Use destructuring for specific mailer functions
 const bcrypt = require('bcryptjs');
 const { initializeNewUserGamification } = require('../utils/gamification'); // NEW IMPORT for gamification
 
+// --- generateOTP function ---
+// Ensure this function is defined at the top level of this file
 function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
+// --- End generateOTP function ---
+
 
 // Middleware to log session for debugging (REMOVE IN PRODUCTION)
 // router.use((req, res, next) => {
@@ -18,38 +22,39 @@ function generateOTP() {
 //     next();
 // });
 
-// GET login page (now accessible at /auth)
+// GET regular user login page (accessible at /auth)
 router.get('/', (req, res) => {
     res.render('login', { error: req.query.error || null, message: req.query.message || null });
 });
 
-// POST login
+// POST regular user login
 router.post('/login', async (req, res) => {
     const { username, password } = req.body; // 'username' from login form is expected to be the email
     try {
-        const user = await User.findOne({ email: username }); // Find user by email
+        // Find user by email and ensure they are NOT an admin for regular login
+        const user = await User.findOne({ email: username, role: 'user' }); // Only allow 'user' role to login here
         if (!user) {
-            console.log(`Login failed: User not found for email ${username}`);
+            console.log(`Regular user login failed: User not found or is admin for email ${username}`);
             return res.redirect('/auth?error=' + encodeURIComponent('Invalid email or password.'));
         }
 
         const isMatch = await user.comparePassword(password);
         if (isMatch) {
             req.session.userId = user._id;
-            req.session.user = user; // Store full user object in session for easy access in templates
-            console.log(`Login successful for user ${username}`);
+            req.session.user = user; // Store full user object in session
+            console.log(`Regular user login successful for user ${username}`);
             return res.redirect('/dashboard/home');
         } else {
-            console.log(`Login failed: Password mismatch for email ${username}`);
+            console.log(`Regular user login failed: Password mismatch for email ${username}`);
             return res.redirect('/auth?error=' + encodeURIComponent('Invalid email or password.'));
         }
     } catch (error) {
-        console.error("Login error:", error);
+        console.error("Regular user login error:", error);
         res.redirect('/auth?error=' + encodeURIComponent('An error occurred during login. Please try again later.'));
     }
 });
 
-// GET signup page (now accessible at /auth/signup)
+// GET signup page (accessible at /auth/signup)
 router.get('/signup', (req, res) => {
     res.render('signup', { error: req.query.error || null });
 });
@@ -64,7 +69,7 @@ router.post('/signup', async (req, res) => {
             return res.redirect('/auth/signup?error=' + encodeURIComponent('Email already exists.'));
         }
 
-        const otpCode = generateOTP();
+        const otpCode = generateOTP(); // Call generateOTP
         // Delete any old signup OTPs for this email, then create a new one
         await Otp.deleteMany({ email: email, type: 'signup' });
         await Otp.create({ email: email, otp: otpCode, type: 'signup' });
@@ -83,7 +88,8 @@ router.post('/signup', async (req, res) => {
             gender,
             points: gamificationData.points, // NEW
             badges: gamificationData.badges, // NEW
-            achievementsTracker: gamificationData.achievementsTracker // NEW
+            achievementsTracker: gamificationData.achievementsTracker, // NEW
+            role: 'user' // Explicitly set role as 'user' for new signups
         };
         console.log(`Signup OTP generated and sent to ${email}`);
 
@@ -99,10 +105,12 @@ router.post('/signup', async (req, res) => {
 
 // POST verify OTP (for signup and password reset)
 router.post('/verify-otp', async (req, res) => {
-    const { username, otp, isPasswordReset } = req.body; // 'username' from form is the email
+    let { username, otp, isPasswordReset } = req.body; // 'username' from form is the email
+    otp = otp.trim(); // Trim OTP to prevent whitespace issues
     const otpType = isPasswordReset === 'true' ? 'password_reset' : 'signup';
 
-    console.log(`Attempting OTP verification for ${username}, type: ${otpType}, OTP: ${otp}`);
+    console.log(`DEBUG: Attempting OTP verification for ${username}, type: ${otpType}, OTP: '${otp}'`);
+    console.log(`DEBUG: isPasswordReset from form: ${isPasswordReset} (Type: ${typeof isPasswordReset})`);
 
     try {
         const otpRec = await Otp.findOne({ email: username, otp: otp, type: otpType });
@@ -138,7 +146,6 @@ router.post('/verify-otp', async (req, res) => {
                 return res.redirect('/auth/forgot-password?error=' + encodeURIComponent('Session expired. Please request a new password reset.'));
             }
 
-            // OTP is valid, proceed to reset password page (via GET)
             await Otp.deleteOne({ _id: otpRec._id });
             console.log(`OTP deleted for password reset for ${username}. Redirecting to reset password.`);
             res.redirect('/auth/reset-password'); // Redirect to GET reset-password route
@@ -161,18 +168,19 @@ router.get('/forgot-password', (req, res) => {
 router.post('/forgot-password', async (req, res) => {
     const { email } = req.body;
     try {
-        const user = await User.findOne({ email });
+        // Find user by email and ensure they are NOT an admin for password reset
+        const user = await User.findOne({ email: email, role: 'user' }); // Only allow 'user' role for reset here
         if (!user) {
-            console.log(`Forgot password: User not found for email ${email}. Sending generic message.`);
+            console.log(`Forgot password: User not found or is admin for email ${email}. Sending generic message.`);
             // Send a generic message to prevent email enumeration
             return res.render('forgot_password', { message: 'If an account with that email exists, an OTP has been sent.', error: null });
         }
 
-        const otpCode = generateOTP();
+        const otpCode = generateOTP(); // Call generateOTP
         await Otp.deleteMany({ email: email, type: 'password_reset' });
         await Otp.create({ email: email, otp: otpCode, type: 'password_reset' });
 
-        req.session.resetEmail = email; // Store email in session for the next step
+        req.session.resetEmail = email;
         console.log(`Forgot password OTP generated and sent to ${email}`);
 
         await sendOTPEmail(email, otpCode, 'password_reset');
@@ -211,17 +219,18 @@ router.post('/reset-password', async (req, res) => {
             return res.render('reset_password', { email: email, error: 'Password must be at least 6 characters long.' });
         }
 
-        const user = await User.findOne({ email });
+        // Find user by email and ensure they are NOT an admin
+        const user = await User.findOne({ email: email, role: 'user' }); // Only update 'user' role passwords here
         if (!user) {
-            console.log(`Reset password POST: User not found for email ${email}`);
+            console.log(`Reset password POST: User not found or is admin for email ${email}`);
             return res.redirect('/auth/forgot-password?error=' + encodeURIComponent('User not found.'));
         }
 
-        user.password = newPassword; // This will trigger the pre-save hook to hash the password
+        user.password = newPassword;
         await user.save();
         console.log(`Password successfully reset for user ${email}`);
 
-        delete req.session.resetEmail; // Clear email from session
+        delete req.session.resetEmail;
 
         res.redirect('/auth?message=' + encodeURIComponent('Password reset successfully! You can now login.'));
 

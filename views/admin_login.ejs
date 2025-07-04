@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login • MyGreenHome</title>
+    <link rel="stylesheet" href="/styles/auth.css"> </head>
+<body>
+    <div class="auth-container">
+        <h2>Admin Login</h2>
+        <p style="text-align: center; margin-bottom: 20px; font-size: 14px; color: #555;">Access Administrator Panel</p>
+
+        <% if (error) { %>
+            <p class="error-msg" style="text-align: center;"><%= error %></p>
+        <% } %>
+
+        <form id="adminLoginForm" action="/admin/login" method="POST">
+            <div class="form-group">
+                <label for="username">Admin Email</label>
+                <input id="username" name="username" type="email" required>
+            </div>
+            <div class="form-group password-group">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" required>
+                <button type="button" id="togglePass" class="toggle-pass">Show</button>
+                <div id="capsAlert" hidden style="color:red; font-size: 12px; margin-top: 5px;">Caps Lock is ON</div>
+            </div>
+
+            <div class="form-actions" style="justify-content: center;">
+                <button type="submit">Admin Login</button>
+            </div>
+            <p style="text-align: center; margin-top: 20px; font-size: 14px;">
+                Not an admin? <a href="/auth" style="color: #4A90E2; text-decoration: none;">User Login</a>
+            </p>
+        </form>
+    </div>
+    <script>
+        const pwInput = document.getElementById('password');
+        const toggle = document.getElementById('togglePass');
+        const capsAlert = document.getElementById('capsAlert');
+
+        if (pwInput && toggle) {
+            toggle.addEventListener('click', () => {
+                pwInput.type = pwInput.type === 'password' ? 'text' : 'password';
+                toggle.textContent = pwInput.type === 'password' ? 'Show' : 'Hide';
+            });
+        }
+        if (pwInput && capsAlert) {
+            pwInput.addEventListener('keydown', e => {
+                if (e.getModifierState && e.getModifierState('CapsLock')) capsAlert.hidden = false;
+            });
+            pwInput.addEventListener('keyup', e => {
+                if (!e.getModifierState || !e.getModifierState('CapsLock')) capsAlert.hidden = true;
+            });
+        }
+    </script>
+</body>
+</html>

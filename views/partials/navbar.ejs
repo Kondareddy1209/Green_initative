@@ -1,5 +1,5 @@
 <style>
-    /* Basic Navbar Styling - you can integrate this into your dashboard.css or style.css */
+    /* Basic Navbar Styling */
     .navbar {
         background-color: #4CAF50; /* Green background */
         padding: 15px 20px;
@@ -13,18 +13,35 @@
         z-index: 1000;
     }
 
+    /* NEW: Container for Logo and Home link */
+    .navbar-brand-area {
+        display: flex;
+        flex-direction: column; /* Stack children vertically */
+        align-items: flex-start; /* Align items to the start (left) */
+        margin-right: 20px; /* Space between brand area and other links */
+    }
+
     .navbar .logo {
         font-size: 1.8em;
         font-weight: bold;
         color: white;
         text-decoration: none;
+        margin-bottom: 2px; /* Small gap between logo and Home link */
+        white-space: nowrap; /* Prevent logo from wrapping */
+    }
+
+    .navbar-links {
+        display: flex;
+        align-items: center;
+        margin-right: auto; /* Push links to the left, make space for user info */
+        /* margin-left: 20px; This margin is now handled by navbar-brand-area's margin-right */
     }
 
     .navbar-links a {
         color: white;
         text-decoration: none;
         padding: 8px 15px;
-        margin-left: 15px;
+        margin-right: 5px; /* Adjust spacing between main links */
         border-radius: 5px;
         transition: background-color 0.3s ease;
     }
@@ -36,6 +53,7 @@
     .navbar-user-info {
         display: flex;
         align-items: center;
+        gap: 12px; /* Slightly increased gap for more breathing room */
     }
 
     .navbar-user-info img {
@@ -43,13 +61,11 @@
         height: 40px;
         border-radius: 50%;
         object-fit: cover;
-        margin-right: 10px;
         border: 2px solid white;
     }
 
     .navbar-user-info span {
         font-weight: bold;
-        margin-right: 15px;
     }
 
     .navbar-points {
@@ -59,7 +75,6 @@
         font-size: 0.9em;
         font-weight: bold;
         color: white;
-        margin-right: 15px;
         display: flex;
         align-items: center;
         gap: 5px;
@@ -75,32 +90,65 @@
         padding: 8px 15px;
         border-radius: 5px;
         cursor: pointer;
-        text-decoration: none; /* Make it look like a button but acts as link */
+        text-decoration: none;
         transition: background-color 0.3s ease;
     }
 
     .navbar-logout:hover {
         background-color: #c9302c;
     }
+
+    /* Style for Admin Panel link in navbar */
+    .admin-link-btn {
+        background-color: #4A90E2; /* Blue for admin */
+        color: white;
+        padding: 8px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 0.9em;
+        transition: background-color 0.3s ease;
+    }
+    .admin-link-btn:hover {
+        background-color: #357ab8;
+    }
+
+    /* NEW: Style for the "Home" link when it's part of the brand area */
+    .home-brand-link {
+        color: white; /* Ensure it stays white */
+        text-decoration: none;
+        font-size: 0.8em; /* Smaller font to fit under logo */
+        padding: 2px 5px; /* Minimal padding */
+        border-radius: 3px;
+        transition: background-color 0.3s ease;
+        text-align: left; /* Align text to left under logo */
+    }
+    .home-brand-link:hover {
+        background-color: rgba(255, 255, 255, 0.2); /* Subtle hover effect */
+    }
 </style>
 
 <nav class="navbar">
-    <a href="/dashboard/home" class="logo">MyGreenHome</a>
+    <div class="navbar-brand-area">
+        <a href="/dashboard/home" class="logo">MyGreenHome</a>
+        <a href="/dashboard/home" class="home-brand-link">Home</a>
+    </div>
+
     <div class="navbar-links">
-        <a href="/dashboard/home">Home</a>
         <a href="/dashboard">Analyze Bill</a>
         <a href="/dashboard/tracking">Tracking</a>
         <a href="/dashboard/profile">Profile</a>
         <a href="/dashboard/badges">Badges</a>
         <a href="/dashboard/leaderboard">Leaderboard</a>
         <a href="/dashboard/team">Team</a>
+        <a href="/donations/donate">Donate</a>
+        <a href="/donations/history">Donation History</a>
+    </div>
+    <div class="navbar-user-info">
         <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
-            <a href="/admin" class="action-btn" style="background-color: #4A90E2;">
+            <a href="/admin" class="admin-link-btn">
                 <i class="fas fa-screwdriver-wrench"></i> Admin Panel
             </a>
         <% } %>
-    </div>
-    <div class="navbar-user-info">
         <% if (typeof user !== 'undefined' && user) { %>
             <div class="navbar-points">
                 <i class="fas fa-star"></i> <%= user.points || 0 %>
@@ -109,7 +157,8 @@
             <span><%= user.firstName || user.username %></span>
             <a href="/dashboard/logout" class="navbar-logout">Logout</a>
         <% } else { %>
-            <a href="/auth" class="navbar-logout" style="background-color: #007bff;">Login</a>
+            <a href="/auth" class="navbar-logout" style="background-color: #007bff;">User Login</a>
+            <a href="/admin/login" class="navbar-logout" style="background-color: #4A90E2; margin-left: 10px;">Admin Login</a>
         <% } %>
     </div>
 </nav>

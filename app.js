@@ -10,11 +10,9 @@ const path = require('path'); // Node.js built-in module for path manipulation
 const app = express();
 
 // Connect to MongoDB
-// useNewUrlParser and useUnifiedTopology are deprecated in newer Mongoose versions (4.0.0+ driver)
-// but including them for broader compatibility if you're on an older setup.
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/green_init', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+    useNewUrlParser: true, // Deprecated, but kept for compatibility
+    useUnifiedTopology: true // Deprecated, but kept for compatibility
 })
 .then(() => console.log('✅ MongoDB connected'))
 .catch(err => console.error('❌ MongoDB connection error:', err));
@@ -47,53 +45,48 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // --- Route Imports ---
-const authRoutes = require('./routes/auth');
-const dashboardRoutes = require('./routes/dashboard');
-const pdfRoutes = require('./routes/pdf');
-// const communityRoutes = require('./routes/community'); // Uncomment if you implement community features
-const adminRoutes = require('./routes/admin'); // Import the new admin routes
+const authRoutes = require('./routes/auth'); // User authentication routes
+const adminAuthRoutes = require('./routes/adminAuth'); // Admin-specific authentication routes
+const dashboardRoutes = require('./routes/dashboard'); // User dashboard routes
+const pdfRoutes = require('./routes/pdf'); // PDF generation routes
+const adminRoutes = require('./routes/admin'); // Admin panel routes
+const donationsRoutes = require('./routes/donations'); // Donations routes (NO Stripe init here)
 
 // --- Route Mounting ---
-// Mount authentication routes under the '/auth' path
-// e.g., /auth, /auth/login, /auth/signup, /auth/forgot-password
+// Mount regular user authentication routes under '/auth'
 app.use('/auth', authRoutes);
 
-// Mount dashboard-related routes under the '/dashboard' path
-// e.g., /dashboard, /dashboard/home, /dashboard/profile, /dashboard/analyze
+// Mount admin-specific authentication routes under '/admin/login'
+app.use('/admin/login', adminAuthRoutes);
+
+// Mount dashboard-related routes under '/dashboard' (protected by user authentication)
 app.use('/dashboard', dashboardRoutes);
 
 // Mount PDF-related routes also under the '/dashboard' path
-// e.g., /dashboard/download-report
 app.use('/dashboard', pdfRoutes);
 
-// Mount admin routes under the '/admin' path
-// e.g., /admin, /admin/users
+// Mount admin panel routes under '/admin' (protected by admin role)
 app.use('/admin', adminRoutes);
 
-// Mount community routes if implemented (uncomment when ready)
-// app.use('/community', communityRoutes);
+// Mount donations routes under '/donations' (protected by user authentication)
+app.use('/donations', donationsRoutes);
 
 // --- Root Route ---
-// This is the default landing page. It redirects based on authentication status.
 app.get('/', (req, res) => {
     if (req.session.userId) {
-        // If user is logged in, redirect to their dashboard home
         return res.redirect('/dashboard/home');
     }
-    // If not logged in, redirect to the authentication (login) page
     res.redirect('/auth');
 });
 
 // --- Error Handling Middleware (Optional but Recommended) ---
-// This middleware catches errors that occur in your routes or other middleware.
 app.use((err, req, res, next) => {
     console.error('Unhandled application error:', err.stack);
-    // Render a generic error page or send a simple error response
     res.status(500).send('Something broke on the server! Please try again later.');
 });
 
 // --- Start Server ---
-const PORT = process.env.PORT || 3000; // Use port from environment variable or default to 3000
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);
 });

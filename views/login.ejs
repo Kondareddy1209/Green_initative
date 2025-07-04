@@ -2,12 +2,12 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Login • MyGreenHome</title>
+    <title>User Login • MyGreenHome</title>
     <link rel="stylesheet" href="/styles/auth.css">
 </head>
 <body>
     <div class="auth-container">
-        <h2>Login to Your Account</h2>
+        <h2>User Login</h2>
         
         <% if (error) { %>
             <p class="error-msg" style="text-align: center;"><%= error %></p>
@@ -34,6 +34,9 @@
             </div>
             <p style="text-align: center; margin-top: 20px; font-size: 14px;">
                 <a href="/auth/forgot-password" style="color: #4A90E2; text-decoration: none;">Forgot Password?</a>
+            </p>
+            <p style="text-align: center; margin-top: 10px; font-size: 12px;">
+                Are you an admin? <a href="/admin/login" style="color: #007bff; text-decoration: none;">Admin Login</a>
             </p>
         </form>
     </div>

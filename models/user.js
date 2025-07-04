@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        lowercase: true
+        lowercase: true // Store emails in lowercase
     },
     email: { // Explicit email field, also unique
         type: String,
@@ -28,6 +28,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: '/images/default_image.png' // Ensure this matches your default image filename
     },
+    // Modified historicalResults to be an array for historical tracking
     historicalResults: [
         {
             totalConsumption: { type: Number, default: 0 },
@@ -43,6 +44,7 @@ const userSchema = new mongoose.Schema({
             analysisDate: { type: Date, default: Date.now } // When this analysis was done
         }
     ],
+    // 'lastResult' will now point to the most recent entry in historicalResults
     lastResult: { // For easy access to the most recent analysis
         totalConsumption: { type: Number, default: 0 },
         carbonKg: { type: Number, default: 0 },
@@ -53,9 +55,10 @@ const userSchema = new mongoose.Schema({
                 consumption: Number
             }
         ],
-        savingsTip: String,
+            savingsTip: String,
         analysisDate: { type: Date, default: Date.now }
     },
+    // --- NEW: Gamification Fields ---
     points: {
         type: Number,
         default: 0
@@ -65,9 +68,11 @@ const userSchema = new mongoose.Schema({
             type: String // Store badge identifiers (e.g., "first-bill", "eco-champion")
         }
     ],
+    // Optional: Track progress towards achievements
     achievementsTracker: {
         billsAnalyzedCount: { type: Number, default: 0 },
         totalConsumptionReduced: { type: Number, default: 0 }, // Sum of consumption decreases across analyses
+        // Add more trackers as needed for specific badge criteria
     },
     // --- NEW: User Role Field ---
     role: {

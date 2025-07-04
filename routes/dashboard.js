@@ -10,14 +10,11 @@ const { extractTextFromImage, parseBillText } = require('../utils/ocrParser');
 const { generateTips } = require('../utils/tips');
 const { sendBillAnalysisEmail } = require('../utils/mailer');
 const { calculateGamification, getAllBadgeDetails } = require('../utils/gamification'); // NEW IMPORTS for gamification
+const { isAuthenticated } = require('../utils/middleware'); // Import isAuthenticated middleware
 
-// Middleware: check if user is authenticated
-function authCheck(req, res, next) {
-    if (!req.session.userId) {
-        return res.redirect('/auth'); // Redirect to /auth base route if not logged in
-    }
-    next();
-}
+// Middleware: check if user is authenticated (using the utility middleware)
+// This replaces the inline function you previously had
+router.use(isAuthenticated);
 
 // --- Multer Configuration for Profile Picture Upload ---
 const profileStorage = multer.diskStorage({
@@ -49,7 +46,7 @@ const uploadProfilePicture = multer({
     }
 }).single('profilePicture');
 
-// --- Existing Multer for Bill Analysis ---
+// --- Multer for Bill Analysis ---
 const billStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         const uploadDir = path.join(__dirname, '..', 'uploads');
@@ -65,7 +62,7 @@ const uploadBill = multer({ storage: billStorage });
 
 
 /* ========== Dashboard GET Route ========== */
-router.get('/', authCheck, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         // Fetch the user to get their latest data including gamification and historical results
         const user = await User.findById(req.session.userId).lean();
@@ -85,7 +82,7 @@ router.get('/', authCheck, async (req, res) => {
             }
             : null;
 
-        const tips = summary
+        const tips = summary && summary.totalConsumption !== undefined
             ? generateTips(summary.totalConsumption)
             : [
                 "Use natural daylight instead of artificial lighting.",
@@ -101,7 +98,7 @@ router.get('/', authCheck, async (req, res) => {
 });
 
 /* ========== OCR Upload Route ========== */
-router.post('/analyze', authCheck, uploadBill.single('photo'), async (req, res) => {
+router.post('/analyze', uploadBill.single('photo'), async (req, res) => {
     if (!req.file) return res.send('❌ No file uploaded');
     const fullPath = path.join(__dirname, '..', 'uploads', req.file.filename);
 
@@ -140,7 +137,7 @@ router.post('/analyze', authCheck, uploadBill.single('photo'), async (req, res) 
             analysisDate: new Date()
         };
 
-        // --- NEW: Gamification Logic ---
+        // --- Gamification Logic ---
         // Increment billsAnalyzedCount first as it's part of badge criteria
         user.achievementsTracker.billsAnalyzedCount = (user.achievementsTracker.billsAnalyzedCount || 0) + 1;
         
@@ -183,14 +180,14 @@ router.post('/analyze', authCheck, uploadBill.single('photo'), async (req, res) 
 
 
 /* ========== Home Page ========== */
-router.get('/home', authCheck, async (req, res) => {
+router.get('/home', async (req, res) => {
     try {
         const user = await User.findById(req.session.userId).lean();
         if (!user) {
             req.session.destroy();
             return res.redirect('/auth');
         }
-        const tipsList = user?.lastResult?.totalConsumption
+        const tipsList = user?.lastResult?.totalConsumption !== undefined
             ? generateTips(user.lastResult.totalConsumption)
             : [
                 "Turn off lights when not in use.",
@@ -217,7 +214,7 @@ router.get('/home', authCheck, async (req, res) => {
 });
 
 /* ========== Profile ========== */
-router.get('/profile', authCheck, async (req, res) => {
+router.get('/profile', async (req, res) => {
     try {
         const user = await User.findById(req.session.userId).lean();
         if (!user) {
@@ -231,7 +228,7 @@ router.get('/profile', authCheck, async (req, res) => {
     }
 });
 
-router.get('/edit-profile', authCheck, async (req, res) => {
+router.get('/edit-profile', async (req, res) => {
     try {
         const user = await User.findById(req.session.userId).lean();
         if (!user) {
@@ -240,12 +237,12 @@ router.get('/edit-profile', authCheck, async (req, res) => {
         }
         res.render('edit-profile', { user, message: req.query.message || null, error: req.query.error || null });
     } catch (error) {
-        console.error("Error fetching user for edit profile page:", error);
+            console.error("Error fetching user for edit profile page:", error);
         res.status(500).send("Server Error");
     }
 });
 
-router.post('/update-profile', authCheck, (req, res) => {
+router.post('/update-profile', (req, res) => {
     uploadProfilePicture(req, res, async (err) => {
         if (err) {
             console.error('Profile picture upload error:', err);
@@ -294,8 +291,8 @@ router.post('/update-profile', authCheck, (req, res) => {
     });
 });
 
-/* ========== NEW: Tracking Page (Historical Data & Comparison) ========== */
-router.get('/tracking', authCheck, async (req, res) => {
+/* ========== Tracking Page (Historical Data & Comparison) ========== */
+router.get('/tracking', async (req, res) => {
     try {
         const user = await User.findById(req.session.userId).lean();
         if (!user) {
@@ -367,50 +364,39 @@ router.get('/tracking', authCheck, async (req, res) => {
 });
 
 
-/* ========== NEW: Badges Page (Display User's Badges) ========== */
-// routes/dashboard.js (Relevant part: '/badges' route)
-
-/* ========== NEW: Badges Page (Display User's Badges) ========== */
-router.get('/badges', authCheck, async (req, res) => {
+/* ========== Badges Page (Display User's Badges) ========== */
+router.get('/badges', async (req, res) => {
     try {
-        // Fetch the user data from DB to ensure it's fresh, including gamification fields
         const user = await User.findById(req.session.userId).lean();
         if (!user) {
-            console.log("Badges page: User not found for session ID:", req.session.userId);
             req.session.destroy();
             return res.redirect('/auth');
         }
 
-        // Ensure user.badges is an array, even if undefined for old users
         const userBadges = Array.isArray(user.badges) ? user.badges : [];
+        const allBadgeDetails = getAllBadgeDetails(); // Get all possible badge details
 
-        const allBadgeDetails = getAllBadgeDetails(); // Get all possible badge details from gamification utility
-
-        // Filter and map earned badges to their full details
         const earnedBadgeDetails = userBadges.map(badgeKey => {
             if (!allBadgeDetails[badgeKey]) {
                 console.warn(`Warning: User ${user.email} has unknown badgeKey: ${badgeKey}`);
-                return null; // Return null if badgeKey doesn't exist in criteria
+                return null;
             }
             return allBadgeDetails[badgeKey];
         }).filter(Boolean); // Filter out any nulls (unknown badge keys)
 
         res.render('badges', {
-            user, // Pass current user for navbar/profile link
+            user,
             earnedBadges: earnedBadgeDetails
         });
     } catch (error) {
         console.error("Error loading badges page:", error);
-        // Log the full error object for better debugging
         console.error("Badges Page Error Details:", error.message, error.stack);
         res.status(500).send("Server Error loading badges. Please try again.");
     }
 });
 
-// ... (rest of dashboard.js code) ...
-
-/* ========== NEW: Leaderboard Page ========== */
-router.get('/leaderboard', authCheck, async (req, res) => {
+/* ========== Leaderboard Page ========== */
+router.get('/leaderboard', async (req, res) => {
     try {
         // Fetch users sorted by points in descending order
         const leaderboardUsers = await User.find({})
@@ -433,8 +419,9 @@ router.get('/leaderboard', authCheck, async (req, res) => {
 
 
 /* ========== Team Page ========== */
-router.get('/team', authCheck, (req, res) => {
+router.get('/team', async (req, res) => {
     res.render('team', {
+        user: req.session.user, // Pass user for navbar
         team: [
             {
                 name: 'A.T. Kondareddy',
@@ -469,7 +456,7 @@ router.get('/team', authCheck, (req, res) => {
 });
 
 /* ========== Logout ========== */
-router.get('/logout', authCheck, (req, res) => {
+router.get('/logout', (req, res) => {
     req.session.destroy(() => res.redirect('/auth')); // Redirect to login page after logout
 });
 
