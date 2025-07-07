@@ -1,12 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tracking & Comparison • MyGreenHome</title>
     <link rel="stylesheet" href="/styles/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        body {
+            background-color: #eef2f7;
+            font-family: Arial, sans-serif;
+        }
         .tracking-container {
             max-width: 900px;
             margin: 30px auto;
@@ -86,6 +91,7 @@
         .history-table th {
             background-color: #f2f2f2;
             color: #333;
+            font-size: 1.1em;
         }
         .history-table tbody tr:nth-child(even) {
             background-color: #f9f9f9;
@@ -116,7 +122,9 @@
     </style>
 </head>
 <body>
-    <%- include('partials/navbar') %> <div class="tracking-container">
+    <%- include('partials/navbar') %>
+
+    <div class="tracking-container">
         <div class="section-header">
             <h2>📈 Your Energy Usage Tracking</h2>
             <a href="/dashboard" class="btn" style="background-color: #6c757d;">
@@ -161,7 +169,7 @@
                 <thead>
                     <tr>
                         <th>Date</th>
-                        <th>Consumption (kWh)</th>
+                        <th>Bill ID</th> <th>Consumption (kWh)</th>
                         <th>CO₂ (kg)</th>
                         <th>Bill Amount (₹)</th>
                         <th>Tip</th>
@@ -171,7 +179,7 @@
                     <% historicalResults.forEach(result => { %>
                         <tr>
                             <td><%= new Date(result.analysisDate).toLocaleDateString() %></td>
-                            <td><%= result.totalConsumption %></td>
+                            <td><%= result.billId || 'N/A' %></td> <td><%= result.totalConsumption %></td>
                             <td><%= result.carbonKg %></td>
                             <td>₹<%= result.totalAmount.toFixed(2) %></td>
                             <td><%= result.savingsTip %></td>

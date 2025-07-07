@@ -50,43 +50,59 @@ const adminAuthRoutes = require('./routes/adminAuth'); // Admin-specific authent
 const dashboardRoutes = require('./routes/dashboard'); // User dashboard routes
 const pdfRoutes = require('./routes/pdf'); // PDF generation routes
 const adminRoutes = require('./routes/admin'); // Admin panel routes
-const donationsRoutes = require('./routes/donations'); // Donations routes (NO Stripe init here)
+const donationsRoutes = require('./routes/donations'); // Donations routes
+const aiChatRoutes = require('./routes/ai_chat'); // AI Chat routes
 
 // --- Route Mounting ---
 // Mount regular user authentication routes under '/auth'
+// e.g., /auth, /auth/login, /auth/signup, /auth/forgot-password
 app.use('/auth', authRoutes);
 
 // Mount admin-specific authentication routes under '/admin/login'
+// This will specifically handle the admin login process
 app.use('/admin/login', adminAuthRoutes);
 
 // Mount dashboard-related routes under '/dashboard' (protected by user authentication)
+// e.g., /dashboard, /dashboard/home, /dashboard/profile, /dashboard/analyze
 app.use('/dashboard', dashboardRoutes);
 
 // Mount PDF-related routes also under the '/dashboard' path
+// e.g., /dashboard/download-report
 app.use('/dashboard', pdfRoutes);
 
 // Mount admin panel routes under '/admin' (protected by admin role)
+// e.g., /admin, /admin/users
 app.use('/admin', adminRoutes);
 
 // Mount donations routes under '/donations' (protected by user authentication)
+// e.g., /donations/donate, /donations/history, /donations/create-payment-intent
 app.use('/donations', donationsRoutes);
 
+// Mount AI Chat routes under '/ai-chat' (protected by user authentication)
+// e.g., /ai-chat, /ai-chat/message
+app.use('/ai-chat', aiChatRoutes);
+
 // --- Root Route ---
+// This is the default landing page. It redirects based on authentication status.
 app.get('/', (req, res) => {
     if (req.session.userId) {
+        // If user is logged in, redirect to their dashboard home
         return res.redirect('/dashboard/home');
     }
+    // If not logged in, redirect to the regular user login page
     res.redirect('/auth');
 });
 
 // --- Error Handling Middleware (Optional but Recommended) ---
+// This middleware catches errors that occur in your routes or other middleware.
 app.use((err, req, res, next) => {
     console.error('Unhandled application error:', err.stack);
+    // Render a generic error page or send a simple error response
     res.status(500).send('Something broke on the server! Please try again later.');
 });
 
 // --- Start Server ---
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000; // Use port from environment variable or default to 3000
 app.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);
 });

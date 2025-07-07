@@ -51,7 +51,13 @@
         <p><span class="label">Mobile:</span>
       <%= user.mobile %>
     </p>
-      </div>
+    <% if (summary.billId) { %>
+      <p><span class="label">Bill ID:</span>
+        <%= summary.billId %>
+      </p>
+      <% } %>
+         
+  </div>
 
     <div class="section">
         <p><span class="label">Total Consumption:</span> <span class="value">

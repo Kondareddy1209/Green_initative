@@ -1,5 +1,5 @@
 <style>
-    /* Basic Navbar Styling */
+    /* --- Navbar Styling --- */
     .navbar {
         background-color: #4CAF50; /* Green background */
         padding: 15px 20px;
@@ -11,9 +11,18 @@
         position: sticky;
         top: 0;
         z-index: 1000;
+        width: 100%;
     }
 
-    /* NEW: Container for Logo and Home link */
+    /* Hamburger Menu Icon */
+    .menu-toggle {
+        display: none; /* Hidden by default on large screens */
+        font-size: 1.8em;
+        cursor: pointer;
+        color: white;
+        margin-right: 15px; /* Space from logo */
+    }
+
     .navbar-brand-area {
         display: flex;
         flex-direction: column; /* Stack children vertically */
@@ -26,34 +35,47 @@
         font-weight: bold;
         color: white;
         text-decoration: none;
-        margin-bottom: 2px; /* Small gap between logo and Home link */
-        white-space: nowrap; /* Prevent logo from wrapping */
+        margin-bottom: 2px;
+        white-space: nowrap;
+    }
+
+    .home-brand-link {
+        color: white;
+        text-decoration: none;
+        font-size: 0.8em; /* Smaller font to fit under logo */
+        padding: 2px 5px; /* Minimal padding */
+        border-radius: 3px;
+        transition: background-color 0.3s ease;
+        text-align: left; /* Align text to left under logo */
+    }
+
+    .home-brand-link:hover {
+        background-color: rgba(255, 255, 255, 0.2); /* Subtle hover effect */
     }
 
     .navbar-links {
-        display: flex;
+        display: flex; /* Horizontal on large screens */
         align-items: center;
-        margin-right: auto; /* Push links to the left, make space for user info */
-        /* margin-left: 20px; This margin is now handled by navbar-brand-area's margin-right */
+        margin-right: auto;
     }
 
     .navbar-links a {
         color: white;
         text-decoration: none;
         padding: 8px 15px;
-        margin-right: 5px; /* Adjust spacing between main links */
+        margin-right: 5px;
         border-radius: 5px;
         transition: background-color 0.3s ease;
     }
 
     .navbar-links a:hover {
-        background-color: #5cb85c; /* Lighter green on hover */
+        background-color: #5cb85c;
     }
 
     .navbar-user-info {
         display: flex;
         align-items: center;
-        gap: 12px; /* Slightly increased gap for more breathing room */
+        gap: 12px;
     }
 
     .navbar-user-info img {
@@ -69,7 +91,7 @@
     }
 
     .navbar-points {
-        background-color: #f39c12; /* Orange for points */
+        background-color: #f39c12;
         padding: 5px 10px;
         border-radius: 20px;
         font-size: 0.9em;
@@ -84,7 +106,7 @@
     }
 
     .navbar-logout {
-        background-color: #d9534f; /* Red logout button */
+        background-color: #d9534f;
         color: white;
         border: none;
         padding: 8px 15px;
@@ -98,9 +120,8 @@
         background-color: #c9302c;
     }
 
-    /* Style for Admin Panel link in navbar */
     .admin-link-btn {
-        background-color: #4A90E2; /* Blue for admin */
+        background-color: #4A90E2;
         color: white;
         padding: 8px 15px;
         border-radius: 5px;
@@ -112,28 +133,87 @@
         background-color: #357ab8;
     }
 
-    /* NEW: Style for the "Home" link when it's part of the brand area */
-    .home-brand-link {
-        color: white; /* Ensure it stays white */
-        text-decoration: none;
-        font-size: 0.8em; /* Smaller font to fit under logo */
-        padding: 2px 5px; /* Minimal padding */
-        border-radius: 3px;
-        transition: background-color 0.3s ease;
-        text-align: left; /* Align text to left under logo */
+    /* Off-canvas (Side) Menu Styling */
+    .side-menu {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 1001;
+        top: 0;
+        left: 0;
+        background-color: #333;
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 60px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.5);
     }
-    .home-brand-link:hover {
-        background-color: rgba(255, 255, 255, 0.2); /* Subtle hover effect */
+
+    .side-menu a {
+        padding: 15px 25px;
+        text-decoration: none;
+        font-size: 1.5em;
+        color: #f1f1f1;
+        display: block;
+        transition: 0.3s;
+        border-bottom: 1px solid #444;
+    }
+
+    .side-menu a:hover {
+        color: #4CAF50;
+        background-color: #555;
+    }
+
+    .side-menu .close-btn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 3em;
+        margin-left: 50px;
+        color: #f1f1f1;
+    }
+
+    /* Media query for responsiveness */
+    @media screen and (max-width: 768px) {
+        .navbar-links, .navbar-user-info {
+            display: none;
+        }
+        .menu-toggle {
+            display: block;
+        }
+        .navbar .logo {
+            margin-right: auto;
+            margin-left: 10px;
+        }
+        .navbar-user-info.mobile-view {
+            display: flex;
+            align-items: center;
+        }
+        .side-menu {
+            padding-top: 15px;
+        }
+        .side-menu a {
+            font-size: 1.2em;
+            padding: 10px 15px;
+        }
+        .side-menu .close-btn {
+            font-size: 2.5em;
+        }
     }
 </style>
 
 <nav class="navbar">
+    <div class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </div>
+
     <div class="navbar-brand-area">
         <a href="/dashboard/home" class="logo">MyGreenHome</a>
         <a href="/dashboard/home" class="home-brand-link">Home</a>
     </div>
 
-    <div class="navbar-links">
+    <div class="navbar-links" id="mainNavbarLinks">
         <a href="/dashboard">Analyze Bill</a>
         <a href="/dashboard/tracking">Tracking</a>
         <a href="/dashboard/profile">Profile</a>
@@ -142,8 +222,9 @@
         <a href="/dashboard/team">Team</a>
         <a href="/donations/donate">Donate</a>
         <a href="/donations/history">Donation History</a>
-    </div>
-    <div class="navbar-user-info">
+        <a href="/ai-chat">AI Chat</a> </div>
+
+    <div class="navbar-user-info" id="mainNavbarUserInfo">
         <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
             <a href="/admin" class="admin-link-btn">
                 <i class="fas fa-screwdriver-wrench"></i> Admin Panel
@@ -162,3 +243,31 @@
         <% } %>
     </div>
 </nav>
+
+<div id="mySideMenu" class="side-menu">
+    <a href="javascript:void(0)" class="close-btn" id="closeMenu">&times;</a>
+    
+    <a href="/dashboard/home">Home</a>
+    <a href="/dashboard">Analyze Bill</a>
+    <a href="/dashboard/tracking">Tracking</a>
+    <a href="/dashboard/profile">Profile</a>
+    <a href="/dashboard/badges">Badges</a>
+    <a href="/dashboard/leaderboard">Leaderboard</a>
+    <a href="/dashboard/team">Team</a>
+    <a href="/donations/donate">Donate</a>
+    <a href="/donations/history">Donation History</a>
+    <a href="/ai-chat">AI Chat</a> <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+        <a href="/admin">
+            <i class="fas fa-screwdriver-wrench"></i> Admin Panel
+        </a>
+    <% } %>
+
+    <% if (typeof user !== 'undefined' && user) { %>
+        <a href="/dashboard/logout">
+            <i class="fas fa-right-from-bracket"></i> Logout
+        </a>
+    <% } else { %>
+        <a href="/auth">User Login</a>
+        <a href="/admin/login">Admin Login</a>
+    <% } %>
+</div>

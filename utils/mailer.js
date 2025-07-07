@@ -6,7 +6,7 @@ require('dotenv').config(); // Load environment variables
 const transporter = nodemailer.createTransport({
     service: 'gmail', // Or your SMTP host/service
     auth: {
-        user: process.env.EMAIL,    // Your email address (e.g., from .env)
+        user: process.env.EMAIL_USER,    // Your email address (e.g., from .env)
         pass: process.env.EMAIL_PASS     // Your email app password (NOT your login password)
     }
 });
@@ -46,7 +46,7 @@ async function sendOTPEmail(to, otp, type = 'signup') {
     }
 
     const mailOptions = {
-        from: `"MyGreenHome" <${process.env.EMAIL_USER}>`, // Sender address: Corrected from process.env.EMAIL
+        from: `"MyGreenHome" <${process.env.EMAIL_USER}>`, // Sender address
         to: to,                                            // List of receivers
         subject: subject,                                  // Subject line
         text: text,                                        // Plain text body
@@ -63,10 +63,10 @@ async function sendOTPEmail(to, otp, type = 'signup') {
     }
 }
 
-// Send bill analysis result email (your existing function)
+// Send bill analysis result email
 async function sendBillAnalysisEmail(to, result) {
     const mailOptions = {
-        from: `"MyGreenHome" <${process.env.EMAIL_USER}>`, // Corrected from process.env.EMAIL
+        from: `"MyGreenHome" <${process.env.EMAIL_USER}>`, // Use EMAIL_USER
         to,
         subject: 'Your Electricity Bill Summary',
         text: `Hello,\n\nHere is your bill summary:\n\nCO₂ Emitted: ${result.carbonKg} kg/month\nTotal Consumption: ${result.totalConsumption} kWh\nEstimated Bill: ₹${result.totalAmount}\n\nTip: ${result.savingsTip}`

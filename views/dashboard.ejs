@@ -152,27 +152,26 @@
                       <h4>📊 Last Analysis Summary</h4>
 
                       <% // Check if there's valid analysis data to display %>
-                          <% if (user && user.lastResult && user.lastResult.totalConsumption !==undefined &&
-                        user.lastResult.totalConsumption !==0) { %>
+                          <% if (summary && summary.totalConsumption !==undefined && summary.totalConsumption !==0) { %>
                                 <div class="result-card">
                                       <strong>Total Consumption:</strong><br />
-                                      <%= user.lastResult.totalConsumption %> kWh
+                                      <%= summary.totalConsumption %> kWh
                                         </div>
                                 <div class="result-card">
                                       <strong>CO₂ Emissions:</strong><br />
-                                      <%= user.lastResult.carbonKg %> kg/month
+                                      <%= summary.carbonKg %> kg/month
                                         </div>
                                 <div class="result-card">
                                       <strong>Bill Amount:</strong><br />
-                                      ₹<%= user.lastResult.totalAmount.toFixed(2) %>
+                                      ₹<%= summary.bill.totalAmount.toFixed(2) %>
                                         </div>
                                 <div class="result-card" style="border-left-color: #f39c12;">
                                       <strong>Tip:</strong><br />
-                                      <%= user.lastResult.savingsTip %>
+                                      <%= summary.savingsTip %>
                                         </div>
                               <% } else { %>
                                     <div class="no-analysis">
-                                          ⚠️ No analysis yet. Upload your first bill to see results here!
+                                          ⚠️ No analysis yet. Upload your first bill to see your summary here!
                                         </div>
                                   <% } %>
 

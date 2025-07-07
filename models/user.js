@@ -31,6 +31,7 @@ const userSchema = new mongoose.Schema({
     // Modified historicalResults to be an array for historical tracking
     historicalResults: [
         {
+            billId: { type: String }, // NEW: Add Bill ID here
             totalConsumption: { type: Number, default: 0 },
             carbonKg: { type: Number, default: 0 },
             totalAmount: { type: Number, default: 0 },
@@ -46,6 +47,7 @@ const userSchema = new mongoose.Schema({
     ],
     // 'lastResult' will now point to the most recent entry in historicalResults
     lastResult: { // For easy access to the most recent analysis
+        billId: { type: String }, // NEW: Add Bill ID here
         totalConsumption: { type: Number, default: 0 },
         carbonKg: { type: Number, default: 0 },
         totalAmount: { type: Number, default: 0 },
@@ -55,10 +57,10 @@ const userSchema = new mongoose.Schema({
                 consumption: Number
             }
         ],
-            savingsTip: String,
+        savingsTip: String,
         analysisDate: { type: Date, default: Date.now }
     },
-    // --- NEW: Gamification Fields ---
+    // --- Gamification Fields ---
     points: {
         type: Number,
         default: 0
@@ -72,15 +74,13 @@ const userSchema = new mongoose.Schema({
     achievementsTracker: {
         billsAnalyzedCount: { type: Number, default: 0 },
         totalConsumptionReduced: { type: Number, default: 0 }, // Sum of consumption decreases across analyses
-        // Add more trackers as needed for specific badge criteria
     },
-    // --- NEW: User Role Field ---
+    // --- User Role Field ---
     role: {
         type: String,
         enum: ['user', 'admin'], // Define allowed roles
         default: 'user' // Default role for new users
     },
-    // --- End User Role Field ---
     createdAt: {
         type: Date,
         default: Date.now

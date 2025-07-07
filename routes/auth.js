@@ -1,26 +1,16 @@
-// routes/auth.js
+// routes/auth.js - User Authentication Routes
 require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const Otp = require('../models/Otp');
-const { sendOTPEmail } = require('../utils/mailer'); // Use destructuring for specific mailer functions
+const { sendOTPEmail } = require('../utils/mailer');
 const bcrypt = require('bcryptjs');
-const { initializeNewUserGamification } = require('../utils/gamification'); // NEW IMPORT for gamification
+const { initializeNewUserGamification } = require('../utils/gamification');
 
-// --- generateOTP function ---
-// Ensure this function is defined at the top level of this file
 function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
-// --- End generateOTP function ---
-
-
-// Middleware to log session for debugging (REMOVE IN PRODUCTION)
-// router.use((req, res, next) => {
-//     console.log('Auth Route: Current Session:', req.session);
-//     next();
-// });
 
 // GET regular user login page (accessible at /auth)
 router.get('/', (req, res) => {
@@ -70,7 +60,6 @@ router.post('/signup', async (req, res) => {
         }
 
         const otpCode = generateOTP(); // Call generateOTP
-        // Delete any old signup OTPs for this email, then create a new one
         await Otp.deleteMany({ email: email, type: 'signup' });
         await Otp.create({ email: email, otp: otpCode, type: 'signup' });
 
@@ -157,9 +146,7 @@ router.post('/verify-otp', async (req, res) => {
     }
 });
 
-// --- FORGOT PASSWORD ROUTES ---
-
-// GET Forgot Password page
+// GET Forgot Password page (accessible at /auth/forgot-password)
 router.get('/forgot-password', (req, res) => {
     res.render('forgot_password', { error: req.query.error || null, message: req.query.message || null });
 });
@@ -193,7 +180,7 @@ router.post('/forgot-password', async (req, res) => {
     }
 });
 
-// GET Reset Password page (after OTP is verified)
+// GET Reset Password page (accessible at /auth/reset-password)
 router.get('/reset-password', (req, res) => {
     if (!req.session.resetEmail) {
         console.log("Reset password GET: No resetEmail in session.");

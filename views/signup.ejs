@@ -23,15 +23,14 @@
         /* Auth Container */
         .auth-container {
             position: relative;
-            max-width: 480px; /* As per your latest code snippet */
+            max-width: 320px; /* Keeping it compact */
             margin: 0 auto;
-            padding: 30px 30px; /* As per your latest code snippet */
+            padding: 18px 18px; /* Compact padding */
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            /* Important: This background image is for the container itself,
-               make sure the path and image exist if different from body bg */
-            background: url("/images/download.jpeg") no-repeat center center; /* Keeping download.jpeg for container */
+            /* Important: use a fixed background here if you want it distinct from body */
+            background: url("/images/download.jpeg") no-repeat center center;
             background-size: cover;
         }
 
@@ -136,9 +135,9 @@
 
         /* Sign up link styled as green button */
         .link {
-            padding: 8px 15px; /* Minimized padding */
+            padding: 8px 15px;
             border: none;
-            font-size: 12px; /* Minimized font size */
+            font-size: 12px;
             color: white;
             background-color: #2ecc71;
             text-decoration: none;
@@ -153,10 +152,10 @@
         .error-msg,
         #errorMsg {
             color: #e74c3c;
-            font-size: 10px; /* Smallest font */
+            font-size: 10px;
             height: 1em;
-            margin-top: -3px; /* Adjusted negative margin */
-            margin-bottom: 3px; /* Adjusted margin */
+            margin-top: -3px;
+            margin-bottom: 3px;
             text-align: left;
         }
 
@@ -232,26 +231,19 @@
             <div class="form-actions">
                 <button type="submit">Send OTP</button>
                 <a href="/auth" class="link">Already have an account? Login</a>
-                </div>
+            </div>
         </form>
     </div>
 
     <script>
-        // --- All JavaScript for the signup page ---
-
-        // Toggle password visibility
         const pwInput = document.getElementById('password');
         const toggle = document.getElementById('togglePass');
-        // Added null checks to prevent errors if elements aren't found (e.g., on other pages if this JS was external)
         if (pwInput && toggle) {
             toggle.addEventListener('click', () => {
                 pwInput.type = pwInput.type === 'password' ? 'text' : 'password';
                 toggle.textContent = pwInput.type === 'password' ? 'Show' : 'Hide';
             });
         }
-
-
-        // Caps Lock alert
         const capsAlert = document.getElementById('capsAlert');
         if (pwInput && capsAlert) {
             pwInput.addEventListener('keydown', e => {
@@ -261,54 +253,41 @@
                 if (!e.getModifierState || !e.getModifierState('CapsLock')) capsAlert.hidden = true;
             });
         }
-        
-
-        // Client-side form validation before submission to server
         document.getElementById('signupForm').addEventListener('submit', function (e) {
-            // No e.preventDefault() here initially, allowing HTML5 validation to run
-            
             const firstName = document.getElementById('firstName');
             const lastName = document.getElementById('lastName');
             const email = document.getElementById('email');
             const mobile = document.getElementById('mobile');
             const password = document.getElementById('password');
             const gender = document.getElementById('gender');
-
-            // Basic client-side validation
             let isValid = true;
-
-            // Using reportValidity() to trigger native browser validation messages
-            if (!firstName.checkValidity()) {
+            if (!firstName.value.trim()) {
                 isValid = false;
                 firstName.reportValidity();
-            } else if (!lastName.checkValidity()) {
+            } else if (!lastName.value.trim()) {
                 isValid = false;
                 lastName.reportValidity();
-            } else if (!email.checkValidity() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) { // Also custom email regex
+            } else if (!email.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
                 isValid = false;
                 email.reportValidity();
-            } else if (!mobile.checkValidity()) { // Pattern attribute handles regex
+            } else if (!mobile.value.trim() || !/^[0-9]{10}$/.test(mobile.value)) {
                 isValid = false;
                 mobile.reportValidity();
-            } else if (!password.checkValidity()) { // minlength attribute handles length
+            } else if (!password.value.trim() || password.value.length < 6) {
                 isValid = false;
                 password.reportValidity();
-            } else if (!gender.checkValidity()) { // required attribute handles selection
+            } else if (!gender.value.trim()) {
                 isValid = false;
                 gender.reportValidity();
             }
-
             if (!isValid) {
-                e.preventDefault(); // Prevent form submission if client-side validation fails
-                // Optionally, focus on the first invalid field or show a general message
+                e.preventDefault();
                 const firstInvalid = document.querySelector('#signupForm :invalid');
                 if (firstInvalid) {
                     firstInvalid.focus();
                 }
             }
-            // If isValid is true, the form will submit normally to the action="/auth/signup"
         });
     </script>
 </body>
-
 </html>

@@ -11,6 +11,8 @@ router.get('/', isAuthenticated, hasRole('admin'), async (req, res) => {
         // Fetch some basic stats for the admin dashboard
         const totalUsers = await User.countDocuments({});
         const adminUsers = await User.countDocuments({ role: 'admin' });
+        // For total bills analyzed, you would iterate through historicalResults of all users
+        // For simplicity, keeping it N/A for now unless explicit user schema wide aggregate is created
         const recentSignups = await User.find({}).sort({ createdAt: -1 }).limit(5).lean();
 
         res.render('admin_dashboard', {

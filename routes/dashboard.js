@@ -9,11 +9,10 @@ const fs = require('fs');
 const { extractTextFromImage, parseBillText } = require('../utils/ocrParser');
 const { generateTips } = require('../utils/tips');
 const { sendBillAnalysisEmail } = require('../utils/mailer');
-const { calculateGamification, getAllBadgeDetails } = require('../utils/gamification'); // NEW IMPORTS for gamification
-const { isAuthenticated } = require('../utils/middleware'); // Import isAuthenticated middleware
+const { calculateGamification, getAllBadgeDetails } = require('../utils/gamification');
+const { isAuthenticated } = require('../utils/middleware'); // Auth middleware
 
 // Middleware: check if user is authenticated (using the utility middleware)
-// This replaces the inline function you previously had
 router.use(isAuthenticated);
 
 // --- Multer Configuration for Profile Picture Upload ---
@@ -99,17 +98,17 @@ router.get('/', async (req, res) => {
 
 /* ========== OCR Upload Route ========== */
 router.post('/analyze', uploadBill.single('photo'), async (req, res) => {
-    if (!req.file) return res.send('❌ No file uploaded');
+    if (!req.file) return res.status(400).send('❌ No file uploaded');
     const fullPath = path.join(__dirname, '..', 'uploads', req.file.filename);
 
     try {
         const rawText = await extractTextFromImage(fullPath);
-        const bill = parseBillText(rawText);
+        const bill = parseBillText(rawText); // This now returns billId
 
-        if (!bill.totalAmount || !bill.energyUsage?.length) {
-            // It's possible OCR fails to find values, return a specific error
+        // Criticality check: Ensure primary data points are extracted before saving
+        if (!bill.totalAmount || isNaN(bill.totalAmount) || !bill.energyUsage || bill.energyUsage.length === 0 || isNaN(bill.energyUsage[0].consumption)) {
             fs.unlink(fullPath, (unlinkErr) => { if (unlinkErr) console.error("Error deleting failed bill image:", unlinkErr); });
-            return res.status(400).send("❌ Could not extract sufficient bill details from the image. Please try another image or ensure it's clear.");
+            return res.status(400).send('❌ Could not extract sufficient bill details (Amount & Consumption) from your image. Please ensure the bill is clear and try again.');
         }
 
         const totalConsumption = bill.energyUsage[0].consumption;
@@ -129,6 +128,7 @@ router.post('/analyze', uploadBill.single('photo'), async (req, res) => {
 
         // Prepare new result object
         const newResult = {
+            billId: bill.billId, // Include billId from parsing
             totalConsumption: totalConsumption,
             carbonKg: carbonKg,
             totalAmount: bill.totalAmount,
@@ -138,7 +138,6 @@ router.post('/analyze', uploadBill.single('photo'), async (req, res) => {
         };
 
         // --- Gamification Logic ---
-        // Increment billsAnalyzedCount first as it's part of badge criteria
         user.achievementsTracker.billsAnalyzedCount = (user.achievementsTracker.billsAnalyzedCount || 0) + 1;
         
         const { earnedPoints, newBadges } = calculateGamification(user, newResult, previousAnalysisData);
@@ -161,15 +160,17 @@ router.post('/analyze', uploadBill.single('photo'), async (req, res) => {
         }
 
         // Update session user data to reflect changes in points, badges, etc.
-        // This is important so that subsequent page loads reflect the updated data
         req.session.user = user;
 
         res.redirect('/dashboard');
     } catch (err) {
         console.error('❌ OCR Analysis Error:', err);
-        res.status(500).send('❌ Internal error during analysis.');
+        // Provide more detailed error to user if OCR fails to extract critical data
+        if (err.message.includes("Could not extract sufficient details")) {
+             return res.status(400).send(`❌ Error analyzing bill: ${err.message}`);
+        }
+        res.status(500).send('❌ Internal error during analysis. Please try a different image.');
     } finally {
-        // Ensure cleanup of the uploaded bill image
         if (fs.existsSync(fullPath)) {
             fs.unlink(fullPath, (unlinkErr) => {
                 if (unlinkErr) console.error("Error deleting bill image:", unlinkErr);
@@ -190,9 +191,9 @@ router.get('/home', async (req, res) => {
         const tipsList = user?.lastResult?.totalConsumption !== undefined
             ? generateTips(user.lastResult.totalConsumption)
             : [
-                "Turn off lights when not in use.",
-                "Use natural daylight.",
-                "Unplug idle chargers."
+                "Use natural daylight instead of artificial lighting.",
+                "Switch off appliances when not in use.",
+                "Unplug devices that are not being used."
             ];
 
         const summary = user?.lastResult
@@ -385,7 +386,7 @@ router.get('/badges', async (req, res) => {
         }).filter(Boolean); // Filter out any nulls (unknown badge keys)
 
         res.render('badges', {
-            user,
+            user, // Pass current user for navbar
             earnedBadges: earnedBadgeDetails
         });
     } catch (error) {

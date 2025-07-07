@@ -79,7 +79,8 @@
         <% if (earnedBadges && earnedBadges.length > 0) { %>
             <div class="badge-grid">
                 <% earnedBadges.forEach(badge => { %>
-                    <% if (badge) { %> <div class="badge-card">
+                    <% if (badge) { %>
+                        <div class="badge-card">
                             <img src="<%= badge.image %>" alt="<%= badge.name %> Badge">
                             <h5><%= badge.name %></h5>
                             <p><%= badge.description %></p>

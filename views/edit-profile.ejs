@@ -2,11 +2,14 @@
 <html lang="en">
 
 <head>
+     
     <meta charset="UTF-8">
+     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Profile • MyGreenHome</title>
+      <title>Edit Profile • MyGreenHome</title>
+     
     <link rel="stylesheet" href="/styles/dashboard.css">
-    <style>
+      <style>
         body {
             background: #eef2f7;
             font-family: Arial, sans-serif;
@@ -123,32 +126,34 @@
 </head>
 
 <body>
-    <%- include('partials/navbar') %>
+      <%- include('partials/navbar') %>
 
-        <div class="edit-profile-container">
-            <h2>✏️ Edit Profile</h2>
+          <div class="edit-profile-container">
+                <h2>✏️ Edit Profile</h2>
 
-            <% if (message) { %>
-                <div class="message-container message-success">
-                    <%= message %>
-                </div>
-                <% } %>
-                    <% if (error) { %>
-                        <div class="message-container message-error">
-                            <%= error %>
-                        </div>
-                        <% } %>
+                <% if (message) { %>
+                        <div class="message-container message-success">
+                                <%= message %>
+                                </div>
+                    <% } %>
+                        <% if (error) { %>
+                                <div class="message-container message-error">
+                                        <%= error %>
+                                        </div>
+                            <% } %>
 
-                            <form action="/dashboard/update-profile" method="POST" enctype="multipart/form-data">
+                                <form action="/dashboard/update-profile" method="POST" enctype="multipart/form-data">
 
-                                <img src="<%= user.profilePicture || '/images/default_image.png' %>"
+                                       <img src="<%= user.profilePicture || '/images/default_image.png' %>"
                                     alt="Profile Picture" class="profile-picture-preview">
-                                <div class="form-group">
-                                    <label for="profilePicture">Change Profile Picture:</label>
-                                    <input type="file" id="profilePicture" name="profilePicture" accept="image/*">
-                                    <small style="color: #666;">Max file size: 5MB. Allowed types: JPG, JPEG, PNG,
-                                        GIF.</small>
-                                </div>
+                                        <div class="form-group">
+                                                <label for="profilePicture">Change Profile Picture:</label>
+                                                <input type="file" id="profilePicture" name="profilePicture"
+                                        accept="image/*">
+                                                <small style="color: #666;">Max file size: 5MB. Allowed types: JPG,
+                                        JPEG, PNG, GIF.</small>
+                                            </div>
+                                       
                                 <hr style="border: none; border-top: 1px solid #eee; margin: 25px 0;">
 
                                       <label for="username">Username (Read-only)</label>
@@ -187,8 +192,7 @@
                                           </div>
                                    
                             </form>
-                             
-        </div>
+                              </div>
 
           <%- include('partials/footer') %>
 </body>

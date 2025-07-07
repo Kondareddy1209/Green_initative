@@ -1,3 +1,4 @@
+<!-- views/partials/footer.ejs -->
 <style>
     /* Basic Footer Styling - integrate this into your dashboard.css or style.css */
     .footer {
@@ -5,7 +6,7 @@
         color: white;
         text-align: center;
         padding: 20px 0;
-        margin-top: 40px; /* Add some space above the footer */
+        margin-top: auto; /* Pushes footer to the bottom when using flex-direction: column on body */
         font-size: 0.9em;
     }
 
@@ -26,4 +27,8 @@
 <footer class="footer">
     <p>&copy; <%= new Date().getFullYear() %> MyGreenHome. All rights reserved.</p>
     <p>Built with 💚 for a sustainable future.</p>
-    </footer>
+</footer>
+
+<!-- NEW: Include the navbar.js script here, after the footer HTML -->
+<!-- This script is crucial for the responsive menu (hamburger icon) functionality -->
+<script src="/scripts/navbar.js"></script>

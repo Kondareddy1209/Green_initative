@@ -14,7 +14,9 @@ router.get('/download-report', async (req, res) => {
     // Use lastResult from the user object directly, which is now updated
     const summary = user?.lastResult;
 
-    if (!summary || !summary.totalConsumption) return res.send("❌ No recent bill data to generate report.");
+    if (!summary || (summary.totalConsumption === 0 && summary.totalAmount === 0)) { // Ensure there's actual data
+        return res.status(400).send("❌ No recent bill data with valid consumption/amount to generate report.");
+    }
 
     const reportPath = path.join(__dirname, '../views/pdf-template.ejs');
 
