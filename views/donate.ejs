@@ -10,9 +10,9 @@
         body {
             background-color: #eef2f7;
             font-family: Arial, sans-serif;
-            min-height: 100vh; /* Ensure body stretches to fill viewport */
+            min-height: 100vh;
             display: flex;
-            flex-direction: column; /* Allow flex items to stack vertically */
+            flex-direction: column;
             margin: 0;
         }
         .donation-container {
@@ -23,7 +23,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             text-align: center;
-            flex-grow: 1; /* Allow content to grow and push footer down */
+            flex-grow: 1;
         }
         .section-header {
             color: #2c3e50;
@@ -31,7 +31,7 @@
             text-align: center;
             font-size: 1.8em;
         }
-        .donation-form-group { /* Styles for input fields */
+        .donation-form-group {
             margin-bottom: 20px;
             text-align: left;
         }
@@ -73,7 +73,7 @@
             padding: 10px;
             border-radius: 5px;
             font-weight: bold;
-            display: none; /* Hidden by default, shown by JS */
+            display: none;
         }
         .payment-status-message.success {
             background-color: #d4edda;
@@ -133,22 +133,19 @@
         const paymentMessage = document.getElementById('payment-message');
         const amountInput = document.getElementById('amount');
 
-        // Simple client-side validation for button state
         amountInput.addEventListener('input', () => {
             submitButton.disabled = !amountInput.value || parseFloat(amountInput.value) <= 0;
-            paymentMessage.style.display = 'none'; // Hide message on input
+            paymentMessage.style.display = 'none';
         });
 
-        // Initial state of the button
         submitButton.disabled = !amountInput.value || parseFloat(amountInput.value) <= 0;
 
-        // Handle form submission (AJAX to backend for simulation)
         donationForm.addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent default form submission
+            event.preventDefault();
 
             submitButton.disabled = true;
             submitButton.textContent = 'Processing Simulation...';
-            paymentMessage.style.display = 'none'; // Hide previous messages
+            paymentMessage.style.display = 'none';
 
             const amount = amountInput.value;
             if (!amount || parseFloat(amount) <= 0) {
@@ -160,41 +157,21 @@
                 return;
             }
 
-            try {
-                const response = await fetch('/donations/process-donation', { // POST to your backend
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ amount: amount }),
-                });
+            // --- Client-side only simulation ---
+            // Simulate a successful transaction after a short delay
+            await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
 
-                const result = await response.json();
+            paymentMessage.textContent = `Simulated donation of ₹${parseFloat(amount).toFixed(2)} recorded successfully! Thank you for your support.`;
+            paymentMessage.classList.remove('error');
+            paymentMessage.classList.add('success');
+            paymentMessage.style.display = 'block';
+            console.log('Client-side Simulated Donation Success for amount:', amount);
+            donationForm.reset(); // Clear form inputs
+            // --- End client-side only simulation ---
 
-                if (response.ok) { // Check if HTTP status is 2xx
-                    paymentMessage.textContent = result.message || 'Simulated donation recorded successfully!';
-                    paymentMessage.classList.remove('error');
-                    paymentMessage.classList.add('success');
-                    console.log('Simulated Donation Success:', result);
-                    donationForm.reset(); // Clear form inputs
-                } else {
-                    paymentMessage.textContent = result.error || 'Failed to record simulated donation.';
-                    paymentMessage.classList.add('error');
-                    paymentMessage.classList.remove('success');
-                    console.error('Simulated Donation Error:', result);
-                }
-            } catch (error) {
-                paymentMessage.textContent = 'An unexpected error occurred during simulation. Please try again.';
-                paymentMessage.classList.add('error');
-                paymentMessage.classList.remove('success');
-                console.error('Network or unexpected error during simulated donation:', error);
-            } finally {
-                paymentMessage.style.display = 'block';
-                submitButton.disabled = false;
-                submitButton.textContent = 'Simulate Donation';
-                // Re-evaluate button state after reset
-                submitButton.disabled = !amountInput.value || parseFloat(amountInput.value) <= 0;
-            }
+            submitButton.disabled = false;
+            submitButton.textContent = 'Simulate Donation';
+            submitButton.disabled = !amountInput.value || parseFloat(amountInput.value) <= 0; // Re-evaluate button state
         });
     </script>
 </body>
