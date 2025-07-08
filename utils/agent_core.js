@@ -6,14 +6,6 @@ const { analyzeUsage } = require('./usageAnalyzer');
 const { getAllBadgeDetails } = require('./gamification');
 const User = require('../models/user');
 
-/**
- * Defines the tools that the AI Agent can use.
- * Each tool has a name, description, parameters, and an execute function.
- * The descriptions are crucial for the LLM to understand when and how to use the tool.
- * Parameters should follow JSON Schema format.
- */
-
-
 const tools = [
     {
         name: "get_energy_saving_tips",
@@ -26,14 +18,13 @@ const tools = [
                     description: "The user's last total electricity consumption in kWh. Defaults to 0 if not available from user's data.",
                 },
             },
-            // Do not require consumption if it's optional in generateTips or derived from user data
             required: []
         },
         execute: async (args, userContext) => {
             const consumption = args.consumption || userContext.lastResult?.totalConsumption || 0;
             const tips = generateTips(consumption);
             if (tips.length > 0) {
-                return { result: tips.join('\n') }; // Return tips as a single string
+                return { result: tips.join('\n') };
             }
             return { result: "I don't have specific tips right now, but generally, try unplugging idle electronics." };
         }
@@ -51,7 +42,6 @@ const tools = [
                 const consumptionSummary = userContext.lastResult.totalConsumption > 0 ?
                     `Total Consumption: ${userContext.lastResult.totalConsumption} kWh, Carbon Emissions: ${userContext.lastResult.carbonKg} kg, ` : '';
                 
-                // Use analyzeUsage for more detailed, contextual summary message if applicable
                 const usageAnalysis = analyzeUsage(userContext);
                 let extraInsight = "";
                 if (usageAnalysis && usageAnalysis.summary) {
@@ -121,7 +111,7 @@ const tools = [
             properties: {
                 pageName: {
                     type: "string",
-                    enum: ["dashboard", "tracking", "badges", "leaderboard", "donations-history", "donate", "profile", "team", "home", "admin-panel", "user-login"], // Expanded options
+                    enum: ["dashboard", "tracking", "badges", "leaderboard", "donations-history", "donate", "profile", "team", "home", "admin-panel", "user-login"],
                     description: "The name of the page to guide the user to. Must be one of: 'dashboard' (for bill analysis), 'tracking', 'badges', 'leaderboard', 'donations-history', 'donate', 'profile', 'team', 'home', 'admin-panel', 'user-login'."
                 }
             },
@@ -138,39 +128,22 @@ const tools = [
                 "donate": { name: "Donate Page", link: "/donations/donate" },
                 "profile": { name: "Profile Page", link: "/dashboard/profile" },
                 "team": { name: "Team Page", link: "/dashboard/team" },
-                "admin-panel": { name: "Admin Panel", link: "/admin" }, // Assuming user is already admin or knows how to access
+                "admin-panel": { name: "Admin Panel", link: "/admin" },
                 "user-login": { name: "User Login Page", link: "/auth" }
             };
             const page = pageMap[args.pageName];
             if (page) {
-                // Ensure the link is wrapped in a full sentence.
                 return { message: `You can find that on the <a href='${page.link}' style='color:#4CAF50;text-decoration:underline;'>${page.name}</a>.` };
             }
             return { message: `I can guide you to our home, dashboard, tracking, badges, leaderboard, donation history, donate, profile, team, admin panel, or user login pages. Which one would you like to visit?` };
         }
     },
-    // Add other tools as needed
 ];
 
-/**
- * The core AI Agent logic. This function takes a user message and conversation history,
- * interacts with Ollama, and potentially uses defined tools to generate a response.
- * @param {string} userMessage The current message from the user.
- * @param {Object} user A lean user object from the database, containing profile and latest analysis data.
- * @param {Array<Object>} chatHistory The array of previous messages in the conversation for context.
- * @returns {Promise<{response: string, updatedHistory: Array<Object>}>} The AI agent's response and the new conversation history.
- */
 async function runAgent(userMessage, user, chatHistory = []) {
-    // Start with the existing history, if any.
-    // If you plan for persistent conversation history *in the database*,
-    // you would load it here for each new user query.
-    let messagesForOllama = [...chatHistory];
-
-    // Ensure the system prompt is always the very first message.
-    // We remove any old system prompts if present and add the fresh one.
-    if (messagesForOllama.length > 0 && messagesForOllama[0].role === "system") {
-        messagesForOllama.shift(); // Remove old system prompt
-    }
+    // Filter out any 'system' role messages from the history before sending to Gemini
+    // Gemini's generateContent endpoint does not support a 'system' role.
+    let messagesForGemini = chatHistory.filter(msg => msg.role !== "system");
 
     const systemPrompt = `
 You are "MyGreenHome AI Helper", a highly knowledgeable, friendly, and concise AI assistant for a web application called "MyGreenHome". Your primary goal is to help users manage their energy consumption, understand their bills, learn about green living, and navigate the MyGreenHome application.
@@ -205,67 +178,99 @@ ${tools.map(tool => `
 9.  **Maintain Context:** Remember previous turns in the conversation. Avoid generic greetings if the user is clearly continuing a discussion or responding to your previous message.
 `.trim();
 
-    messagesForOllama.unshift({ role: "system", content: systemPrompt });
-    messagesForOllama.push({ role: "user", content: userMessage }); // Add the current user message
+    // Prepend the system prompt to the *first* user message for Gemini
+    // This is a common workaround for models that don't support a dedicated 'system' role.
+    const initialUserMessageContent = `${systemPrompt}\n\nUser: ${userMessage}`;
+
+    // Add the modified initial user message to the conversation history
+    // If chatHistory is empty, this will be the first message.
+    // If chatHistory has previous turns, the system prompt applies to the current user query.
+    messagesForGemini.push({ role: "user", content: initialUserMessageContent });
 
 
     try {
-        let ollamaResponse;
+        let geminiResponse;
         let finalResponseContent;
         let finalUpdatedHistory = [];
 
-        // First call to Ollama: LLM decides to generate text or call a tool
-        ollamaResponse = await ollamaChat(messagesForOllama);
+        geminiResponse = await ollamaChat(messagesForGemini);
 
-        if (ollamaResponse.message && ollamaResponse.message.tool_calls && ollamaResponse.message.tool_calls.length > 0) {
-            const toolCall = ollamaResponse.message.tool_calls[0];
-            const toolName = toolCall.function.name;
-            const toolArgs = toolCall.function.arguments;
-
-            const tool = tools.find(t => t.name === toolName);
-
-            if (tool) {
-                console.log(`[AgentCore] Executing tool: ${toolName} with arguments:`, toolArgs);
-                let toolResult;
-                try {
-                    toolResult = await tool.execute(toolArgs, user);
-                    console.log(`[AgentCore] Tool '${toolName}' executed. Result:`, toolResult);
-                } catch (toolError) {
-                    console.error(`[AgentCore] Error executing tool '${toolName}':`, toolError);
-                    toolResult = { error: `Failed to execute tool '${toolName}'. Details: ${toolError.message}.` };
+        // Check for tool_calls in the Gemini response.
+        // Gemini's tool_code output will be in content.parts[0].text, which needs parsing.
+        // This part assumes Gemini will output a JSON string for tool calls.
+        if (geminiResponse.message && geminiResponse.message.content) {
+            let toolCallDetected = false;
+            let parsedToolCall = null;
+            try {
+                // Attempt to parse the content as a tool_code JSON string
+                const content = geminiResponse.message.content.trim();
+                // Check if it starts with 'tool_code:' or similar indicator from Gemini
+                if (content.startsWith('tool_code:')) {
+                    parsedToolCall = JSON.parse(content.substring('tool_code:'.length).trim());
+                    if (parsedToolCall.function && parsedToolCall.function.name) {
+                        toolCallDetected = true;
+                    }
+                } else if (content.startsWith('{"function":')) { // Direct JSON output
+                     parsedToolCall = JSON.parse(content);
+                     if (parsedToolCall.function && parsedToolCall.function.name) {
+                        toolCallDetected = true;
+                    }
                 }
+            } catch (parseError) {
+                // Not a tool call, or malformed JSON
+                toolCallDetected = false;
+            }
 
-                // Add tool's response to the conversation history for the next LLM call
-                const messagesWithToolOutput = [
-                    ...messagesForOllama, // All messages up to the point of tool call decision
-                    { role: "assistant", content: JSON.stringify(toolCall) }, // Assistant's previous turn suggesting tool
-                    { role: "tool", content: JSON.stringify(toolResult), tool_call_id: toolCall.id } // Tool's output
-                ];
+            if (toolCallDetected && parsedToolCall) {
+                const toolName = parsedToolCall.function.name;
+                const toolArgs = parsedToolCall.function.arguments;
 
-                // Second call to Ollama: LLM synthesizes response based on tool output
-                const secondOllamaResponse = await ollamaChat(messagesWithToolOutput);
-                finalResponseContent = secondOllamaResponse.message.content;
-                finalUpdatedHistory = messagesWithToolOutput.concat(secondOllamaResponse.message);
+                const tool = tools.find(t => t.name === toolName);
 
+                if (tool) {
+                    console.log(`[AgentCore] Executing tool: ${toolName} with arguments:`, toolArgs);
+                    let toolResult;
+                    try {
+                        toolResult = await tool.execute(toolArgs, user);
+                        console.log(`[AgentCore] Tool '${toolName}' executed. Result:`, toolResult);
+                    } catch (toolError) {
+                        console.error(`[AgentCore] Error executing tool '${toolName}':`, toolError);
+                        toolResult = { error: `Failed to execute tool '${toolName}'. Details: ${toolError.message}.` };
+                    }
+
+                    const messagesWithToolOutput = [
+                        ...messagesForGemini,
+                        { role: "assistant", content: JSON.stringify(parsedToolCall) }, // Assistant's previous turn suggesting tool
+                        { role: "tool", content: JSON.stringify(toolResult), tool_call_id: parsedToolCall.id || 'tool_call_id_placeholder' }
+                    ];
+
+                    const secondGeminiResponse = await ollamaChat(messagesWithToolOutput);
+                    finalResponseContent = secondGeminiResponse.message.content;
+                    finalUpdatedHistory = messagesWithToolOutput.concat(secondGeminiResponse.message);
+
+                } else {
+                    console.warn(`[AgentCore] Gemini requested unknown tool: ${toolName}`);
+                    finalResponseContent = "I attempted to use an internal tool, but it seems there was an issue finding it. Can you please rephrase your request?";
+                    finalUpdatedHistory = messagesForGemini.concat({ role: "model", content: finalResponseContent });
+                }
             } else {
-                console.warn(`[AgentCore] Ollama requested unknown tool: ${toolName}`);
-                finalResponseContent = "I attempted to use an internal tool, but it seems there was an issue finding it. Can you please rephrase your request?";
-                finalUpdatedHistory = messagesForOllama.concat({ role: "assistant", content: finalResponseContent });
+                // No tool call detected, use Gemini's direct response
+                finalResponseContent = geminiResponse.message.content;
+                finalUpdatedHistory = messagesForGemini.concat(geminiResponse.message);
             }
         } else {
-            // No tool call detected, use Ollama's direct response (e.g., for greetings, general questions)
-            finalResponseContent = ollamaResponse.message.content;
-            finalUpdatedHistory = messagesForOllama.concat(ollamaResponse.message);
+            // No message content from Gemini, or unexpected response
+            finalResponseContent = "I'm sorry, I couldn't get a clear response from the AI. Please try again.";
+            finalUpdatedHistory = messagesForGemini.concat({ role: "model", content: finalResponseContent });
         }
 
         return { response: finalResponseContent, updatedHistory: finalUpdatedHistory };
 
     } catch (error) {
         console.error('[AgentCore] Error in runAgent:', error.message);
-        // Provide a more user-friendly error message if an unexpected issue occurs
         return {
             response: "I'm sorry, I encountered an internal error while processing your request. Please try again later.",
-            updatedHistory: messagesForOllama.concat({ role: "assistant", content: "I'm sorry, I encountered an internal error while processing your request. Please try again later." })
+            updatedHistory: messagesForGemini.concat({ role: "model", content: "I'm sorry, I encountered an internal error while processing your request. Please try again later." })
         };
     }
 }
