@@ -8,6 +8,9 @@ const path = require('path');
 
 const app = express();
 
+// Trust the Render proxy to correctly set X-Forwarded-Proto headers
+app.set('trust proxy', 1);
+
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/green_init', {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -29,7 +32,8 @@ app.use(session({
     }),
     cookie: {
         maxAge: 1000 * 60 * 60 * 24,
-        secure: process.env.NODE_ENV === 'production',
+        // Set secure to true only if the original request was HTTPS (as indicated by the proxy)
+        secure: process.env.NODE_ENV === 'production' && app.get('env') !== 'development', // Ensure secure is true in production
         httpOnly: true
     }
 }));
