@@ -1,0 +1,36 @@
+{
+  "name": "green_initative",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kondareddy1209/Green_initative.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Kondareddy1209/Green_initative/issues"
+  },
+  "homepage": "https://github.com/Kondareddy1209/Green_initative#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
+    "dotenv": "^17.1.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "html-pdf": "^3.0.1",
+    "mailer": "^0.6.7",
+    "mongoose": "^8.16.2",
+    "multer": "^2.0.1",
+    "nodemailer": "^7.0.5",
+    "ollama": "^0.5.16",
+    "tesseract.js": "^6.0.1"
+  }
+}
