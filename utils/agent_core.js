@@ -140,12 +140,20 @@ const tools = [
     },
 ];
 
+/**
+ * The core AI Agent logic. This function takes a user message and conversation history,
+ * interacts with Gemini, and potentially uses defined tools to generate a response.
+ * @param {string} userMessage The current message from the user.
+ * @param {Object} user A lean user object from the database, containing profile and latest analysis data.
+ * @param {Array<Object>} chatHistory The array of previous messages in the conversation for context.
+ * @returns {Promise<{response: string, updatedHistory: Array<Object>}>} The AI agent's response and the new conversation history.
+ */
 async function runAgent(userMessage, user, chatHistory = []) {
-    // Filter out any 'system' role messages from the history before sending to Gemini
-    // Gemini's generateContent endpoint does not support a 'system' role.
+    // Gemini does not support a dedicated 'system' role.
+    // The system prompt is prepended to the first user message or handled as part of the overall context.
     let messagesForGemini = chatHistory.filter(msg => msg.role !== "system");
 
-    const systemPrompt = `
+    const systemPromptContent = `
 You are "MyGreenHome AI Helper", a highly knowledgeable, friendly, and concise AI assistant for a web application called "MyGreenHome". Your primary goal is to help users manage their energy consumption, understand their bills, learn about green living, and navigate the MyGreenHome application.
 
 **User Information (for context, do NOT proactively disclose or summarize unless asked directly):**
@@ -156,15 +164,6 @@ You are "MyGreenHome AI Helper", a highly knowledgeable, friendly, and concise A
     'No recent bill analysis available or consumption is 0.'
 }
 - Total Bills Analyzed: ${user.historicalResults?.length || 0}
-
-**Capabilities and Tools:**
-You have access to the following tools to assist the user. When the user's request clearly aligns with a tool's description, you **MUST call the tool**.
-
-${tools.map(tool => `
-- **Tool Name:** \`${tool.name}\`
-  **Description:** ${tool.description}
-  **Parameters (JSON Schema):** \`\`\`json\n${JSON.stringify(tool.parameters, null, 2)}\n\`\`\`
-`).join('\n')}
 
 **Interaction Guidelines:**
 1.  **Prioritize Tool Use:** If a user's query can be answered or acted upon by a tool, you MUST use that tool.
@@ -179,95 +178,72 @@ ${tools.map(tool => `
 `.trim();
 
     // Prepend the system prompt to the *first* user message for Gemini
-    // This is a common workaround for models that don't support a dedicated 'system' role.
-    const initialUserMessageContent = `${systemPrompt}\n\nUser: ${userMessage}`;
-
-    // Add the modified initial user message to the conversation history
-    // If chatHistory is empty, this will be the first message.
-    // If chatHistory has previous turns, the system prompt applies to the current user query.
-    messagesForGemini.push({ role: "user", content: initialUserMessageContent });
-
+    // If there's no chat history, the system prompt and current user message form the first 'user' turn.
+    // If there is history, the system prompt is applied as context to the current user query.
+    if (messagesForGemini.length === 0) {
+        messagesForGemini.push({ role: "user", content: `${systemPromptContent}\n\nUser: ${userMessage}` });
+    } else {
+        // If there's existing history, add the system prompt as a "context" to the current user message.
+        // This is a common way to handle system prompts for models that don't have a dedicated role.
+        messagesForGemini.push({ role: "user", content: `${systemPromptContent}\n\n${userMessage}` });
+    }
 
     try {
         let geminiResponse;
         let finalResponseContent;
         let finalUpdatedHistory = [];
 
-        geminiResponse = await ollamaChat(messagesForGemini);
+        // First call to Gemini: LLM decides to generate text or call a tool
+        // Pass the tools array directly to ollamaChat
+        geminiResponse = await ollamaChat(messagesForGemini, tools);
 
-        // Check for tool_calls in the Gemini response.
-        // Gemini's tool_code output will be in content.parts[0].text, which needs parsing.
-        // This part assumes Gemini will output a JSON string for tool calls.
-        if (geminiResponse.message && geminiResponse.message.content) {
-            let toolCallDetected = false;
-            let parsedToolCall = null;
-            try {
-                // Attempt to parse the content as a tool_code JSON string
-                const content = geminiResponse.message.content.trim();
-                // Check if it starts with 'tool_code:' or similar indicator from Gemini
-                if (content.startsWith('tool_code:')) {
-                    parsedToolCall = JSON.parse(content.substring('tool_code:'.length).trim());
-                    if (parsedToolCall.function && parsedToolCall.function.name) {
-                        toolCallDetected = true;
-                    }
-                } else if (content.startsWith('{"function":')) { // Direct JSON output
-                     parsedToolCall = JSON.parse(content);
-                     if (parsedToolCall.function && parsedToolCall.function.name) {
-                        toolCallDetected = true;
-                    }
+        if (geminiResponse.message && geminiResponse.message.tool_calls && geminiResponse.message.tool_calls.length > 0) {
+            const toolCall = geminiResponse.message.tool_calls[0];
+            const toolName = toolCall.function.name;
+            const toolArgs = toolCall.function.arguments;
+            const toolCallId = toolCall.id; // Get the tool call ID if available
+
+            const tool = tools.find(t => t.name === toolName);
+
+            if (tool) {
+                console.log(`[AgentCore] Executing tool: ${toolName} with arguments:`, toolArgs);
+                let toolResult;
+                try {
+                    toolResult = await tool.execute(toolArgs, user);
+                    console.log(`[AgentCore] Tool '${toolName}' executed. Result:`, toolResult);
+                } catch (toolError) {
+                    console.error(`[AgentCore] Error executing tool '${toolName}':`, toolError);
+                    toolResult = { error: `Failed to execute tool '${toolName}'. Details: ${toolError.message}.` };
                 }
-            } catch (parseError) {
-                // Not a tool call, or malformed JSON
-                toolCallDetected = false;
-            }
 
-            if (toolCallDetected && parsedToolCall) {
-                const toolName = parsedToolCall.function.name;
-                const toolArgs = parsedToolCall.function.arguments;
+                // Add assistant's tool call and tool's output to the conversation history for the next Gemini call
+                const messagesWithToolOutput = [
+                    ...messagesForGemini, // All messages up to the point of tool call decision
+                    { role: "assistant", content: JSON.stringify({ tool_calls: [toolCall] }) }, // Represent the tool call from assistant
+                    { role: "tool", content: JSON.stringify(toolResult), tool_call_id: toolCallId } // Tool's actual output
+                ];
 
-                const tool = tools.find(t => t.name === toolName);
+                // Second call to Gemini: LLM synthesizes response based on tool output
+                const secondGeminiResponse = await ollamaChat(messagesWithToolOutput, tools); // Pass tools again
+                finalResponseContent = secondGeminiResponse.message.content;
+                finalUpdatedHistory = messagesWithToolOutput.concat(secondGeminiResponse.message);
 
-                if (tool) {
-                    console.log(`[AgentCore] Executing tool: ${toolName} with arguments:`, toolArgs);
-                    let toolResult;
-                    try {
-                        toolResult = await tool.execute(toolArgs, user);
-                        console.log(`[AgentCore] Tool '${toolName}' executed. Result:`, toolResult);
-                    } catch (toolError) {
-                        console.error(`[AgentCore] Error executing tool '${toolName}':`, toolError);
-                        toolResult = { error: `Failed to execute tool '${toolName}'. Details: ${toolError.message}.` };
-                    }
-
-                    const messagesWithToolOutput = [
-                        ...messagesForGemini,
-                        { role: "assistant", content: JSON.stringify(parsedToolCall) }, // Assistant's previous turn suggesting tool
-                        { role: "tool", content: JSON.stringify(toolResult), tool_call_id: parsedToolCall.id || 'tool_call_id_placeholder' }
-                    ];
-
-                    const secondGeminiResponse = await ollamaChat(messagesWithToolOutput);
-                    finalResponseContent = secondGeminiResponse.message.content;
-                    finalUpdatedHistory = messagesWithToolOutput.concat(secondGeminiResponse.message);
-
-                } else {
-                    console.warn(`[AgentCore] Gemini requested unknown tool: ${toolName}`);
-                    finalResponseContent = "I attempted to use an internal tool, but it seems there was an issue finding it. Can you please rephrase your request?";
-                    finalUpdatedHistory = messagesForGemini.concat({ role: "model", content: finalResponseContent });
-                }
             } else {
-                // No tool call detected, use Gemini's direct response
-                finalResponseContent = geminiResponse.message.content;
-                finalUpdatedHistory = messagesForGemini.concat(geminiResponse.message);
+                console.warn(`[AgentCore] Gemini requested unknown tool: ${toolName}`);
+                finalResponseContent = "I attempted to use an internal tool, but it seems there was an issue finding it. Can you please rephrase your request?";
+                finalUpdatedHistory = messagesForGemini.concat({ role: "model", content: finalResponseContent });
             }
         } else {
-            // No message content from Gemini, or unexpected response
-            finalResponseContent = "I'm sorry, I couldn't get a clear response from the AI. Please try again.";
-            finalUpdatedHistory = messagesForGemini.concat({ role: "model", content: finalResponseContent });
+            // No tool call detected, use Gemini's direct response (natural language)
+            finalResponseContent = geminiResponse.message.content;
+            finalUpdatedHistory = messagesForGemini.concat(geminiResponse.message);
         }
 
         return { response: finalResponseContent, updatedHistory: finalUpdatedHistory };
 
     } catch (error) {
         console.error('[AgentCore] Error in runAgent:', error.message);
+        // Provide a more user-friendly error message if an unexpected issue occurs
         return {
             response: "I'm sorry, I encountered an internal error while processing your request. Please try again later.",
             updatedHistory: messagesForGemini.concat({ role: "model", content: "I'm sorry, I encountered an internal error while processing your request. Please try again later." })
