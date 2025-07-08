@@ -3,6 +3,7 @@ require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const MongoStore = require('connect-mongo'); // Import connect-mongo for persistent sessions
 const bodyParser = require('body-parser'); // Used for parsing request bodies
 const path = require('path'); // Node.js built-in module for path manipulation
 
@@ -11,25 +12,33 @@ const app = express();
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/green_init', {
-    useNewUrlParser: true, // Deprecated, but kept for compatibility
-    useUnifiedTopology: true // Deprecated, but kept for compatibility
+    useNewUrlParser: true, // Deprecated, but kept for compatibility - consider removing in future
+    useUnifiedTopology: true // Deprecated, but kept for compatibility - consider removing in future
 })
-.then(() => console.log('✅ MongoDB connected'))
-.catch(err => console.error('❌ MongoDB connection error:', err));
+    .then(() => console.log('✅ MongoDB connected'))
+    .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // --- Middleware Setup ---
 // Body parser middleware to handle form data and JSON payloads
 app.use(bodyParser.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
 app.use(express.json()); // For parsing application/json
 
-// Session middleware configuration
+// Session middleware configuration using connect-mongo
 app.use(session({
     secret: process.env.SESSION_SECRET || 'a_fallback_super_secret_key_please_change_this', // VERY IMPORTANT: Use a strong, unique secret from your .env file
     resave: false, // Prevents sessions from being re-saved if they haven't been modified
     saveUninitialized: false, // Prevents creating sessions for unauthenticated users
+
+    // Configure MongoStore to store sessions in MongoDB
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI || 'mongodb://localhost:27017/green_init', // Use your MongoDB URI
+        collectionName: 'sessions', // Name of the collection to store session data
+        ttl: 1000 * 60 * 60 * 24 // Session expiration time in seconds (here, 24 hours), matches cookie.maxAge
+    }),
     cookie: {
         maxAge: 1000 * 60 * 60 * 24, // Session expires after 24 hours (in milliseconds)
-        secure: process.env.NODE_ENV === 'production' // Set to true in production for HTTPS only cookies
+        secure: process.env.NODE_ENV === 'production', // Set to true in production for HTTPS only cookies
+        httpOnly: true // Recommended to prevent client-side JavaScript access to the cookie
     }
 }));
 
