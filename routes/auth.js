@@ -54,7 +54,14 @@ router.post('/signup', async (req, res) => {
 
         const otpCode = generateOTP();
         await Otp.deleteMany({ email: email, type: 'signup' });
-        await Otp.create({ email: email, otp: otpCode, type: 'signup' });
+
+        try {
+            const newOtp = await Otp.create({ email: email, otp: otpCode, type: 'signup' });
+            console.log(`DEBUG: OTP successfully saved to DB: ${newOtp._id}`);
+        } catch (dbError) {
+            console.error(`ERROR: Failed to save OTP to database for ${email}:`, dbError);
+            return res.redirect('/auth/signup?error=' + encodeURIComponent('Failed to generate OTP. Please try again.'));
+        }
 
         const gamificationData = initializeNewUserGamification();
 
@@ -77,7 +84,7 @@ router.post('/signup', async (req, res) => {
 
         res.render('verify_otp', { username: email, error: null, message: null, isPasswordReset: false });
     } catch (error) {
-        console.error("Signup error:", error);
+        console.error("Signup error (general catch):", error);
         res.redirect('/auth/signup?error=' + encodeURIComponent('An error occurred during signup. Please try again later.'));
     }
 });
