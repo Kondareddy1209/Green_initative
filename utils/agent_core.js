@@ -12,6 +12,8 @@ const User = require('../models/user');
  * The descriptions are crucial for the LLM to understand when and how to use the tool.
  * Parameters should follow JSON Schema format.
  */
+
+
 const tools = [
     {
         name: "get_energy_saving_tips",
