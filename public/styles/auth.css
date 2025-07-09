@@ -1,8 +1,15 @@
-/* Full background for body (Desktop/Default) */
+/* Base Styles (Desktop/Default) */
+
+/* Ensure html and body take full height and no default margins */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   background: url("/images/green.jpg") no-repeat center center fixed;
   background-size: cover;
-  margin: 0;
   font-family: Arial, sans-serif;
   background-color: #eef2f7;
   display: flex;
@@ -10,27 +17,28 @@ body {
   align-items: center;
   min-height: 100vh;
   box-sizing: border-box;
-  padding: 0;
-  overflow-y: auto;
-  align-self: center; /* Ensures vertical centering if content is short */
-  flex-shrink: 0;
+  padding: 0; /* No padding on desktop body */
+  overflow-y: auto; /* Allow scrolling if content is tall */
 }
 
-/* Auth Container (Desktop/Default) */
+/* Auth Container - General styles for other auth pages (forgot_password, reset_password, verify_otp) */
 .auth-container {
   position: relative;
   max-width: 320px;
+  width: calc(100% - 40px); /* Fluid width with horizontal padding */
   margin: 0 auto;
-  padding: 18px 18px;
+  padding: 18px;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   background: url("/images/download.jpeg") no-repeat center center;
   background-size: cover;
   box-sizing: border-box;
+  align-self: center;
+  flex-shrink: 0;
 }
 
-/* Overlay for readability (Desktop/Default) */
+/* Overlay for readability */
 .auth-container::before {
   content: "";
   position: absolute;
@@ -41,13 +49,13 @@ body {
   border-radius: 12px;
 }
 
-/* Ensure content is above overlay (Desktop/Default) */
+/* Ensure content is above overlay */
 .auth-container * {
   position: relative;
   z-index: 1;
 }
 
-/* Green Heading (Desktop/Default) */
+/* Headings */
 h2 {
   margin-top: 5px;
   margin-bottom: 10px;
@@ -56,7 +64,7 @@ h2 {
   font-size: 19px;
 }
 
-/* General paragraph in auth container (Desktop/Default) */
+/* General paragraph in auth container */
 .auth-container p {
     text-align: center;
     margin-bottom: 20px;
@@ -64,14 +72,14 @@ h2 {
     color: #555;
 }
 
-/* Specific styles for links within auth container paragraphs (Desktop/Default) */
+/* Specific styles for links within auth container paragraphs */
 .auth-link-text {
     text-align: center;
-    margin-top: 10px; /* Reduced margin-top for closer links */
+    margin-top: 10px;
     font-size: 14px;
 }
 .auth-link-text:not(:first-of-type) {
-    margin-top: 5px; /* Even smaller margin for subsequent links */
+    margin-top: 5px;
     font-size: 12px;
 }
 .auth-link {
@@ -128,16 +136,26 @@ input:valid {
   border-color: #2ecc71;
 }
 
+/* Password group (for pages that use it, like reset_password) */
+.password-group {
+    position: relative;
+}
+
 .password-group .toggle-pass {
   position: absolute;
   right: 8px;
-  top: 26px;
+  top: 50%;
+  transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
   color: #4A90E2;
   font-size: 12px;
   padding: 0;
+  line-height: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .form-actions {
@@ -156,7 +174,7 @@ button[type="submit"]:disabled {
   opacity: 0.7;
 }
 
-/* General Button Style (for login, signup, send OTP, reset password) */
+/* General Button Style (for pages that use external auth.css) */
 button {
   padding: 8px 15px;
   border: none;
@@ -221,7 +239,7 @@ input.shake {
   40%, 80% { transform: translateX(6px); }
 }
 
-/* Small text below password field (Desktop/Default) */
+/* Small text below password field */
 .password-group small {
   font-size: 9px;
   color: #666;
@@ -230,7 +248,7 @@ input.shake {
   margin-bottom: 3px;
 }
 
-/* Message containers (success/error) for auth pages (Desktop/Default) */
+/* Message containers (success/error) for auth pages */
 .message-success {
     background-color: #d4edda;
     color: #155724;

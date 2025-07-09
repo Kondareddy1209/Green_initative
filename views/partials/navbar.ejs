@@ -1,208 +1,220 @@
 <style>
-    /* --- Navbar Styling --- */
-    .navbar {
-        background-color: #4CAF50; /* Green background */
-        padding: 15px 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        color: white;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        width: 100%;
-    }
+  /* All styles inlined for full responsiveness */
+  .navbar {
+    background-color: #4CAF50;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+  }
 
-    /* Hamburger Menu Icon */
-    .menu-toggle {
-        display: none; /* Hidden by default on large screens */
-        font-size: 1.8em;
-        cursor: pointer;
-        color: white;
-        margin-right: 15px; /* Space from logo */
-    }
+  .menu-toggle {
+    display: none;
+    font-size: 1.8em;
+    cursor: pointer;
+    color: white;
+    margin-right: 15px;
+  }
 
-    .navbar-brand-area {
-        display: flex;
-        flex-direction: column; /* Stack children vertically */
-        align-items: flex-start; /* Align items to the start (left) */
-        margin-right: 20px; /* Space between brand area and other links */
-    }
+  .navbar-brand-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-right: 20px;
+  }
 
-    .navbar .logo {
-        font-size: 1.8em;
-        font-weight: bold;
-        color: white;
-        text-decoration: none;
-        margin-bottom: 2px;
-        white-space: nowrap;
-    }
+  .navbar .logo {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    margin-bottom: 2px;
+    white-space: nowrap;
+  }
 
-    .home-brand-link {
-        color: white;
-        text-decoration: none;
-        font-size: 0.8em; /* Smaller font to fit under logo */
-        padding: 2px 5px; /* Minimal padding */
-        border-radius: 3px;
-        transition: background-color 0.3s ease;
-        text-align: left; /* Align text to left under logo */
-    }
+  .home-brand-link {
+    color: white;
+    text-decoration: none;
+    font-size: 0.8em;
+    padding: 2px 5px;
+    border-radius: 3px;
+    transition: background-color 0.3s ease;
+    text-align: left;
+  }
 
-    .home-brand-link:hover {
-        background-color: rgba(255, 255, 255, 0.2); /* Subtle hover effect */
-    }
+  .home-brand-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
 
-    .navbar-links {
-        display: flex; /* Horizontal on large screens */
-        align-items: center;
-        margin-right: auto;
-    }
+  .navbar-links {
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+    flex-wrap: nowrap;
+  }
 
-    .navbar-links a {
-        color: white;
-        text-decoration: none;
-        padding: 8px 15px;
-        margin-right: 5px;
-        border-radius: 5px;
-        transition: background-color 0.3s ease;
-    }
+  .navbar-links a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 15px;
+    margin-right: 5px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+  }
 
-    .navbar-links a:hover {
-        background-color: #5cb85c;
-    }
+  .navbar-links a:hover {
+    background-color: #5cb85c;
+  }
 
+  .navbar-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+  }
+
+  .navbar-user-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+  }
+
+  .navbar-user-info span {
+    font-weight: bold;
+    margin-left: 5px;
+  }
+
+  .navbar-points {
+    background-color: #f39c12;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .navbar-logout {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+  }
+
+  .navbar-logout:hover {
+    background-color: #c9302c;
+  }
+
+  .admin-link-btn {
+    background-color: #4A90E2;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+  }
+
+  .admin-link-btn:hover {
+    background-color: #357ab8;
+  }
+
+  .side-menu {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1001;
+    top: 0;
+    left: 0;
+    background-color: #333;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+  }
+
+  .side-menu a {
+    padding: 15px 25px;
+    text-decoration: none;
+    font-size: 1.5em;
+    color: #f1f1f1;
+    display: block;
+    transition: 0.3s;
+    border-bottom: 1px solid #444;
+  }
+
+  .side-menu a:hover {
+    color: #4CAF50;
+    background-color: #555;
+  }
+
+  .side-menu .close-btn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 3em;
+    color: #f1f1f1;
+  }
+
+  .navbar-user-info.mobile-view {
+    display: none;
+  }
+
+  @media screen and (max-width: 768px) {
+    .navbar-links,
     .navbar-user-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
+      display: none;
+    }
+    .menu-toggle {
+      display: block;
     }
 
-    .navbar-user-info img {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid white;
+    .navbar-user-info.mobile-view {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 15px;
+      background-color: #2e2e2e;
+      border-bottom: 1px solid #444;
     }
 
-    .navbar-user-info span {
-        font-weight: bold;
+    .navbar-user-info.mobile-view img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-bottom: 8px;
+      border: 2px solid #fff;
     }
 
-    .navbar-points {
-        background-color: #f39c12;
-        padding: 5px 10px;
-        border-radius: 20px;
-        font-size: 0.9em;
-        font-weight: bold;
-        color: white;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-    .navbar-points i {
-        font-size: 1.1em;
+    .navbar-user-info.mobile-view span {
+      font-size: 1.1em;
+      color: white;
+      font-weight: bold;
     }
 
-    .navbar-logout {
-        background-color: #d9534f;
-        color: white;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        text-decoration: none;
-        transition: background-color 0.3s ease;
+    .navbar-user-info.mobile-view .navbar-points {
+      margin-top: 10px;
     }
-
-    .navbar-logout:hover {
-        background-color: #c9302c;
-    }
-
-    .admin-link-btn {
-        background-color: #4A90E2;
-        color: white;
-        padding: 8px 15px;
-        border-radius: 5px;
-        text-decoration: none;
-        font-size: 0.9em;
-        transition: background-color 0.3s ease;
-    }
-    .admin-link-btn:hover {
-        background-color: #357ab8;
-    }
-
-    /* Off-canvas (Side) Menu Styling */
-    .side-menu {
-        height: 100%;
-        width: 0;
-        position: fixed;
-        z-index: 1001;
-        top: 0;
-        left: 0;
-        background-color: #333;
-        overflow-x: hidden;
-        transition: 0.5s;
-        padding-top: 60px;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.5);
-    }
-
-    .side-menu a {
-        padding: 15px 25px;
-        text-decoration: none;
-        font-size: 1.5em;
-        color: #f1f1f1;
-        display: block;
-        transition: 0.3s;
-        border-bottom: 1px solid #444;
-    }
-
-    .side-menu a:hover {
-        color: #4CAF50;
-        background-color: #555;
-    }
-
-    .side-menu .close-btn {
-        position: absolute;
-        top: 0;
-        right: 25px;
-        font-size: 3em;
-        margin-left: 50px;
-        color: #f1f1f1;
-    }
-
-    /* Media query for responsiveness */
-    @media screen and (max-width: 768px) {
-        .navbar-links, .navbar-user-info {
-            display: none;
-        }
-        .menu-toggle {
-            display: block;
-        }
-        .navbar .logo {
-            margin-right: auto;
-            margin-left: 10px;
-        }
-        .navbar-user-info.mobile-view {
-            display: flex;
-            align-items: center;
-        }
-        .side-menu {
-            padding-top: 15px;
-        }
-        .side-menu a {
-            font-size: 1.2em;
-            padding: 10px 15px;
-        }
-        .side-menu .close-btn {
-            font-size: 2.5em;
-        }
-    }
+  }
 </style>
-
 <nav class="navbar">
     <div class="menu-toggle" id="menuToggle">
         <i class="fas fa-bars"></i>
@@ -214,15 +226,22 @@
     </div>
 
     <div class="navbar-links" id="mainNavbarLinks">
+        <a href="/dashboard/home">Home</a>
+        <a href="/dashboard">Dashboard</a>
         <a href="/dashboard">Analyze Bill</a>
-        <a href="/dashboard/tracking">Tracking</a>
-        <a href="/dashboard/profile">Profile</a>
+        <a href="/dashboard/tracking">Tracking Bill</a>
         <a href="/dashboard/badges">Badges</a>
         <a href="/dashboard/leaderboard">Leaderboard</a>
-        <a href="/dashboard/team">Team</a>
         <a href="/donations/donate">Donate</a>
         <a href="/donations/history">Donation History</a>
-        <a href="/ai-chat">AI Chat</a> </div>
+        <a href="/dashboard/team">Team</a>
+        <a href="/dashboard/profile">Profile</a>
+        <a href="/ai-chat">AI Chat</a>
+        <!-- Logout for desktop view is now explicitly here in the main links -->
+        <% if (typeof user !== 'undefined' && user) { %>
+            <a href="/dashboard/logout">Logout</a>
+        <% } %>
+    </div>
 
     <div class="navbar-user-info" id="mainNavbarUserInfo">
         <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
@@ -236,7 +255,7 @@
             </div>
             <img src="<%= user.profilePicture || '/images/default_image.png' %>" alt="<%= user.username %>'s Profile Pic">
             <span><%= user.firstName || user.username %></span>
-            <a href="/dashboard/logout" class="navbar-logout">Logout</a>
+            <!-- Logout link is no longer duplicated here for desktop -->
         <% } else { %>
             <a href="/auth" class="navbar-logout" style="background-color: #007bff;">User Login</a>
             <a href="/admin/login" class="navbar-logout" style="background-color: #4A90E2; margin-left: 10px;">Admin Login</a>
@@ -247,27 +266,47 @@
 <div id="mySideMenu" class="side-menu">
     <a href="javascript:void(0)" class="close-btn" id="closeMenu">&times;</a>
     
-    <a href="/dashboard/home">Home</a>
-    <a href="/dashboard">Analyze Bill</a>
-    <a href="/dashboard/tracking">Tracking</a>
-    <a href="/dashboard/profile">Profile</a>
-    <a href="/dashboard/badges">Badges</a>
-    <a href="/dashboard/leaderboard">Leaderboard</a>
-    <a href="/dashboard/team">Team</a>
-    <a href="/donations/donate">Donate</a>
-    <a href="/donations/history">Donation History</a>
-    <a href="/ai-chat">AI Chat</a> <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
-        <a href="/admin">
-            <i class="fas fa-screwdriver-wrench"></i> Admin Panel
-        </a>
+    <% if (typeof user !== 'undefined' && user) { %>
+        <div class="navbar-user-info mobile-view">
+            <img src="<%= user.profilePicture || '/images/default_image.png' %>" alt="Profile">
+            <span><%= user.firstName || user.username %></span>
+            <div class="navbar-points">
+                <i class="fas fa-star"></i> <%= user.points || 0 %>
+            </div>
+        </div>
     <% } %>
 
+    <!-- Side menu links, reordered as requested -->
+    <a href="/dashboard/home">Home</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/dashboard">Analyze Bill</a>
+    <a href="/dashboard/tracking">Tracking Bill</a>
+    <a href="/dashboard/badges">Badges</a>
+    <a href="/dashboard/leaderboard">Leaderboard</a>
+    <a href="/donations/donate">Donate</a>
+    <a href="/donations/history">Donation History</a>
+    <a href="/dashboard/team">Team</a>
+    <a href="/dashboard/profile">Profile</a>
+    <a href="/ai-chat">AI Chat</a>
+
+    <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+        <a href="/admin"><i class="fas fa-screwdriver-wrench"></i> Admin Panel</a>
+    <% } %>
     <% if (typeof user !== 'undefined' && user) { %>
-        <a href="/dashboard/logout">
-            <i class="fas fa-right-from-bracket"></i> Logout
-        </a>
+        <a href="/dashboard/logout"><i class="fas fa-right-from-bracket"></i> Logout</a>
     <% } else { %>
         <a href="/auth">User Login</a>
         <a href="/admin/login">Admin Login</a>
     <% } %>
 </div>
+
+<!-- Side Menu JS -->
+<script>
+  document.getElementById("menuToggle").addEventListener("click", function () {
+    document.getElementById("mySideMenu").style.width = "250px";
+  });
+
+  document.getElementById("closeMenu").addEventListener("click", function () {
+    document.getElementById("mySideMenu").style.width = "0";
+  });
+</script>
