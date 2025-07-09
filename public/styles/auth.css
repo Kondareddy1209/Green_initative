@@ -1,107 +1,124 @@
-/* Full background for body */
+/* Full background for body (Desktop/Default) */
 body {
   background: url("/images/green.jpg") no-repeat center center fixed;
   background-size: cover;
   margin: 0;
-  font-family: 'Inter', Arial, sans-serif; /* Using Inter for a modern look */
+  font-family: Arial, sans-serif; /* Reverted to Arial as per original */
   background-color: #eef2f7;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh; /* Ensure body takes full viewport height */
+  min-height: 100vh;
   box-sizing: border-box;
-  padding: 0.625rem; /* 10px padding for very small screens */
-  /* Added for better vertical centering on smaller screens if content is short */
-  align-content: center;
-  flex-wrap: wrap;
+  padding: 0; /* No padding on desktop body */
 }
 
-/* Auth Container */
+/* Auth Container (Desktop/Default) */
 .auth-container {
   position: relative;
-  max-width: 380px; /* Slightly wider for better form layout */
-  width: calc(100% - 2.5rem); /* Fluid width, accounting for body padding (40px) */
-  margin: auto; /* Use auto margin to allow flexbox to center it vertically and horizontally */
-  padding: 1.5625rem; /* 25px increased base padding */
-  border-radius: 0.75rem; /* 12px more rounded corners */
+  max-width: 320px; /* Original max-width for desktop */
+  margin: 0 auto;
+  padding: 18px 18px; /* Original padding */
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 0.375rem 1.25rem rgba(0, 0, 0, 0.2); /* 6px 20px stronger shadow */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   background: url("/images/download.jpeg") no-repeat center center;
   background-size: cover;
   box-sizing: border-box;
-  /* Ensure it doesn't take up too much height on very small screens */
-  flex-shrink: 0;
 }
 
-/* Overlay for readability */
+/* Overlay for readability (Desktop/Default) */
 .auth-container::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-color: rgba(255, 255, 255, 0.85); /* Slightly more opaque overlay */
-  backdrop-filter: blur(0.25rem); /* 4px stronger blur */
+  background-color: rgba(255, 255, 255, 0.75); /* Original opacity */
+  backdrop-filter: blur(3px); /* Original blur */
   z-index: 0;
-  border-radius: 0.75rem; /* 12px */
+  border-radius: 12px;
 }
 
-/* Ensure content is above overlay */
+/* Ensure content is above overlay (Desktop/Default) */
 .auth-container * {
   position: relative;
   z-index: 1;
 }
 
-/* Headings */
+/* Green Heading (Desktop/Default) */
 h2 {
-  margin-top: 0.3125rem; /* 5px */
-  margin-bottom: 0.9375rem; /* 15px more space below heading */
+  margin-top: 5px;
+  margin-bottom: 10px;
   text-align: center;
-  color: #2ecc71; /* Green color for headings */
-  font-size: 2rem; /* Larger heading */
+  color: green;
+  font-size: 19px;
 }
 
-.auth-container p { /* General paragraph in auth container */
-    font-size: 0.95rem;
-    color: #555;
-    margin-bottom: 1.25rem; /* 20px */
+/* General paragraph in auth container (Desktop/Default) */
+.auth-container p {
     text-align: center;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #555;
 }
+
+/* Specific styles for links within auth container paragraphs (Desktop/Default) */
+.auth-link-text { /* This class was added for consistency in EJS, now styled here */
+    text-align: center;
+    margin-top: 20px; /* Original margin */
+    font-size: 14px; /* Original font size */
+}
+.auth-link-text:not(:first-of-type) {
+    margin-top: 10px; /* Original margin */
+    font-size: 12px; /* Original font size */
+}
+.auth-link {
+    color: #4A90E2; /* Blue */
+    text-decoration: none;
+    transition: text-decoration 0.2s ease;
+}
+.auth-link:hover {
+    text-decoration: underline;
+}
+.admin-auth-link {
+    color: #007bff; /* Original blue */
+}
+
 
 .form-group {
   position: relative;
-  margin-bottom: 0.9375rem; /* 15px more space between form groups */
+  margin-bottom: 6px; /* Original margin */
   text-align: left;
 }
 
 label {
   display: block;
-  margin-bottom: 0.3125rem; /* 5px more space below label */
+  margin-bottom: 1px; /* Original margin */
   font-weight: bold;
-  font-size: 0.9rem;
-  color: #333;
+  font-size: 12px; /* Original font size */
 }
 
 input,
 select {
   width: 100%;
-  padding: 0.625rem 0.9375rem; /* 10px 15px increased padding */
-  font-size: 1rem;
-  border: 0.09375rem solid #ccc; /* 1.5px */
-  border-radius: 0.5rem; /* 8px more rounded inputs */
+  padding: 7px 34px 7px 9px; /* Original padding */
+  font-size: 13px; /* Original font size */
+  border: 1.5px solid #ccc;
+  border-radius: 5px; /* Original border-radius */
   box-sizing: border-box;
-  height: 2.8125rem; /* 45px taller inputs */
+  height: 36px; /* Original fixed height */
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 input:focus, select:focus {
     outline: none;
-    border-color: #4CAF50;
-    box-shadow: 0 0 0 0.1875rem rgba(76, 175, 80, 0.2); /* 3px */
+    border-color: #4CAF50; /* Green focus border */
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
 }
 
 input:invalid:focus,
 input:invalid:not(:placeholder-shown) {
   border-color: #e74c3c;
-  box-shadow: 0 0 0 0.1875rem rgba(231, 76, 60, 0.2); /* 3px */
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
 }
 
 input:valid {
@@ -110,25 +127,24 @@ input:valid {
 
 .password-group .toggle-pass {
   position: absolute;
-  right: 0.75rem; /* 12px adjusted right position */
-  top: 50%; /* Center vertically */
-  transform: translateY(-50%); /* Adjust for vertical centering */
+  right: 8px; /* Original right position */
+  top: 26px; /* Original top position */
   background: none;
   border: none;
   cursor: pointer;
   color: #4A90E2;
-  font-size: 0.9rem;
-  padding: 0.3125rem; /* 5px make clickable area larger */
+  font-size: 12px; /* Original font size */
+  padding: 0; /* No padding on desktop */
 }
 
 .form-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1.25rem; /* 20px more space above buttons */
-  margin-bottom: 0.625rem; /* 10px */
-  flex-wrap: wrap;
-  gap: 0.9375rem; /* 15px more space between wrapped items */
+  margin-top: 12px; /* Original margin */
+  margin-bottom: 5px; /* Original margin */
+  flex-wrap: nowrap; /* Prevent wrapping on desktop */
+  gap: 10px; /* Original gap */
 }
 
 button[type="submit"]:disabled {
@@ -139,54 +155,55 @@ button[type="submit"]:disabled {
 
 /* General Button Style (for login, signup, send OTP, reset password) */
 button {
-  padding: 0.75rem 1.25rem; /* 12px 20px */
+  padding: 8px 15px; /* Original padding */
   border: none;
-  font-size: 1rem;
+  font-size: 12px; /* Original font size */
   color: white;
-  background-color: #4A90E2; /* Blue for primary actions */
+  background-color: #4A90E2;
   text-decoration: none;
-  border-radius: 0.5rem; /* 8px */
+  border-radius: 5px; /* Original border-radius */
   cursor: pointer;
-  flex-grow: 1;
-  min-width: 8.75rem; /* 140px ensure buttons have a decent minimum width */
+  flex-grow: 1; /* Allow buttons to grow */
+  min-width: unset; /* No min-width on desktop */
   box-sizing: border-box;
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 button:hover:not(:disabled) {
   background: #357ab8;
-  transform: translateY(-0.125rem); /* 2px slight lift on hover */
+  transform: translateY(0); /* No transform on desktop */
 }
 
 /* Link styled as button (Sign Up) */
 .link {
-  padding: 0.75rem 1.25rem; /* 12px 20px */
+  padding: 8px 15px; /* Original padding */
   border: none;
-  font-size: 1rem;
+  font-size: 12px; /* Original font size */
   color: white;
-  background-color: #2ecc71; /* Green for secondary actions/signup */
+  background-color: #2ecc71;
   text-decoration: none;
-  border-radius: 0.5rem; /* 8px */
+  border-radius: 5px; /* Original border-radius */
   cursor: pointer;
-  flex-grow: 1;
-  min-width: 8.75rem; /* 140px */
+  flex-grow: 1; /* Allow links to grow */
+  min-width: unset; /* No min-width on desktop */
   text-align: center;
-  box-sizing: border-sizing;
+  box-sizing: border-box;
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .link:hover {
   background: #27ae60;
-  transform: translateY(-0.125rem); /* 2px */
+  transform: translateY(0); /* No transform on desktop */
 }
 
 .error-msg,
-#errorMsg {
+#errorMsg,
+.caps-alert { /* Added .caps-alert here */
   color: #e74c3c;
-  font-size: 0.85rem;
-  min-height: 0.625rem; /* 1em reserve space to prevent layout shift */
-  margin-top: 0.3125rem; /* 5px */
-  margin-bottom: 0.625rem; /* 10px */
+  font-size: 10px; /* Original font size */
+  min-height: 1em;
+  margin-top: -3px; /* Original margin */
+  margin-bottom: 3px; /* Original margin */
   text-align: left;
 }
 
@@ -197,129 +214,157 @@ input.shake {
 
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
-  20%, 60% { transform: translateX(-0.375rem); } /* 6px */
-  40%, 80% { transform: translateX(0.375rem); } /* 6px */
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
 }
 
-/* Small text below password field */
+/* Small text below password field (Desktop/Default) */
 .password-group small {
-  font-size: 0.75rem;
+  font-size: 9px; /* Original font size */
   color: #666;
   display: block;
-  margin-top: 0.3125rem; /* 5px */
-  margin-bottom: 0.625rem; /* 10px */
+  margin-top: 2px; /* Original margin */
+  margin-bottom: 3px; /* Original margin */
 }
 
-/* Message containers (success/error) for auth pages */
+/* Message containers (success/error) for auth pages (Desktop/Default) */
 .message-success {
     background-color: #d4edda;
     color: #155724;
     border: 1px solid #c3e6cb;
-    padding: 0.625rem 0.9375rem; /* 10px 15px */
-    border-radius: 0.3125rem; /* 5px */
-    margin-bottom: 0.9375rem; /* 15px */
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
     font-weight: bold;
     text-align: center;
-    font-size: 0.9rem;
+    font-size: 0.9em;
 }
 
 .message-error {
     background-color: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6fb;
-    padding: 0.625rem 0.9375rem; /* 10px 15px */
-    border-radius: 0.3125rem; /* 5px */
-    margin-bottom: 0.9375rem; /* 15px */
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
     font-weight: bold;
     text-align: center;
-    font-size: 0.9rem;
+    font-size: 0.9em;
 }
 
 
-/* --- Media Queries for Responsiveness (Auth Pages) --- */
+/* --- Media Queries for Responsiveness (Auth Pages - Mobile Overrides) --- */
 
 /* Tablets and smaller laptops (up to 768px) */
 @media (max-width: 768px) {
+    body {
+        padding: 10px; /* Add padding to body on smaller screens */
+    }
     .auth-container {
-        padding: 1.25rem; /* 20px */
-        max-width: 21.875rem; /* 350px */
-        width: calc(100% - 1.875rem); /* 30px */
+        padding: 20px; /* Increase padding inside container */
+        max-width: 350px; /* Allow it to grow a bit */
+        width: calc(100% - 30px); /* Fluid width */
+        border-radius: 10px; /* Slightly less rounded */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Keep original shadow */
+    }
+    .auth-container::before {
+        backdrop-filter: blur(3px); /* Keep original blur */
     }
     h2 {
-        font-size: 1.8rem;
-        margin-bottom: 0.625rem; /* 10px */
+        font-size: 1.8em; /* Smaller heading */
+        margin-bottom: 10px;
     }
     .auth-container p {
-        font-size: 0.9rem;
-        margin-bottom: 0.9375rem; /* 15px */
+        font-size: 0.9em;
+        margin-bottom: 15px;
+    }
+    .auth-link-text {
+        font-size: 0.8em; /* Smaller font for links in paragraphs */
+        margin-top: 15px;
+    }
+    .auth-link-text:not(:first-of-type) {
+        margin-top: 5px;
     }
     label {
-        font-size: 0.85rem;
+        font-size: 0.85em;
     }
     input, select {
-        padding: 0.5rem 0.75rem; /* 8px 12px */
-        font-size: 0.9rem;
-        height: 2.5rem; /* 40px */
+        padding: 8px 12px;
+        font-size: 0.9em;
+        height: 40px;
+        border-radius: 6px;
     }
     .password-group .toggle-pass {
-        font-size: 0.8rem;
-        right: 0.625rem; /* 10px */
-    }
-    button, .link {
-        padding: 0.625rem 0.9375rem; /* 10px 15px */
-        font-size: 0.9rem;
-        min-width: unset;
-        flex-basis: calc(50% - 0.625rem); /* 10px */
+        font-size: 0.8em;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
     }
     .form-actions {
-        gap: 0.625rem; /* 10px */
+        flex-direction: column; /* Stack buttons vertically */
+        gap: 10px;
+        margin-top: 15px;
     }
-    .error-msg, #errorMsg, .password-group small, .message-success, .message-error {
-        font-size: 0.8rem;
+    button, .link {
+        padding: 10px 15px;
+        font-size: 0.9em;
+        min-width: unset; /* Remove min-width */
+        width: 100%; /* Take full width */
+        border-radius: 6px;
+        transform: translateY(0); /* Ensure no transform */
+    }
+    button:hover:not(:disabled), .link:hover {
+        transform: translateY(0); /* No transform on hover for mobile */
+    }
+    .error-msg, #errorMsg, .password-group small, .message-success, .message-error, .caps-alert {
+        font-size: 0.8em;
     }
 }
 
 /* Small phones (up to 480px) */
 @media (max-width: 480px) {
     body {
-        padding: 0.3125rem; /* 5px */
+        padding: 5px;
     }
     .auth-container {
-        padding: 0.9375rem; /* 15px */
-        width: calc(100% - 0.625rem); /* 10px */
-        border-radius: 0.625rem; /* 10px */
+        padding: 15px;
+        width: calc(100% - 10px);
+        border-radius: 8px;
     }
     h2 {
-        font-size: 1.5rem;
-        margin-bottom: 0.625rem; /* 10px */
+        font-size: 1.5em;
     }
     .auth-container p {
-        font-size: 0.85rem;
-        margin-bottom: 0.625rem; /* 10px */
+        font-size: 0.85em;
     }
     label {
-        font-size: 0.8rem;
+        font-size: 0.8em;
     }
     input, select {
-        padding: 0.4375rem 0.625rem; /* 7px 10px */
-        font-size: 0.85rem;
-        height: 2.375rem; /* 38px */
+        padding: 7px 10px;
+        font-size: 0.85em;
+        height: 38px;
     }
     .password-group .toggle-pass {
-        font-size: 0.75rem;
-        right: 0.5rem; /* 8px */
+        font-size: 0.75em;
+        right: 8px;
     }
     .form-actions {
-        flex-direction: column;
-        gap: 0.5rem; /* 8px */
-        margin-top: 0.9375rem; /* 15px */
+        gap: 8px;
+        margin-top: 10px;
     }
     button, .link {
-        width: 100%;
-        padding: 0.5625rem 0.75rem; /* 9px 12px */
-        font-size: 0.85rem;
+        padding: 9px 12px;
+        font-size: 0.85em;
     }
-    .error-msg, #errorMsg, .password-group small, .message-success, .message-error {
-        font-size: 0.75rem;
+    .error-msg, #errorMsg, .password-group small, .message-success, .message-error, .caps-alert {
+        font-size: 0.75em;
+    }
+    .auth-link-text {
+        font-size: 0.75em;
+        margin-top: 10px;
+    }
+    .auth-link-text:not(:first-of-type) {
+        margin-top: 5px;
     }
 }
