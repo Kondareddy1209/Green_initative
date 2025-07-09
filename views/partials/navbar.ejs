@@ -1,24 +1,39 @@
 <style>
-  /* All styles inlined for full responsiveness */
+  :root {
+    --primary-green: #4CAF50;
+    --hover-green: #5cb85c;
+    --text-white: white;
+    --logout-red: #d9534f;
+    --logout-red-hover: #c9302c;
+    --points-orange: #f39c12;
+    --admin-blue: #4A90E2;
+    --admin-blue-hover: #357ab8;
+    --dark-bg: #333;
+    --darker-bg: #2e2e2e;
+    --border-dark: #444;
+    --login-blue: #007bff;
+  }
+
   .navbar {
-    background-color: #4CAF50;
-    padding: 15px 20px;
+    background-color: var(--primary-green);
+    padding: 12px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    color: var(--text-white);
     position: sticky;
     top: 0;
     z-index: 1000;
     width: 100%;
+    font-size: 1em;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   }
 
   .menu-toggle {
     display: none;
     font-size: 1.8em;
     cursor: pointer;
-    color: white;
+    color: var(--text-white);
     margin-right: 15px;
   }
 
@@ -30,109 +45,124 @@
   }
 
   .navbar .logo {
-    font-size: 1.8em;
+    font-size: 1.5em;
     font-weight: bold;
-    color: white;
+    color: var(--text-white);
     text-decoration: none;
     margin-bottom: 2px;
     white-space: nowrap;
   }
 
   .home-brand-link {
-    color: white;
+    color: var(--text-white);
     text-decoration: none;
     font-size: 0.8em;
-    padding: 2px 5px;
-    border-radius: 3px;
-    transition: background-color 0.3s ease;
-    text-align: left;
-  }
-
-  .home-brand-link:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    padding: 1px 4px;
+    border-radius: 2px;
+    opacity: 0.9;
   }
 
   .navbar-links {
     display: flex;
     align-items: center;
     margin-right: auto;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
+    overflow-x: visible;
+    gap: 12px;
   }
 
   .navbar-links a {
-    color: white;
+    color: var(--text-white);
     text-decoration: none;
-    padding: 8px 15px;
-    margin-right: 5px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+    padding: 7px 14px;
+    border-radius: 4px;
+    font-size: 0.95em;
     white-space: nowrap;
+    transition: background-color 0.2s ease;
   }
 
   .navbar-links a:hover {
-    background-color: #5cb85c;
+    background-color: var(--hover-green);
   }
 
   .navbar-user-info {
     display: flex;
     align-items: center;
-    gap: 12px;
-    white-space: nowrap;
+    gap: 15px;
+    margin-left: 15px;
   }
 
   .navbar-user-info img {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid white;
+    border: 2px solid var(--text-white);
   }
 
   .navbar-user-info span {
     font-weight: bold;
-    margin-left: 5px;
+    font-size: 0.9em;
+    white-space: nowrap;
   }
 
   .navbar-points {
-    background-color: #f39c12;
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 0.9em;
-    font-weight: bold;
-    color: white;
+    background-color: var(--points-orange);
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    color: var(--text-white);
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
+    white-space: nowrap;
   }
 
   .navbar-logout {
-    background-color: #d9534f;
-    color: white;
+    background-color: var(--logout-red);
+    color: var(--text-white);
     border: none;
     padding: 8px 15px;
-    border-radius: 5px;
+    border-radius: 4px;
+    font-size: 0.9em;
     cursor: pointer;
     text-decoration: none;
-    transition: background-color 0.3s ease;
-    margin-left: 10px;
+    transition: background-color 0.2s ease;
+    white-space: nowrap;
   }
 
   .navbar-logout:hover {
-    background-color: #c9302c;
+    background-color: var(--logout-red-hover);
+  }
+
+  .navbar-logout.login-btn {
+    background-color: var(--login-blue);
+  }
+  .navbar-logout.login-btn:hover {
+    background-color: #0056b3;
+  }
+  .navbar-logout.admin-login-btn {
+    background-color: var(--admin-blue);
+  }
+  .navbar-logout.admin-login-btn:hover {
+    background-color: var(--admin-blue-hover);
   }
 
   .admin-link-btn {
-    background-color: #4A90E2;
-    color: white;
+    background-color: var(--admin-blue);
+    color: var(--text-white);
     padding: 8px 15px;
-    border-radius: 5px;
-    text-decoration: none;
+    border-radius: 4px;
     font-size: 0.9em;
-    transition: background-color 0.3s ease;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .admin-link-btn:hover {
-    background-color: #357ab8;
+    background-color: var(--admin-blue-hover);
   }
 
   .side-menu {
@@ -142,171 +172,240 @@
     z-index: 1001;
     top: 0;
     left: 0;
-    background-color: #333;
+    background-color: var(--dark-bg);
     overflow-x: hidden;
+    overflow-y: auto;
     transition: 0.5s;
     padding-top: 60px;
     display: flex;
     flex-direction: column;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
   }
 
   .side-menu a {
-    padding: 15px 25px;
-    text-decoration: none;
-    font-size: 1.5em;
+    padding: 12px 20px;
+    font-size: 1.2em;
     color: #f1f1f1;
+    border-bottom: 1px solid var(--border-dark);
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
     display: block;
-    transition: 0.3s;
-    border-bottom: 1px solid #444;
   }
 
   .side-menu a:hover {
-    color: #4CAF50;
+    color: var(--primary-green);
     background-color: #555;
   }
 
   .side-menu .close-btn {
     position: absolute;
     top: 0;
-    right: 25px;
-    font-size: 3em;
+    right: 20px;
+    font-size: 2.5em;
     color: #f1f1f1;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1;
   }
 
   .navbar-user-info.mobile-view {
     display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: var(--darker-bg);
+    border-bottom: 1px solid var(--border-dark);
+    text-align: center;
+  }
+
+  .navbar-user-info.mobile-view img {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 10px;
+    border: 3px solid var(--text-white);
+  }
+
+  .navbar-user-info.mobile-view span {
+    font-size: 1.2em;
+    color: var(--text-white);
+    margin-bottom: 8px;
+  }
+
+  .navbar-user-info.mobile-view .navbar-points {
+    margin-top: 5px;
+    font-size: 0.95em;
+    padding: 5px 12px;
+  }
+
+  .side-menu .mobile-action-btn {
+    display: block;
+    width: calc(100% - 40px);
+    margin: 15px auto 5px auto;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 1.1em;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text-white);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+
+  .side-menu .mobile-logout-btn {
+    background-color: var(--logout-red);
+  }
+  .side-menu .mobile-logout-btn:hover {
+    background-color: var(--logout-red-hover);
+  }
+
+  .side-menu .mobile-login-btn {
+    background-color: var(--login-blue);
+  }
+  .side-menu .mobile-login-btn:hover {
+    background-color: #0056b3;
+  }
+
+  .side-menu .mobile-admin-login-btn {
+    background-color: var(--admin-blue);
+  }
+  .side-menu .mobile-admin-login-btn:hover {
+    background-color: var(--admin-blue-hover);
+  }
+
+  .side-menu .mobile-admin-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    font-size: 1.2em;
+    color: #f1f1f1;
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-dark);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .side-menu .mobile-admin-link:hover {
+    background-color: #555;
+    color: var(--primary-green);
   }
 
   @media screen and (max-width: 768px) {
+    .navbar {
+        padding: 10px 15px;
+        font-size: 0.85em;
+    }
+
     .navbar-links,
     .navbar-user-info {
       display: none;
     }
+
     .menu-toggle {
       display: block;
     }
 
-    .navbar-user-info.mobile-view {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 15px;
-      background-color: #2e2e2e;
-      border-bottom: 1px solid #444;
+    .navbar-brand-area {
+        margin-right: 0;
+    }
+    .navbar .logo {
+        font-size: 1.2em;
+    }
+    .home-brand-link {
+        display: none;
     }
 
-    .navbar-user-info.mobile-view img {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      margin-bottom: 8px;
-      border: 2px solid #fff;
-    }
-
-    .navbar-user-info.mobile-view span {
-      font-size: 1.1em;
-      color: white;
-      font-weight: bold;
-    }
-
-    .navbar-user-info.mobile-view .navbar-points {
-      margin-top: 10px;
+    .side-menu {
+        padding-top: 20px;
     }
   }
 </style>
+
 <nav class="navbar">
-    <div class="menu-toggle" id="menuToggle">
-        <i class="fas fa-bars"></i>
-    </div>
+  <div class="menu-toggle" id="menuToggle">
+    <i class="fas fa-bars"></i>
+  </div>
 
-    <div class="navbar-brand-area">
-        <a href="/dashboard/home" class="logo">MyGreenHome</a>
-        <a href="/dashboard/home" class="home-brand-link">Home</a>
-    </div>
+  <div class="navbar-brand-area">
+    <a href="/dashboard/home" class="logo">MyGreenHome</a>
+    <a href="/dashboard/home" class="home-brand-link">Home</a>
+  </div>
 
-    <div class="navbar-links" id="mainNavbarLinks">
-        <a href="/dashboard/home">Home</a>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/dashboard">Analyze Bill</a>
-        <a href="/dashboard/tracking">Tracking Bill</a>
-        <a href="/dashboard/badges">Badges</a>
-        <a href="/dashboard/leaderboard">Leaderboard</a>
-        <a href="/donations/donate">Donate</a>
-        <a href="/donations/history">Donation History</a>
-        <a href="/dashboard/team">Team</a>
-        <a href="/dashboard/profile">Profile</a>
-        <a href="/ai-chat">AI Chat</a>
-        <!-- Logout for desktop view is now explicitly here in the main links -->
-        <% if (typeof user !== 'undefined' && user) { %>
-            <a href="/dashboard/logout">Logout</a>
-        <% } %>
-    </div>
-
-    <div class="navbar-user-info" id="mainNavbarUserInfo">
-        <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
-            <a href="/admin" class="admin-link-btn">
-                <i class="fas fa-screwdriver-wrench"></i> Admin Panel
-            </a>
-        <% } %>
-        <% if (typeof user !== 'undefined' && user) { %>
-            <div class="navbar-points">
-                <i class="fas fa-star"></i> <%= user.points || 0 %>
-            </div>
-            <img src="<%= user.profilePicture || '/images/default_image.png' %>" alt="<%= user.username %>'s Profile Pic">
-            <span><%= user.firstName || user.username %></span>
-            <!-- Logout link is no longer duplicated here for desktop -->
-        <% } else { %>
-            <a href="/auth" class="navbar-logout" style="background-color: #007bff;">User Login</a>
-            <a href="/admin/login" class="navbar-logout" style="background-color: #4A90E2; margin-left: 10px;">Admin Login</a>
-        <% } %>
-    </div>
-</nav>
-
-<div id="mySideMenu" class="side-menu">
-    <a href="javascript:void(0)" class="close-btn" id="closeMenu">&times;</a>
-    
-    <% if (typeof user !== 'undefined' && user) { %>
-        <div class="navbar-user-info mobile-view">
-            <img src="<%= user.profilePicture || '/images/default_image.png' %>" alt="Profile">
-            <span><%= user.firstName || user.username %></span>
-            <div class="navbar-points">
-                <i class="fas fa-star"></i> <%= user.points || 0 %>
-            </div>
-        </div>
-    <% } %>
-
-    <!-- Side menu links, reordered as requested -->
-    <a href="/dashboard/home">Home</a>
+  <div class="navbar-links" id="mainNavbarLinks">
     <a href="/dashboard">Dashboard</a>
-    <a href="/dashboard">Analyze Bill</a>
-    <a href="/dashboard/tracking">Tracking Bill</a>
+    <a href="/dashboard/tracking">Tracking</a>
     <a href="/dashboard/badges">Badges</a>
     <a href="/dashboard/leaderboard">Leaderboard</a>
     <a href="/donations/donate">Donate</a>
-    <a href="/donations/history">Donation History</a>
+    <a href="/donations/history">Donations</a>
     <a href="/dashboard/team">Team</a>
     <a href="/dashboard/profile">Profile</a>
     <a href="/ai-chat">AI Chat</a>
+  </div>
 
+  <div class="navbar-user-info" id="mainNavbarUserInfo">
     <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
-        <a href="/admin"><i class="fas fa-screwdriver-wrench"></i> Admin Panel</a>
+      <a href="/admin" class="admin-link-btn" title="Admin Panel">
+        <i class="fas fa-screwdriver-wrench"></i>
+      </a>
     <% } %>
     <% if (typeof user !== 'undefined' && user) { %>
-        <a href="/dashboard/logout"><i class="fas fa-right-from-bracket"></i> Logout</a>
+      <div class="navbar-points">
+        <i class="fas fa-star"></i> <%= user.points || 0 %>
+      </div>
+      <img src="<%= user.profilePicture || '/images/default_image.png' %>" alt="Profile">
+      <span><%= user.firstName || user.username %></span>
+      <a href="/dashboard/logout" class="navbar-logout">Logout</a>
     <% } else { %>
-        <a href="/auth">User Login</a>
-        <a href="/admin/login">Admin Login</a>
+      <a href="/auth" class="navbar-logout login-btn">Login</a>
+      <a href="/admin/login" class="navbar-logout admin-login-btn">Admin</a>
     <% } %>
+  </div>
+</nav>
+
+<div id="mySideMenu" class="side-menu">
+  <a href="javascript:void(0)" class="close-btn" id="closeMenu">&times;</a>
+
+  <a href="/dashboard/home">Home</a>
+  <a href="/dashboard">Dashboard</a>
+  <a href="/dashboard/tracking">Tracking</a>
+  <a href="/dashboard/badges">Badges</a>
+  <a href="/dashboard/leaderboard">Leaderboard</a>
+  <a href="/donations/donate">Donate</a>
+  <a href="/donations/history">Donations</a>
+  <a href="/dashboard/team">Team</a>
+  <a href="/dashboard/profile">Profile</a>
+  <a href="/ai-chat">AI Chat</a>
+
+  <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+    <a href="/admin" class="mobile-admin-link"><i class="fas fa-screwdriver-wrench"></i> Admin</a>
+  <% } %>
+  <% if (typeof user !== 'undefined' && user) { %>
+    <a href="/dashboard/logout" class="mobile-action-btn mobile-logout-btn"><i class="fas fa-right-from-bracket"></i> Logout</a>
+  <% } else { %>
+    <a href="/auth" class="mobile-action-btn mobile-login-btn">Login</a>
+    <a href="/admin/login" class="mobile-action-btn mobile-admin-login-btn">Admin Login</a>
+  <% } %>
 </div>
 
-<!-- Side Menu JS -->
 <script>
   document.getElementById("menuToggle").addEventListener("click", function () {
     document.getElementById("mySideMenu").style.width = "250px";
+    document.body.classList.add('no-scroll');
   });
 
   document.getElementById("closeMenu").addEventListener("click", function () {
     document.getElementById("mySideMenu").style.width = "0";
+    document.body.classList.remove('no-scroll');
+  });
+
+  document.querySelectorAll("#mySideMenu a").forEach(link => {
+    link.addEventListener("click", function() {
+      if (!link.classList.contains('close-btn') && !link.hasAttribute('target')) {
+        document.getElementById("mySideMenu").style.width = "0";
+        document.body.classList.remove('no-scroll');
+      }
+    });
   });
 </script>
