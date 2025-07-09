@@ -3,29 +3,29 @@ body {
   background: url("/images/green.jpg") no-repeat center center fixed;
   background-size: cover;
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Inter', Arial, sans-serif; /* Using Inter for a modern look */
   background-color: #eef2f7;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  box-sizing: border-box; /* Ensure padding/border don't cause overflow */
+  box-sizing: border-box;
   padding: 10px; /* Small padding for very small screens */
 }
 
 /* Auth Container */
 .auth-container {
   position: relative;
-  max-width: 320px;
-  width: calc(100% - 20px); /* Fluid width, accounting for body padding */
+  max-width: 380px; /* Slightly wider for better form layout */
+  width: calc(100% - 40px); /* Fluid width, accounting for body padding */
   margin: 0 auto;
-  padding: 18px;
-  border-radius: 12px;
+  padding: 25px; /* Increased base padding */
+  border-radius: 12px; /* More rounded corners */
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); /* Stronger shadow */
   background: url("/images/download.jpeg") no-repeat center center;
   background-size: cover;
-  box-sizing: border-box; /* Include padding in width calculation */
+  box-sizing: border-box;
 }
 
 /* Overlay for readability */
@@ -33,8 +33,8 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background-color: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(3px);
+  background-color: rgba(255, 255, 255, 0.85); /* Slightly more opaque overlay */
+  backdrop-filter: blur(4px); /* Stronger blur */
   z-index: 0;
   border-radius: 12px;
 }
@@ -45,42 +45,58 @@ body {
   z-index: 1;
 }
 
-/* Green Heading */
+/* Headings */
 h2 {
   margin-top: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 15px; /* More space below heading */
   text-align: center;
-  color: green;
-  font-size: 19px;
+  color: #2ecc71; /* Green color for headings */
+  font-size: 2em; /* Larger heading */
+}
+
+.auth-container p { /* General paragraph in auth container */
+    font-size: 0.95em;
+    color: #555;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 .form-group {
   position: relative;
-  margin-bottom: 6px;
+  margin-bottom: 15px; /* More space between form groups */
   text-align: left;
 }
 
 label {
   display: block;
-  margin-bottom: 1px;
+  margin-bottom: 5px; /* More space below label */
   font-weight: bold;
-  font-size: 12px;
+  font-size: 0.9em;
+  color: #333;
 }
 
 input,
 select {
   width: 100%;
-  padding: 7px 34px 7px 9px;
-  font-size: 13px;
+  padding: 10px 15px; /* Increased padding */
+  font-size: 1em;
   border: 1.5px solid #ccc;
-  border-radius: 5px;
+  border-radius: 8px; /* More rounded inputs */
   box-sizing: border-box;
-  height: 36px;
+  height: 45px; /* Taller inputs */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
 }
 
 input:invalid:focus,
 input:invalid:not(:placeholder-shown) {
   border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
 }
 
 input:valid {
@@ -89,76 +105,83 @@ input:valid {
 
 .password-group .toggle-pass {
   position: absolute;
-  right: 8px;
-  top: 26px;
+  right: 12px; /* Adjusted right position */
+  top: 50%; /* Center vertically */
+  transform: translateY(-50%); /* Adjust for vertical centering */
   background: none;
   border: none;
   cursor: pointer;
   color: #4A90E2;
-  font-size: 12px;
+  font-size: 0.9em;
+  padding: 5px; /* Make clickable area larger */
 }
 
 .form-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 12px;
-  margin-bottom: 5px;
-  flex-wrap: wrap; /* Allow buttons to wrap on small screens */
-  gap: 10px; /* Space between wrapped items */
+  margin-top: 20px; /* More space above buttons */
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 15px; /* More space between wrapped items */
 }
 
 button[type="submit"]:disabled {
   background: #ccc;
   cursor: not-allowed;
+  opacity: 0.7;
 }
 
-/* Login button (blue) */
+/* General Button Style (for login, signup, send OTP, reset password) */
 button {
-  padding: 8px 15px;
+  padding: 12px 20px;
   border: none;
-  font-size: 12px;
+  font-size: 1em;
   color: white;
-  background-color: #4A90E2;
+  background-color: #4A90E2; /* Blue for primary actions */
   text-decoration: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  flex-grow: 1; /* Allow buttons to grow */
-  min-width: 120px; /* Minimum width for buttons */
+  flex-grow: 1;
+  min-width: 140px; /* Ensure buttons have a decent minimum width */
   box-sizing: border-box;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 button:hover:not(:disabled) {
   background: #357ab8;
+  transform: translateY(-2px); /* Slight lift on hover */
 }
 
-/* Sign up link styled as green button */
+/* Link styled as button (Sign Up) */
 .link {
-  padding: 8px 15px;
+  padding: 12px 20px;
   border: none;
-  font-size: 12px;
+  font-size: 1em;
   color: white;
-  background-color: #2ecc71;
+  background-color: #2ecc71; /* Green for secondary actions/signup */
   text-decoration: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  flex-grow: 1; /* Allow links to grow */
-  min-width: 120px; /* Minimum width for links */
-  text-align: center; /* Center text in link button */
+  flex-grow: 1;
+  min-width: 140px;
+  text-align: center;
   box-sizing: border-box;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .link:hover {
   background: #27ae60;
+  transform: translateY(-2px);
 }
 
 .error-msg,
 #errorMsg {
   color: #e74c3c;
-  font-size: 10px;
-  height: 1em;
-  margin-top: -3px;
-  margin-bottom: 3px;
+  font-size: 0.85em;
+  min-height: 1em; /* Reserve space to prevent layout shift */
+  margin-top: 5px;
+  margin-bottom: 10px;
   text-align: left;
 }
 
@@ -168,27 +191,18 @@ input.shake {
 }
 
 @keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  20%,
-  60% {
-    transform: translateX(-6px);
-  }
-  40%,
-  80% {
-    transform: translateX(6px);
-  }
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
 }
 
 /* Small text below password field */
 .password-group small {
-  font-size: 9px;
+  font-size: 0.75em;
   color: #666;
   display: block;
-  margin-top: 2px;
-  margin-bottom: 3px;
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 
 /* Message containers (success/error) for auth pages */
@@ -219,60 +233,88 @@ input.shake {
 
 /* --- Media Queries for Responsiveness (Auth Pages) --- */
 
-@media (max-width: 480px) {
-    body {
-        padding: 5px; /* Even less padding on very small screens */
-    }
+/* Tablets and smaller laptops (up to 768px) */
+@media (max-width: 768px) {
     .auth-container {
-        padding: 15px; /* Reduce padding inside container */
-        width: calc(100% - 10px); /* Maximize width on tiny screens */
+        padding: 20px; /* Slightly less padding */
+        max-width: 350px; /* Adjust max-width */
+        width: calc(100% - 30px);
     }
     h2 {
-        font-size: 1.6em; /* Smaller heading */
+        font-size: 1.8em;
+        margin-bottom: 10px;
     }
-    .form-group {
-        margin-bottom: 10px; /* Slightly more space between form groups */
+    .auth-container p {
+        font-size: 0.9em;
+        margin-bottom: 15px;
     }
     label {
-        font-size: 11px; /* Smaller labels */
+        font-size: 0.85em;
     }
     input, select {
-        padding: 8px 10px; /* Adjust input padding */
-        font-size: 12px; /* Adjust input font size */
-        height: 34px; /* Adjust input height */
+        padding: 8px 12px;
+        font-size: 0.9em;
+        height: 40px;
     }
     .password-group .toggle-pass {
-        top: 24px; /* Adjust toggle position */
-        font-size: 11px;
-    }
-    .form-actions {
-        flex-direction: column; /* Ensure buttons stack */
-        gap: 8px; /* Smaller gap */
-        margin-top: 10px;
+        font-size: 0.8em;
+        right: 10px;
     }
     button, .link {
-        padding: 10px 12px; /* Adjust button padding */
-        font-size: 11px; /* Adjust button font size */
-        min-width: unset; /* Remove min-width for full flexibility */
-        width: 100%; /* Ensure they take full width when stacked */
+        padding: 10px 15px;
+        font-size: 0.9em;
+        min-width: unset; /* Allow more flexibility */
+        flex-basis: calc(50% - 10px); /* Two columns */
     }
-    p {
-        font-size: 12px; /* Smaller paragraph text */
+    .form-actions {
+        gap: 10px;
     }
-    .error-msg, #errorMsg, .password-group small {
-        font-size: 9px; /* Smallest text */
+    .error-msg, #errorMsg, .password-group small, .message-success, .message-error {
+        font-size: 0.8em;
     }
 }
 
-/* Specific adjustments for admin_login.ejs */
-.auth-container p { /* General paragraph in auth container */
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 20px;
-}
+/* Small phones (up to 480px) */
 @media (max-width: 480px) {
+    body {
+        padding: 5px;
+    }
+    .auth-container {
+        padding: 15px;
+        width: calc(100% - 10px);
+        border-radius: 10px;
+    }
+    h2 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
     .auth-container p {
-        font-size: 12px;
-        margin-bottom: 15px;
+        font-size: 0.85em;
+        margin-bottom: 10px;
+    }
+    label {
+        font-size: 0.8em;
+    }
+    input, select {
+        padding: 7px 10px;
+        font-size: 0.85em;
+        height: 38px;
+    }
+    .password-group .toggle-pass {
+        font-size: 0.75em;
+        right: 8px;
+    }
+    .form-actions {
+        flex-direction: column; /* Stack buttons vertically on very small screens */
+        gap: 8px;
+        margin-top: 15px;
+    }
+    button, .link {
+        width: 100%; /* Take full width when stacked */
+        padding: 9px 12px;
+        font-size: 0.85em;
+    }
+    .error-msg, #errorMsg, .password-group small, .message-success, .message-error {
+        font-size: 0.75em;
     }
 }
