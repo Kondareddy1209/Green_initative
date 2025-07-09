@@ -1,4 +1,4 @@
-/* Full background for body (Desktop/Default - matches screenshot) */
+/* Full background for body (Desktop/Default) */
 body {
   background: url("/images/green.jpg") no-repeat center center fixed;
   background-size: cover;
@@ -18,8 +18,8 @@ body {
 .auth-container {
   position: relative;
   max-width: 320px; /* Exact width from your original login form */
-  margin: 0 auto; /* Center horizontally */
-  padding: 18px; /* Consistent original padding */
+  margin: 0 auto;
+  padding: 18px 18px; /* Consistent original padding */
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -66,7 +66,7 @@ h2 {
 }
 
 /* Specific styles for links within auth container paragraphs (Desktop/Default) */
-.auth-link-text {
+.auth-link-text { /* This class was added for consistency in EJS, now styled here */
     text-align: center;
     margin-top: 20px; /* Original margin */
     font-size: 14px; /* Original font size */
@@ -192,7 +192,7 @@ button:hover:not(:disabled) {
   min-width: unset; /* No min-width on desktop */
   text-align: center;
   box-sizing: border-box;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .link:hover {
