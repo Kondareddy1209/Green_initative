@@ -8,24 +8,29 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100vh; /* Ensure body takes full viewport height */
   box-sizing: border-box;
-  padding: 10px; /* Small padding for very small screens */
+  padding: 0.625rem; /* 10px padding for very small screens */
+  /* Added for better vertical centering on smaller screens if content is short */
+  align-content: center;
+  flex-wrap: wrap;
 }
 
 /* Auth Container */
 .auth-container {
   position: relative;
   max-width: 380px; /* Slightly wider for better form layout */
-  width: calc(100% - 40px); /* Fluid width, accounting for body padding */
-  margin: 0 auto;
-  padding: 25px; /* Increased base padding */
-  border-radius: 12px; /* More rounded corners */
+  width: calc(100% - 2.5rem); /* Fluid width, accounting for body padding (40px) */
+  margin: auto; /* Use auto margin to allow flexbox to center it vertically and horizontally */
+  padding: 1.5625rem; /* 25px increased base padding */
+  border-radius: 0.75rem; /* 12px more rounded corners */
   overflow: hidden;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+  box-shadow: 0 0.375rem 1.25rem rgba(0, 0, 0, 0.2); /* 6px 20px stronger shadow */
   background: url("/images/download.jpeg") no-repeat center center;
   background-size: cover;
   box-sizing: border-box;
+  /* Ensure it doesn't take up too much height on very small screens */
+  flex-shrink: 0;
 }
 
 /* Overlay for readability */
@@ -34,9 +39,9 @@ body {
   position: absolute;
   inset: 0;
   background-color: rgba(255, 255, 255, 0.85); /* Slightly more opaque overlay */
-  backdrop-filter: blur(4px); /* Stronger blur */
+  backdrop-filter: blur(0.25rem); /* 4px stronger blur */
   z-index: 0;
-  border-radius: 12px;
+  border-radius: 0.75rem; /* 12px */
 }
 
 /* Ensure content is above overlay */
@@ -47,56 +52,56 @@ body {
 
 /* Headings */
 h2 {
-  margin-top: 5px;
-  margin-bottom: 15px; /* More space below heading */
+  margin-top: 0.3125rem; /* 5px */
+  margin-bottom: 0.9375rem; /* 15px more space below heading */
   text-align: center;
   color: #2ecc71; /* Green color for headings */
-  font-size: 2em; /* Larger heading */
+  font-size: 2rem; /* Larger heading */
 }
 
 .auth-container p { /* General paragraph in auth container */
-    font-size: 0.95em;
+    font-size: 0.95rem;
     color: #555;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem; /* 20px */
     text-align: center;
 }
 
 .form-group {
   position: relative;
-  margin-bottom: 15px; /* More space between form groups */
+  margin-bottom: 0.9375rem; /* 15px more space between form groups */
   text-align: left;
 }
 
 label {
   display: block;
-  margin-bottom: 5px; /* More space below label */
+  margin-bottom: 0.3125rem; /* 5px more space below label */
   font-weight: bold;
-  font-size: 0.9em;
+  font-size: 0.9rem;
   color: #333;
 }
 
 input,
 select {
   width: 100%;
-  padding: 10px 15px; /* Increased padding */
-  font-size: 1em;
-  border: 1.5px solid #ccc;
-  border-radius: 8px; /* More rounded inputs */
+  padding: 0.625rem 0.9375rem; /* 10px 15px increased padding */
+  font-size: 1rem;
+  border: 0.09375rem solid #ccc; /* 1.5px */
+  border-radius: 0.5rem; /* 8px more rounded inputs */
   box-sizing: border-box;
-  height: 45px; /* Taller inputs */
+  height: 2.8125rem; /* 45px taller inputs */
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 input:focus, select:focus {
     outline: none;
     border-color: #4CAF50;
-    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+    box-shadow: 0 0 0 0.1875rem rgba(76, 175, 80, 0.2); /* 3px */
 }
 
 input:invalid:focus,
 input:invalid:not(:placeholder-shown) {
   border-color: #e74c3c;
-  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+  box-shadow: 0 0 0 0.1875rem rgba(231, 76, 60, 0.2); /* 3px */
 }
 
 input:valid {
@@ -105,25 +110,25 @@ input:valid {
 
 .password-group .toggle-pass {
   position: absolute;
-  right: 12px; /* Adjusted right position */
+  right: 0.75rem; /* 12px adjusted right position */
   top: 50%; /* Center vertically */
   transform: translateY(-50%); /* Adjust for vertical centering */
   background: none;
   border: none;
   cursor: pointer;
   color: #4A90E2;
-  font-size: 0.9em;
-  padding: 5px; /* Make clickable area larger */
+  font-size: 0.9rem;
+  padding: 0.3125rem; /* 5px make clickable area larger */
 }
 
 .form-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 20px; /* More space above buttons */
-  margin-bottom: 10px;
+  margin-top: 1.25rem; /* 20px more space above buttons */
+  margin-bottom: 0.625rem; /* 10px */
   flex-wrap: wrap;
-  gap: 15px; /* More space between wrapped items */
+  gap: 0.9375rem; /* 15px more space between wrapped items */
 }
 
 button[type="submit"]:disabled {
@@ -134,54 +139,54 @@ button[type="submit"]:disabled {
 
 /* General Button Style (for login, signup, send OTP, reset password) */
 button {
-  padding: 12px 20px;
+  padding: 0.75rem 1.25rem; /* 12px 20px */
   border: none;
-  font-size: 1em;
+  font-size: 1rem;
   color: white;
   background-color: #4A90E2; /* Blue for primary actions */
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: 0.5rem; /* 8px */
   cursor: pointer;
   flex-grow: 1;
-  min-width: 140px; /* Ensure buttons have a decent minimum width */
+  min-width: 8.75rem; /* 140px ensure buttons have a decent minimum width */
   box-sizing: border-box;
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 button:hover:not(:disabled) {
   background: #357ab8;
-  transform: translateY(-2px); /* Slight lift on hover */
+  transform: translateY(-0.125rem); /* 2px slight lift on hover */
 }
 
 /* Link styled as button (Sign Up) */
 .link {
-  padding: 12px 20px;
+  padding: 0.75rem 1.25rem; /* 12px 20px */
   border: none;
-  font-size: 1em;
+  font-size: 1rem;
   color: white;
   background-color: #2ecc71; /* Green for secondary actions/signup */
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: 0.5rem; /* 8px */
   cursor: pointer;
   flex-grow: 1;
-  min-width: 140px;
+  min-width: 8.75rem; /* 140px */
   text-align: center;
-  box-sizing: border-box;
+  box-sizing: border-sizing;
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .link:hover {
   background: #27ae60;
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem); /* 2px */
 }
 
 .error-msg,
 #errorMsg {
   color: #e74c3c;
-  font-size: 0.85em;
-  min-height: 1em; /* Reserve space to prevent layout shift */
-  margin-top: 5px;
-  margin-bottom: 10px;
+  font-size: 0.85rem;
+  min-height: 0.625rem; /* 1em reserve space to prevent layout shift */
+  margin-top: 0.3125rem; /* 5px */
+  margin-bottom: 0.625rem; /* 10px */
   text-align: left;
 }
 
@@ -192,17 +197,17 @@ input.shake {
 
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
-  20%, 60% { transform: translateX(-6px); }
-  40%, 80% { transform: translateX(6px); }
+  20%, 60% { transform: translateX(-0.375rem); } /* 6px */
+  40%, 80% { transform: translateX(0.375rem); } /* 6px */
 }
 
 /* Small text below password field */
 .password-group small {
-  font-size: 0.75em;
+  font-size: 0.75rem;
   color: #666;
   display: block;
-  margin-top: 5px;
-  margin-bottom: 10px;
+  margin-top: 0.3125rem; /* 5px */
+  margin-bottom: 0.625rem; /* 10px */
 }
 
 /* Message containers (success/error) for auth pages */
@@ -210,24 +215,24 @@ input.shake {
     background-color: #d4edda;
     color: #155724;
     border: 1px solid #c3e6cb;
-    padding: 10px 15px;
-    border-radius: 5px;
-    margin-bottom: 15px;
+    padding: 0.625rem 0.9375rem; /* 10px 15px */
+    border-radius: 0.3125rem; /* 5px */
+    margin-bottom: 0.9375rem; /* 15px */
     font-weight: bold;
     text-align: center;
-    font-size: 0.9em;
+    font-size: 0.9rem;
 }
 
 .message-error {
     background-color: #f8d7da;
     color: #721c24;
-    border: 1px solid #f5c6cb;
-    padding: 10px 15px;
-    border-radius: 5px;
-    margin-bottom: 15px;
+    border: 1px solid #f5c6fb;
+    padding: 0.625rem 0.9375rem; /* 10px 15px */
+    border-radius: 0.3125rem; /* 5px */
+    margin-bottom: 0.9375rem; /* 15px */
     font-weight: bold;
     text-align: center;
-    font-size: 0.9em;
+    font-size: 0.9rem;
 }
 
 
@@ -236,85 +241,85 @@ input.shake {
 /* Tablets and smaller laptops (up to 768px) */
 @media (max-width: 768px) {
     .auth-container {
-        padding: 20px; /* Slightly less padding */
-        max-width: 350px; /* Adjust max-width */
-        width: calc(100% - 30px);
+        padding: 1.25rem; /* 20px */
+        max-width: 21.875rem; /* 350px */
+        width: calc(100% - 1.875rem); /* 30px */
     }
     h2 {
-        font-size: 1.8em;
-        margin-bottom: 10px;
+        font-size: 1.8rem;
+        margin-bottom: 0.625rem; /* 10px */
     }
     .auth-container p {
-        font-size: 0.9em;
-        margin-bottom: 15px;
+        font-size: 0.9rem;
+        margin-bottom: 0.9375rem; /* 15px */
     }
     label {
-        font-size: 0.85em;
+        font-size: 0.85rem;
     }
     input, select {
-        padding: 8px 12px;
-        font-size: 0.9em;
-        height: 40px;
+        padding: 0.5rem 0.75rem; /* 8px 12px */
+        font-size: 0.9rem;
+        height: 2.5rem; /* 40px */
     }
     .password-group .toggle-pass {
-        font-size: 0.8em;
-        right: 10px;
+        font-size: 0.8rem;
+        right: 0.625rem; /* 10px */
     }
     button, .link {
-        padding: 10px 15px;
-        font-size: 0.9em;
-        min-width: unset; /* Allow more flexibility */
-        flex-basis: calc(50% - 10px); /* Two columns */
+        padding: 0.625rem 0.9375rem; /* 10px 15px */
+        font-size: 0.9rem;
+        min-width: unset;
+        flex-basis: calc(50% - 0.625rem); /* 10px */
     }
     .form-actions {
-        gap: 10px;
+        gap: 0.625rem; /* 10px */
     }
     .error-msg, #errorMsg, .password-group small, .message-success, .message-error {
-        font-size: 0.8em;
+        font-size: 0.8rem;
     }
 }
 
 /* Small phones (up to 480px) */
 @media (max-width: 480px) {
     body {
-        padding: 5px;
+        padding: 0.3125rem; /* 5px */
     }
     .auth-container {
-        padding: 15px;
-        width: calc(100% - 10px);
-        border-radius: 10px;
+        padding: 0.9375rem; /* 15px */
+        width: calc(100% - 0.625rem); /* 10px */
+        border-radius: 0.625rem; /* 10px */
     }
     h2 {
-        font-size: 1.5em;
-        margin-bottom: 10px;
+        font-size: 1.5rem;
+        margin-bottom: 0.625rem; /* 10px */
     }
     .auth-container p {
-        font-size: 0.85em;
-        margin-bottom: 10px;
+        font-size: 0.85rem;
+        margin-bottom: 0.625rem; /* 10px */
     }
     label {
-        font-size: 0.8em;
+        font-size: 0.8rem;
     }
     input, select {
-        padding: 7px 10px;
-        font-size: 0.85em;
-        height: 38px;
+        padding: 0.4375rem 0.625rem; /* 7px 10px */
+        font-size: 0.85rem;
+        height: 2.375rem; /* 38px */
     }
     .password-group .toggle-pass {
-        font-size: 0.75em;
-        right: 8px;
+        font-size: 0.75rem;
+        right: 0.5rem; /* 8px */
     }
     .form-actions {
-        flex-direction: column; /* Stack buttons vertically on very small screens */
-        gap: 8px;
-        margin-top: 15px;
+        flex-direction: column;
+        gap: 0.5rem; /* 8px */
+        margin-top: 0.9375rem; /* 15px */
     }
     button, .link {
-        width: 100%; /* Take full width when stacked */
-        padding: 9px 12px;
-        font-size: 0.85em;
+        width: 100%;
+        padding: 0.5625rem 0.75rem; /* 9px 12px */
+        font-size: 0.85rem;
     }
     .error-msg, #errorMsg, .password-group small, .message-success, .message-error {
-        font-size: 0.75em;
+        font-size: 0.75rem;
     }
 }
