@@ -3,32 +3,31 @@ body {
   background: url("/images/green.jpg") no-repeat center center fixed;
   background-size: cover;
   margin: 0;
-  font-family: Arial, sans-serif; /* Keep Arial as per screenshot feel */
+  font-family: Arial, sans-serif;
   background-color: #eef2f7;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   box-sizing: border-box;
-  padding: 0; /* No padding on desktop body */
-  overflow-y: auto; /* Allow scrolling if content is tall */
+  padding: 0;
+  overflow-y: auto;
+  align-self: center; /* Ensures vertical centering if content is short */
+  flex-shrink: 0;
 }
 
-/* Auth Container (Desktop/Default - matches screenshot) */
+/* Auth Container (Desktop/Default) */
 .auth-container {
   position: relative;
-  max-width: 320px; /* Exact width from your original login form */
+  max-width: 320px;
   margin: 0 auto;
-  padding: 18px 18px; /* Consistent original padding */
+  padding: 18px 18px;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   background: url("/images/download.jpeg") no-repeat center center;
   background-size: cover;
   box-sizing: border-box;
-  /* Ensure it's vertically centered by flexbox on body */
-  align-self: center;
-  flex-shrink: 0; /* Prevent shrinking if content is small */
 }
 
 /* Overlay for readability (Desktop/Default) */
@@ -36,8 +35,8 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background-color: rgba(255, 255, 255, 0.75); /* Original opacity */
-  backdrop-filter: blur(3px); /* Original blur */
+  background-color: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(3px);
   z-index: 0;
   border-radius: 12px;
 }
@@ -54,29 +53,29 @@ h2 {
   margin-bottom: 10px;
   text-align: center;
   color: green;
-  font-size: 19px; /* Original font size */
+  font-size: 19px;
 }
 
 /* General paragraph in auth container (Desktop/Default) */
 .auth-container p {
     text-align: center;
-    margin-bottom: 20px; /* Original margin */
-    font-size: 14px; /* Original font size */
+    margin-bottom: 20px;
+    font-size: 14px;
     color: #555;
 }
 
 /* Specific styles for links within auth container paragraphs (Desktop/Default) */
-.auth-link-text { /* This class was added for consistency in EJS, now styled here */
+.auth-link-text {
     text-align: center;
-    margin-top: 20px; /* Original margin */
-    font-size: 14px; /* Original font size */
+    margin-top: 10px; /* Reduced margin-top for closer links */
+    font-size: 14px;
 }
 .auth-link-text:not(:first-of-type) {
-    margin-top: 10px; /* Original margin */
-    font-size: 12px; /* Original font size */
+    margin-top: 5px; /* Even smaller margin for subsequent links */
+    font-size: 12px;
 }
 .auth-link {
-    color: #4A90E2; /* Original blue */
+    color: #4A90E2;
     text-decoration: none;
     transition: text-decoration 0.2s ease;
 }
@@ -84,38 +83,38 @@ h2 {
     text-decoration: underline;
 }
 .admin-auth-link {
-    color: #007bff; /* Original blue */
+    color: #007bff;
 }
 
 
 .form-group {
   position: relative;
-  margin-bottom: 6px; /* Original margin */
+  margin-bottom: 6px;
   text-align: left;
 }
 
 label {
   display: block;
-  margin-bottom: 1px; /* Original margin */
+  margin-bottom: 1px;
   font-weight: bold;
-  font-size: 12px; /* Original font size */
+  font-size: 12px;
 }
 
 input,
 select {
   width: 100%;
-  padding: 7px 34px 7px 9px; /* Original padding */
-  font-size: 13px; /* Original font size */
+  padding: 7px 34px 7px 9px;
+  font-size: 13px;
   border: 1.5px solid #ccc;
-  border-radius: 5px; /* Original border-radius */
+  border-radius: 5px;
   box-sizing: border-box;
-  height: 36px; /* Original fixed height */
+  height: 36px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 input:focus, select:focus {
     outline: none;
-    border-color: #4CAF50; /* Green focus border */
+    border-color: #4CAF50;
     box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
 }
 
@@ -131,24 +130,24 @@ input:valid {
 
 .password-group .toggle-pass {
   position: absolute;
-  right: 8px; /* Original right position */
-  top: 26px; /* Original top position */
+  right: 8px;
+  top: 26px;
   background: none;
   border: none;
   cursor: pointer;
   color: #4A90E2;
-  font-size: 12px; /* Original font size */
-  padding: 0; /* No padding on desktop */
+  font-size: 12px;
+  padding: 0;
 }
 
 .form-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 12px; /* Original margin */
-  margin-bottom: 5px; /* Original margin */
-  flex-wrap: nowrap; /* Prevent wrapping on desktop */
-  gap: 10px; /* Original gap */
+  margin-top: 12px;
+  margin-bottom: 5px;
+  flex-wrap: nowrap;
+  gap: 10px;
 }
 
 button[type="submit"]:disabled {
@@ -159,37 +158,37 @@ button[type="submit"]:disabled {
 
 /* General Button Style (for login, signup, send OTP, reset password) */
 button {
-  padding: 8px 15px; /* Original padding */
+  padding: 8px 15px;
   border: none;
-  font-size: 12px; /* Original font size */
+  font-size: 12px;
   color: white;
   background-color: #4A90E2;
   text-decoration: none;
-  border-radius: 5px; /* Original border-radius */
+  border-radius: 5px;
   cursor: pointer;
-  flex-grow: 1; /* Allow buttons to grow */
-  min-width: unset; /* No min-width on desktop */
+  flex-grow: 1;
+  min-width: unset;
   box-sizing: border-box;
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 button:hover:not(:disabled) {
   background: #357ab8;
-  transform: translateY(0); /* No transform on desktop */
+  transform: translateY(0);
 }
 
 /* Link styled as button (Sign Up) */
 .link {
-  padding: 8px 15px; /* Original padding */
+  padding: 8px 15px;
   border: none;
-  font-size: 12px; /* Original font size */
+  font-size: 12px;
   color: white;
   background-color: #2ecc71;
   text-decoration: none;
-  border-radius: 5px; /* Original border-radius */
+  border-radius: 5px;
   cursor: pointer;
   flex-grow: 1;
-  min-width: unset; /* No min-width on desktop */
+  min-width: unset;
   text-align: center;
   box-sizing: border-box;
   transition: background-color 0.3s ease, transform 0.2s ease;
@@ -197,14 +196,14 @@ button:hover:not(:disabled) {
 
 .link:hover {
   background: #27ae60;
-  transform: translateY(0); /* No transform on desktop */
+  transform: translateY(0);
 }
 
 .error-msg,
 #errorMsg,
 .caps-alert {
   color: #e74c3c;
-  font-size: 10px; /* Original font size */
+  font-size: 10px;
   min-height: 1em;
   margin-top: -3px;
   margin-bottom: 3px;
@@ -224,7 +223,7 @@ input.shake {
 
 /* Small text below password field (Desktop/Default) */
 .password-group small {
-  font-size: 9px; /* Original font size */
+  font-size: 9px;
   color: #666;
   display: block;
   margin-top: 2px;
@@ -262,20 +261,20 @@ input.shake {
 /* Tablets and smaller laptops (up to 768px) */
 @media (max-width: 768px) {
     body {
-        padding: 10px; /* Add padding to body on smaller screens */
+        padding: 10px;
     }
     .auth-container {
-        padding: 20px; /* Increase padding inside container */
-        max-width: 350px; /* Allow it to grow a bit */
-        width: calc(100% - 30px); /* Fluid width */
-        border-radius: 10px; /* Slightly less rounded */
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Keep original shadow */
+        padding: 20px;
+        max-width: 350px;
+        width: calc(100% - 30px);
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
     .auth-container::before {
-        backdrop-filter: blur(3px); /* Keep original blur */
+        backdrop-filter: blur(3px);
     }
     h2 {
-        font-size: 1.8em; /* Smaller heading */
+        font-size: 1.8em;
         margin-bottom: 10px;
     }
     .auth-container p {
@@ -283,7 +282,7 @@ input.shake {
         margin-bottom: 15px;
     }
     .auth-link-text {
-        font-size: 0.8em; /* Smaller font for links in paragraphs */
+        font-size: 0.8em;
         margin-top: 15px;
     }
     .auth-link-text:not(:first-of-type) {
@@ -301,11 +300,11 @@ input.shake {
     .password-group .toggle-pass {
         font-size: 0.8em;
         right: 10px;
-        top: 50%; /* Revert to 50% for mobile */
-        transform: translateY(-50%); /* For vertical centering */
+        top: 50%;
+        transform: translateY(-50%);
     }
     .form-actions {
-        flex-direction: column; /* Stack buttons vertically */
+        flex-direction: column;
         gap: 10px;
         margin-top: 15px;
     }
@@ -313,12 +312,12 @@ input.shake {
         padding: 10px 15px;
         font-size: 0.9em;
         min-width: unset;
-        width: 100%; /* Take full width */
+        width: 100%;
         border-radius: 6px;
-        transform: translateY(0); /* Ensure no transform */
+        transform: translateY(0);
     }
     button:hover:not(:disabled), .link:hover {
-        transform: translateY(0); /* No transform on hover for mobile */
+        transform: translateY(0);
     }
     .error-msg, #errorMsg, .password-group small, .message-success, .message-error, .caps-alert {
         font-size: 0.8em;
