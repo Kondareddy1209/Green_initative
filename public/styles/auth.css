@@ -5,31 +5,27 @@ body {
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #eef2f7;
-  /* Consistent background for all auth pages */
   display: flex;
-  /* Use flexbox to center content vertically */
   justify-content: center;
-  /* Center horizontally */
   align-items: center;
-  /* Center vertically */
   min-height: 100vh;
-  /* Ensure body takes full viewport height */
+  box-sizing: border-box; /* Ensure padding/border don't cause overflow */
+  padding: 10px; /* Small padding for very small screens */
 }
 
 /* Auth Container */
 .auth-container {
   position: relative;
   max-width: 320px;
-  /* Keeping width compact */
+  width: calc(100% - 20px); /* Fluid width, accounting for body padding */
   margin: 0 auto;
-  /* Removed top/bottom margin from here, handled by body flex */
-  padding: 18px 18px;
-  /* Further reduced overall padding */
+  padding: 18px;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   background: url("/images/download.jpeg") no-repeat center center;
   background-size: cover;
+  box-sizing: border-box; /* Include padding in width calculation */
 }
 
 /* Overlay for readability */
@@ -38,7 +34,6 @@ body {
   position: absolute;
   inset: 0;
   background-color: rgba(255, 255, 255, 0.75);
-  /* Slightly more opaque overlay for better contrast */
   backdrop-filter: blur(3px);
   z-index: 0;
   border-radius: 12px;
@@ -53,43 +48,34 @@ body {
 /* Green Heading */
 h2 {
   margin-top: 5px;
-  /* Reduced top margin for heading */
   margin-bottom: 10px;
-  /* Reduced margin */
   text-align: center;
   color: green;
   font-size: 19px;
-  /* Slightly smaller font for compactness */
 }
 
 .form-group {
   position: relative;
   margin-bottom: 6px;
-  /* Significantly reduced margin between form groups */
   text-align: left;
 }
 
 label {
   display: block;
   margin-bottom: 1px;
-  /* Minimal margin below label */
   font-weight: bold;
   font-size: 12px;
-  /* Smallest font for labels */
 }
 
 input,
 select {
   width: 100%;
   padding: 7px 34px 7px 9px;
-  /* Minimized padding */
   font-size: 13px;
-  /* Slightly smaller font */
   border: 1.5px solid #ccc;
   border-radius: 5px;
   box-sizing: border-box;
   height: 36px;
-  /* Fixed height for inputs/selects for even more consistency */
 }
 
 input:invalid:focus,
@@ -104,9 +90,7 @@ input:valid {
 .password-group .toggle-pass {
   position: absolute;
   right: 8px;
-  /* Adjusted right position */
   top: 26px;
-  /* Adjusted top to match new input padding/height */
   background: none;
   border: none;
   cursor: pointer;
@@ -119,9 +103,9 @@ input:valid {
   justify-content: space-between;
   align-items: center;
   margin-top: 12px;
-  /* Reduced margin */
   margin-bottom: 5px;
-  /* Added a small margin to bottom of actions */
+  flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+  gap: 10px; /* Space between wrapped items */
 }
 
 button[type="submit"]:disabled {
@@ -132,15 +116,16 @@ button[type="submit"]:disabled {
 /* Login button (blue) */
 button {
   padding: 8px 15px;
-  /* Minimized padding */
   border: none;
   font-size: 12px;
-  /* Minimized font size */
   color: white;
   background-color: #4A90E2;
   text-decoration: none;
   border-radius: 5px;
   cursor: pointer;
+  flex-grow: 1; /* Allow buttons to grow */
+  min-width: 120px; /* Minimum width for buttons */
+  box-sizing: border-box;
 }
 
 button:hover:not(:disabled) {
@@ -150,15 +135,17 @@ button:hover:not(:disabled) {
 /* Sign up link styled as green button */
 .link {
   padding: 8px 15px;
-  /* Minimized padding */
   border: none;
   font-size: 12px;
-  /* Minimized font size */
   color: white;
   background-color: #2ecc71;
   text-decoration: none;
   border-radius: 5px;
   cursor: pointer;
+  flex-grow: 1; /* Allow links to grow */
+  min-width: 120px; /* Minimum width for links */
+  text-align: center; /* Center text in link button */
+  box-sizing: border-box;
 }
 
 .link:hover {
@@ -169,12 +156,9 @@ button:hover:not(:disabled) {
 #errorMsg {
   color: #e74c3c;
   font-size: 10px;
-  /* Smallest font */
   height: 1em;
   margin-top: -3px;
-  /* Adjusted negative margin */
   margin-bottom: 3px;
-  /* Adjusted margin */
   text-align: left;
 }
 
@@ -184,17 +168,14 @@ input.shake {
 }
 
 @keyframes shake {
-
   0%,
   100% {
     transform: translateX(0);
   }
-
   20%,
   60% {
     transform: translateX(-6px);
   }
-
   40%,
   80% {
     transform: translateX(6px);
@@ -204,11 +185,94 @@ input.shake {
 /* Small text below password field */
 .password-group small {
   font-size: 9px;
-  /* Smallest font for hints */
   color: #666;
   display: block;
-  margin-top: -7px;
-  /* Pull it up closer to input */
+  margin-top: 2px;
   margin-bottom: 3px;
-  /* Add some space below */
+}
+
+/* Message containers (success/error) for auth pages */
+.message-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+.message-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+
+/* --- Media Queries for Responsiveness (Auth Pages) --- */
+
+@media (max-width: 480px) {
+    body {
+        padding: 5px; /* Even less padding on very small screens */
+    }
+    .auth-container {
+        padding: 15px; /* Reduce padding inside container */
+        width: calc(100% - 10px); /* Maximize width on tiny screens */
+    }
+    h2 {
+        font-size: 1.6em; /* Smaller heading */
+    }
+    .form-group {
+        margin-bottom: 10px; /* Slightly more space between form groups */
+    }
+    label {
+        font-size: 11px; /* Smaller labels */
+    }
+    input, select {
+        padding: 8px 10px; /* Adjust input padding */
+        font-size: 12px; /* Adjust input font size */
+        height: 34px; /* Adjust input height */
+    }
+    .password-group .toggle-pass {
+        top: 24px; /* Adjust toggle position */
+        font-size: 11px;
+    }
+    .form-actions {
+        flex-direction: column; /* Ensure buttons stack */
+        gap: 8px; /* Smaller gap */
+        margin-top: 10px;
+    }
+    button, .link {
+        padding: 10px 12px; /* Adjust button padding */
+        font-size: 11px; /* Adjust button font size */
+        min-width: unset; /* Remove min-width for full flexibility */
+        width: 100%; /* Ensure they take full width when stacked */
+    }
+    p {
+        font-size: 12px; /* Smaller paragraph text */
+    }
+    .error-msg, #errorMsg, .password-group small {
+        font-size: 9px; /* Smallest text */
+    }
+}
+
+/* Specific adjustments for admin_login.ejs */
+.auth-container p { /* General paragraph in auth container */
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 20px;
+}
+@media (max-width: 480px) {
+    .auth-container p {
+        font-size: 12px;
+        margin-bottom: 15px;
+    }
 }
