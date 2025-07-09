@@ -1,100 +1,127 @@
-/* Full background for body */
+/* Full background for body (Desktop/Default) */
 body {
   background: url("/images/green.jpg") no-repeat center center fixed;
   background-size: cover;
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #eef2f7;
-  /* Consistent background for all auth pages */
   display: flex;
-  /* Use flexbox to center content vertically */
   justify-content: center;
-  /* Center horizontally */
   align-items: center;
-  /* Center vertically */
   min-height: 100vh;
-  /* Ensure body takes full viewport height */
+  box-sizing: border-box;
+  padding: 0;
+  overflow-y: auto;
+  align-self: center; /* Ensures vertical centering if content is short */
+  flex-shrink: 0;
 }
 
-/* Auth Container */
+/* Auth Container (Desktop/Default) */
 .auth-container {
   position: relative;
   max-width: 320px;
-  /* Keeping width compact */
   margin: 0 auto;
-  /* Removed top/bottom margin from here, handled by body flex */
   padding: 18px 18px;
-  /* Further reduced overall padding */
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   background: url("/images/download.jpeg") no-repeat center center;
   background-size: cover;
+  box-sizing: border-box;
 }
 
-/* Overlay for readability */
+/* Overlay for readability (Desktop/Default) */
 .auth-container::before {
   content: "";
   position: absolute;
   inset: 0;
   background-color: rgba(255, 255, 255, 0.75);
-  /* Slightly more opaque overlay for better contrast */
   backdrop-filter: blur(3px);
   z-index: 0;
   border-radius: 12px;
 }
 
-/* Ensure content is above overlay */
+/* Ensure content is above overlay (Desktop/Default) */
 .auth-container * {
   position: relative;
   z-index: 1;
 }
 
-/* Green Heading */
+/* Green Heading (Desktop/Default) */
 h2 {
   margin-top: 5px;
-  /* Reduced top margin for heading */
   margin-bottom: 10px;
-  /* Reduced margin */
   text-align: center;
   color: green;
   font-size: 19px;
-  /* Slightly smaller font for compactness */
 }
+
+/* General paragraph in auth container (Desktop/Default) */
+.auth-container p {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #555;
+}
+
+/* Specific styles for links within auth container paragraphs (Desktop/Default) */
+.auth-link-text {
+    text-align: center;
+    margin-top: 10px; /* Reduced margin-top for closer links */
+    font-size: 14px;
+}
+.auth-link-text:not(:first-of-type) {
+    margin-top: 5px; /* Even smaller margin for subsequent links */
+    font-size: 12px;
+}
+.auth-link {
+    color: #4A90E2;
+    text-decoration: none;
+    transition: text-decoration 0.2s ease;
+}
+.auth-link:hover {
+    text-decoration: underline;
+}
+.admin-auth-link {
+    color: #007bff;
+}
+
 
 .form-group {
   position: relative;
   margin-bottom: 6px;
-  /* Significantly reduced margin between form groups */
   text-align: left;
 }
 
 label {
   display: block;
   margin-bottom: 1px;
-  /* Minimal margin below label */
   font-weight: bold;
   font-size: 12px;
-  /* Smallest font for labels */
 }
 
 input,
 select {
   width: 100%;
   padding: 7px 34px 7px 9px;
-  /* Minimized padding */
   font-size: 13px;
-  /* Slightly smaller font */
   border: 1.5px solid #ccc;
   border-radius: 5px;
   box-sizing: border-box;
   height: 36px;
-  /* Fixed height for inputs/selects for even more consistency */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
 }
 
 input:invalid:focus,
 input:invalid:not(:placeholder-shown) {
   border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
 }
 
 input:valid {
@@ -104,14 +131,13 @@ input:valid {
 .password-group .toggle-pass {
   position: absolute;
   right: 8px;
-  /* Adjusted right position */
   top: 26px;
-  /* Adjusted top to match new input padding/height */
   background: none;
   border: none;
   cursor: pointer;
   color: #4A90E2;
   font-size: 12px;
+  padding: 0;
 }
 
 .form-actions {
@@ -119,62 +145,68 @@ input:valid {
   justify-content: space-between;
   align-items: center;
   margin-top: 12px;
-  /* Reduced margin */
   margin-bottom: 5px;
-  /* Added a small margin to bottom of actions */
+  flex-wrap: nowrap;
+  gap: 10px;
 }
 
 button[type="submit"]:disabled {
   background: #ccc;
   cursor: not-allowed;
+  opacity: 0.7;
 }
 
-/* Login button (blue) */
+/* General Button Style (for login, signup, send OTP, reset password) */
 button {
   padding: 8px 15px;
-  /* Minimized padding */
   border: none;
   font-size: 12px;
-  /* Minimized font size */
   color: white;
   background-color: #4A90E2;
   text-decoration: none;
   border-radius: 5px;
   cursor: pointer;
+  flex-grow: 1;
+  min-width: unset;
+  box-sizing: border-box;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 button:hover:not(:disabled) {
   background: #357ab8;
+  transform: translateY(0);
 }
 
-/* Sign up link styled as green button */
+/* Link styled as button (Sign Up) */
 .link {
   padding: 8px 15px;
-  /* Minimized padding */
   border: none;
   font-size: 12px;
-  /* Minimized font size */
   color: white;
   background-color: #2ecc71;
   text-decoration: none;
   border-radius: 5px;
   cursor: pointer;
+  flex-grow: 1;
+  min-width: unset;
+  text-align: center;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .link:hover {
   background: #27ae60;
+  transform: translateY(0);
 }
 
 .error-msg,
-#errorMsg {
+#errorMsg,
+.caps-alert {
   color: #e74c3c;
   font-size: 10px;
-  /* Smallest font */
-  height: 1em;
+  min-height: 1em;
   margin-top: -3px;
-  /* Adjusted negative margin */
   margin-bottom: 3px;
-  /* Adjusted margin */
   text-align: left;
 }
 
@@ -184,31 +216,160 @@ input.shake {
 }
 
 @keyframes shake {
-
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-
-  20%,
-  60% {
-    transform: translateX(-6px);
-  }
-
-  40%,
-  80% {
-    transform: translateX(6px);
-  }
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
 }
 
-/* Small text below password field */
+/* Small text below password field (Desktop/Default) */
 .password-group small {
   font-size: 9px;
-  /* Smallest font for hints */
   color: #666;
   display: block;
-  margin-top: -7px;
-  /* Pull it up closer to input */
+  margin-top: 2px;
   margin-bottom: 3px;
-  /* Add some space below */
+}
+
+/* Message containers (success/error) for auth pages (Desktop/Default) */
+.message-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+.message-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6fb;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+
+/* --- Media Queries for Responsiveness (Auth Pages - Mobile Overrides) --- */
+
+/* Tablets and smaller laptops (up to 768px) */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    .auth-container {
+        padding: 20px;
+        max-width: 350px;
+        width: calc(100% - 30px);
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .auth-container::before {
+        backdrop-filter: blur(3px);
+    }
+    h2 {
+        font-size: 1.8em;
+        margin-bottom: 10px;
+    }
+    .auth-container p {
+        font-size: 0.9em;
+        margin-bottom: 15px;
+    }
+    .auth-link-text {
+        font-size: 0.8em;
+        margin-top: 15px;
+    }
+    .auth-link-text:not(:first-of-type) {
+        margin-top: 5px;
+    }
+    label {
+        font-size: 0.85em;
+    }
+    input, select {
+        padding: 8px 12px;
+        font-size: 0.9em;
+        height: 40px;
+        border-radius: 6px;
+    }
+    .password-group .toggle-pass {
+        font-size: 0.8em;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    button, .link {
+        padding: 10px 15px;
+        font-size: 0.9em;
+        min-width: unset;
+        width: 100%;
+        border-radius: 6px;
+        transform: translateY(0);
+    }
+    button:hover:not(:disabled), .link:hover {
+        transform: translateY(0);
+    }
+    .error-msg, #errorMsg, .password-group small, .message-success, .message-error, .caps-alert {
+        font-size: 0.8em;
+    }
+}
+
+/* Small phones (up to 480px) */
+@media (max-width: 480px) {
+    body {
+        padding: 5px;
+    }
+    .auth-container {
+        padding: 15px;
+        width: calc(100% - 10px);
+        border-radius: 8px;
+    }
+    h2 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+    .auth-container p {
+        font-size: 0.85em;
+        margin-bottom: 10px;
+    }
+    label {
+        font-size: 0.8em;
+    }
+    input, select {
+        padding: 7px 10px;
+        font-size: 0.85em;
+        height: 38px;
+    }
+    .password-group .toggle-pass {
+        font-size: 0.75em;
+        right: 8px;
+    }
+    .form-actions {
+        gap: 8px;
+        margin-top: 10px;
+    }
+    button, .link {
+        padding: 9px 12px;
+        font-size: 0.85em;
+    }
+    .error-msg, #errorMsg, .password-group small, .message-success, .message-error, .caps-alert {
+        font-size: 0.75em;
+    }
+    .auth-link-text {
+        font-size: 0.75em;
+        margin-top: 10px;
+    }
+    .auth-link-text:not(:first-of-type) {
+        margin-top: 5px;
+    }
 }
