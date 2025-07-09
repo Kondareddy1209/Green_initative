@@ -3,34 +3,276 @@ body {
   background: #eef2f7;
   margin: 0;
   padding: 0;
+  display: flex; /* Use flexbox for overall layout */
+  flex-direction: column; /* Stack header, main, footer vertically */
+  min-height: 100vh; /* Ensure body takes full viewport height */
 }
-.main {
-  max-width: 900px;
+
+/* General Container Styles (apply to .main, .admin-container, .tracking-container, etc.) */
+.main,
+.admin-container,
+.tracking-container,
+.badges-container,
+.leaderboard-container,
+.donation-container,
+.chat-container,
+.profile-card,
+.edit-profile-container,
+.history-container {
+  max-width: 900px; /* Max width for desktop */
   margin: 30px auto;
   padding: 20px;
   background: #ffffff;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-.top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* Ensures left and right alignment */
-  margin-bottom: 20px;
+  box-sizing: border-box; /* Include padding in width calculation */
+  width: calc(100% - 40px); /* Fluid width with horizontal padding */
 }
 
+/* Adjust margins for smaller screens */
+@media (max-width: 768px) {
+    .main,
+    .admin-container,
+    .tracking-container,
+    .badges-container,
+    .leaderboard-container,
+    .donation-container,
+    .chat-container,
+    .profile-card,
+    .edit-profile-container,
+    .history-container {
+        margin: 15px auto; /* Smaller top/bottom margin */
+        padding: 15px; /* Slightly less padding */
+        width: calc(100% - 30px); /* Adjust fluid width */
+    }
+}
+
+
+/* --- Navbar Styling (from navbar.ejs, moved here for consistency) --- */
+.navbar {
+    background-color: #4CAF50;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.menu-toggle {
+    display: none; /* Hidden by default on large screens */
+    font-size: 1.8em;
+    cursor: pointer;
+    color: white;
+    margin-right: 15px;
+}
+
+.navbar-brand-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-right: 20px;
+}
+
+.navbar .logo {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    margin-bottom: 2px;
+    white-space: nowrap;
+}
+
+.home-brand-link {
+    color: white;
+    text-decoration: none;
+    font-size: 0.8em;
+    padding: 2px 5px;
+    border-radius: 3px;
+    transition: background-color 0.3s ease;
+    text-align: left;
+}
+
+.home-brand-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+}
+
+.navbar-links a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 15px;
+    margin-right: 5px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-links a:hover {
+    background-color: #5cb85c;
+}
+
+.navbar-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.navbar-user-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+}
+
+.navbar-user-info span {
+    font-weight: bold;
+}
+
+.navbar-points {
+    background-color: #f39c12;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.navbar-points i {
+    font-size: 1.1em;
+}
+
+.navbar-logout {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-logout:hover {
+    background-color: #c9302c;
+}
+
+.admin-link-btn {
+    background-color: #4A90E2;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+}
+.admin-link-btn:hover {
+    background-color: #357ab8;
+}
+
+/* Off-canvas (Side) Menu Styling */
+.side-menu {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1001;
+    top: 0;
+    left: 0;
+    background-color: #333;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+}
+
+.side-menu a {
+    padding: 15px 25px;
+    text-decoration: none;
+    font-size: 1.5em;
+    color: #f1f1f1;
+    display: block;
+    transition: 0.3s;
+    border-bottom: 1px solid #444;
+}
+
+.side-menu a:hover {
+    color: #4CAF50;
+    background-color: #555;
+}
+
+.side-menu .close-btn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 3em;
+    margin-left: 50px;
+    color: #f1f1f1;
+}
+
+/* Media query for responsiveness */
+@media screen and (max-width: 768px) {
+    .navbar-links, .navbar-user-info {
+        display: none; /* Hide main links and user info on small screens */
+    }
+    .menu-toggle {
+        display: block; /* Show hamburger menu */
+    }
+    .navbar .logo {
+        margin-right: auto;
+        margin-left: 10px;
+    }
+    /* Ensure user info is shown in mobile sidebar if desired */
+    .navbar-user-info.mobile-view { /* You might need to add this class in your EJS */
+        display: flex;
+        align-items: center;
+        padding: 15px; /* Add padding for mobile view */
+        background-color: #444; /* Different background for mobile user info */
+        border-bottom: 1px solid #555;
+    }
+    .side-menu {
+        padding-top: 15px;
+    }
+    .side-menu a {
+        font-size: 1.2em;
+        padding: 10px 15px;
+    }
+    .side-menu .close-btn {
+        font-size: 2.5em;
+    }
+}
+/* --- End Navbar Styling --- */
+
+
+/* --- Card and Chart Layouts --- */
 .cards {
   display: flex;
   gap: 20px;
+  flex-wrap: wrap; /* Allow cards to wrap on smaller screens */
 }
 .card {
   flex: 1;
+  min-width: 280px; /* Ensure cards don't get too small */
   background: linear-gradient(145deg, #76b852, #8DC26F);
   color: #fff;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transition: transform 0.2s ease;
+  box-sizing: border-box;
 }
 .card:hover {
   transform: translateY(-5px);
@@ -38,18 +280,24 @@ body {
 .card h3 {
   margin-top: 0;
 }
+
 .charts {
   display: flex;
   gap: 20px;
   margin-top: 30px;
+  flex-wrap: wrap; /* Allow charts to wrap on smaller screens */
 }
 .chart-container {
   flex: 1;
+  min-width: 280px; /* Ensure charts don't get too small */
   background: #fff;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
 }
+
+/* --- Buttons --- */
 button {
   padding: 12px 24px;
   background: #76b852;
@@ -63,6 +311,8 @@ button {
 button:hover {
   background: #669e45;
 }
+
+/* --- Upload Progress (from dashboard.ejs) --- */
 .upload-progress {
   margin-top: 20px;
 }
@@ -75,4 +325,227 @@ button:hover {
   text-align: center;
   border-radius: 4px;
   transition: width 0.3s ease;
+}
+
+/* --- Home Page Specific Styles (from home.ejs, moved here) --- */
+.home-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  width: calc(100% - 40px); /* Fluid width */
+}
+
+.welcome-section {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.welcome-section h1 {
+  color: #2ecc71;
+  font-size: 2.5em;
+  margin-bottom: 10px;
+}
+
+.welcome-section p {
+  color: #555;
+  font-size: 1.1em;
+}
+
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+  flex-wrap: wrap; /* Allow buttons to wrap */
+}
+
+.cta-buttons .btn {
+  background-color: #007bff;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 1.1em;
+  transition: background-color 0.3s ease;
+  flex-grow: 1; /* Allow buttons to grow and fill space */
+  max-width: 250px; /* Limit individual button width */
+  text-align: center;
+}
+
+.cta-buttons .btn:hover {
+  background-color: #0056b3;
+}
+
+.analysis-summary-section {
+  background: #f9f9f9;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 40px;
+}
+
+.analysis-summary-section h3 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.analysis-summary-section .summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  text-align: center;
+}
+
+.analysis-summary-section .summary-item {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.analysis-summary-section .summary-item strong {
+  display: block;
+  font-size: 1.1em;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.analysis-summary-section .summary-item p {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #4CAF50;
+}
+
+.analysis-summary-section .summary-item.red {
+  color: #e74c3c;
+}
+
+.tips-section {
+  background: #fff9e6;
+  padding: 25px;
+  border-left: 6px solid #f39c12;
+  border-radius: 8px;
+  margin-bottom: 40px;
+}
+
+.tips-section h4 {
+  color: #d35400;
+  margin-bottom: 15px;
+}
+
+.tips-section ul {
+  list-style-type: disc;
+  padding-left: 25px;
+  color: #666;
+}
+
+.tips-section li {
+  margin-bottom: 8px;
+}
+
+.no-data-message {
+  text-align: center;
+  padding: 30px;
+  color: #777;
+  font-style: italic;
+  font-size: 1.1em;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+}
+
+/* --- Media Queries for Responsiveness --- */
+
+/* Small screens (e.g., mobile phones, up to 768px) */
+@media (max-width: 768px) {
+    /* General adjustments for smaller screens */
+    h1 {
+        font-size: 2em; /* Slightly smaller headings */
+    }
+    h2 {
+        font-size: 1.5em;
+    }
+    h3 {
+        font-size: 1.2em;
+    }
+    p, li, span {
+        font-size: 0.9em; /* Slightly smaller text */
+    }
+
+    /* Navbar adjustments already handled above in .navbar media query */
+
+    /* Home Page Specifics */
+    .home-container {
+        padding: 15px; /* Reduce padding on mobile */
+        margin: 10px auto; /* Reduce margin */
+    }
+
+    .welcome-section h1 {
+        font-size: 2em; /* Adjust welcome heading size */
+    }
+    .welcome-section p {
+        font-size: 1em;
+    }
+
+    .cta-buttons {
+        flex-direction: column; /* Stack buttons vertically */
+        gap: 10px; /* Reduce gap between stacked buttons */
+        align-items: center; /* Center stacked buttons */
+    }
+    .cta-buttons .btn {
+        width: 100%; /* Full width for stacked buttons */
+        max-width: 300px; /* Max width for consistency */
+        font-size: 1em; /* Adjust button font size */
+        padding: 10px 15px; /* Adjust button padding */
+    }
+
+    .analysis-summary-section .summary-grid {
+        grid-template-columns: 1fr; /* Stack summary items vertically */
+    }
+    .analysis-summary-section .summary-item {
+        padding: 10px; /* Smaller padding for summary items */
+    }
+    .analysis-summary-section .summary-item p {
+        font-size: 1.2em; /* Adjust value font size */
+    }
+
+    .tips-section {
+        padding: 15px; /* Reduce padding for tips section */
+    }
+    .tips-section ul {
+        padding-left: 15px; /* Adjust list padding */
+    }
+}
+
+/* Even smaller screens (e.g., very small phones, up to 480px) */
+@media (max-width: 480px) {
+    .home-container {
+        padding: 10px;
+        margin: 5px auto;
+    }
+    .welcome-section h1 {
+        font-size: 1.8em;
+    }
+    .welcome-section p {
+        font-size: 0.9em;
+    }
+    .cta-buttons .btn {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+    .analysis-summary-section {
+        padding: 15px;
+    }
+    .analysis-summary-section .summary-item p {
+        font-size: 1.1em;
+    }
+    .tips-section {
+        padding: 10px;
+    }
 }
