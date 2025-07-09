@@ -1,80 +1,135 @@
 // utils/ollama_service.js
 
-// Ensure dotenv is loaded if you haven't done it globally in app.js
-// If you load it only in app.js, make sure process.env variables are accessible here.
-// require('dotenv').config();
-
-const ollama = require('ollama'); // Requires 'ollama' npm package to be installed
-
-// Configuration for Ollama host and model
-const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://localhost:11434';
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llama2'; // Default to llama2 if not specified
-
-// Initialize Ollama client
-// This client instance will be reused for all calls
-const ollamaClient = new ollama.Ollama({ host: OLLAMA_HOST });
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
 /**
- * Sends a chat message history to Ollama and gets a response.
- * @param {Array<Object>} messages An array of message objects { role: 'user' | 'assistant' | 'system' | 'tool', content: '...' }.
- * @param {boolean} [stream=false] Whether to stream the response (currently, this function only supports non-streaming).
- * @param {Object} [options={}] Additional options for the Ollama API call (e.g., temperature, top_p, etc.).
- * @returns {Promise<Object>} A promise that resolves to the Ollama API response object.
- * For non-streaming, this will contain { message: { role, content }, done, etc. }.
- * @throws {Error} If there's an issue communicating with the Ollama API.
+ * Sends a chat message history to Gemini API and gets a response, potentially with tool calls.
+ * @param {Array<Object>} messages An array of message objects { role: 'user' | 'model' | 'tool', content: '...' }.
+ * @param {Array<Object>} tools Optional: An array of tool definitions for Gemini to use.
+ * @returns {Promise<Object>} A promise that resolves to an object containing the Gemini message (content or tool_calls).
+ * @throws {Error} If there's an issue communicating with the Gemini API.
  */
-async function ollamaChat(messages, stream = false, options = {}) {
-    // Basic validation for messages structure
+async function ollamaChat(messages, tools = []) {
+    if (!GEMINI_API_KEY) {
+        throw new Error("Gemini API Key is not configured. Please set GEMINI_API_KEY in your .env file.");
+    }
     if (!Array.isArray(messages) || messages.length === 0) {
         throw new Error("Messages array must be non-empty and valid.");
     }
 
-    try {
-        console.log(`[OllamaService] Sending chat request to model '${OLLAMA_MODEL}' on host '${OLLAMA_HOST}'`);
-        // console.log("[OllamaService] Messages being sent:", JSON.stringify(messages, null, 2)); // Careful with logging sensitive data
-
-        const response = await ollamaClient.chat({
-            model: OLLAMA_MODEL,
-            messages: messages,
-            stream: stream, // Always false for now, as direct streaming to client is more complex
-            options: {
-                temperature: 0.5, // Default temperature for balanced responses
-                top_p: 0.9,
-                top_k: 40,
-                num_predict: 150, // <--- REDUCED TO 150 TOKENS FOR FASTER RESPONSES
-                // Merge any additional options provided
-                ...options
+    // Gemini expects 'user' and 'model' roles. 'assistant' from agent_core maps to 'model'.
+    // 'tool' role also needs special handling.
+    const geminiContents = messages.map(msg => {
+        let role = msg.role;
+        if (role === 'assistant') {
+            role = 'model';
+        } else if (role === 'tool') {
+            // Gemini expects tool outputs in a specific format: { role: 'tool', parts: [{ functionResponse: { name: 'tool_name', response: { ... } } }] }
+            // For simplicity, if tool output is just text, we'll map it as user content for now.
+            // If agent_core sends structured tool output, this needs refinement.
+            // Based on agent_core, tool.execute returns { result: '...' } or { message: '...' }
+            try {
+                const toolOutput = JSON.parse(msg.content); // Assuming msg.content from agent_core is JSON stringified tool result
+                if (toolOutput.result || toolOutput.message || toolOutput.error) {
+                    return {
+                        role: 'tool',
+                        parts: [{
+                            functionResponse: {
+                                name: msg.tool_call_id ? msg.tool_call_id.split('_')[0] : 'unknown_tool', // Extract tool name if possible
+                                response: toolOutput // Pass the structured tool result directly
+                            }
+                        }]
+                    };
+                }
+            } catch (e) {
+                // If not valid JSON, treat as plain text from tool
+                return {
+                    role: 'user', // Fallback for unstructured tool output
+                    parts: [{ text: `Tool Output: ${msg.content}` }]
+                };
             }
+        }
+        return {
+            role: role,
+            parts: [{ text: msg.content }]
+        };
+    }).filter(part => part.role !== 'system'); // Filter out system role messages for Gemini
+
+    const payload = {
+        contents: geminiContents,
+        generationConfig: {
+            // You can adjust temperature, topP, topK here if needed
+            // temperature: 0.5,
+            // topP: 0.9,
+            // topK: 40,
+        }
+    };
+
+    // Only include tools in the request if provided and non-empty
+    if (tools && tools.length > 0) {
+        payload.tools = tools.map(tool => ({
+            functionDeclarations: [{
+                name: tool.name,
+                description: tool.description,
+                parameters: tool.parameters
+            }]
+        }));
+    }
+
+    try {
+        const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
         });
 
-        if (stream) {
-            // If you later implement streaming to the client, you'd handle the ReadableStream here
-            // For now, this function is configured for non-streaming response as per previous plans.
-            throw new Error("Streaming not currently supported by this ollamaChat function implementation.");
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("[GeminiService Error] API response not OK:", errorData);
+            throw new Error(`Gemini API error: ${errorData.error.message || response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        if (result.candidates && result.candidates.length > 0 && result.candidates[0].content) {
+            const candidateContent = result.candidates[0].content;
+            if (candidateContent.parts && candidateContent.parts.length > 0 && candidateContent.parts[0].text) {
+                // Natural language response
+                return {
+                    message: {
+                        role: 'assistant',
+                        content: candidateContent.parts[0].text
+                    },
+                };
+            } else if (candidateContent.toolCalls && candidateContent.toolCalls.length > 0) {
+                // Structured tool call response
+                return {
+                    message: {
+                        role: 'assistant',
+                        tool_calls: candidateContent.toolCalls.map(tc => ({
+                            function: {
+                                name: tc.function.name,
+                                arguments: tc.function.args // Gemini uses 'args' for arguments
+                            },
+                            id: tc.id // Include tool call ID if available
+                        }))
+                    },
+                };
+            }
         } else {
-            // Return the full JSON response from Ollama for non-streaming requests
-            return response;
+            console.warn("[GeminiService] Unexpected Gemini API response structure or no candidates:", result);
+            throw new Error("Gemini API returned an unexpected response structure or no valid candidates.");
         }
 
     } catch (error) {
-        // Enhance error message for better debugging
-        if (error.code === 'ECONNREFUSED') {
-            console.error(`[OllamaService Error] Connection refused. Is Ollama server running at ${OLLAMA_HOST}?`);
-        } else if (error.name === 'FetchError') { // Common for network issues
-             console.error(`[OllamaService Error] Network issue or invalid host: ${error.message}`);
-        } else {
-            console.error(`[OllamaService Error] Failed to get response from Ollama:`, error);
-        }
+        console.error(`[GeminiService Error] Failed to get response from AI:`, error);
         throw new Error(`Failed to get response from AI: ${error.message}`);
     }
 }
 
-// You can add other Ollama API calls here if needed, e.g., for embeddings or raw generation:
-// async function ollamaGenerate(prompt, options = {}) { ... }
-// async function ollamaEmbeddings(text) { ... }
-
 module.exports = {
     ollamaChat,
-    // ollamaGenerate, // Export if implemented
-    // ollamaEmbeddings, // Export if implemented
 };

@@ -24,9 +24,46 @@ router.get('/donate', async (req, res) => {
     }
 });
 
-// REMOVED: POST route to process a simulated donation (formerly /process-donation)
-// There will be no backend processing for "donations" on the POST request now.
-// The frontend will be purely static.
+// NEW: POST route to process a simulated donation and save it to DB
+router.post('/process-donation', isAuthenticated, async (req, res) => {
+    const { amount } = req.body;
+    const userId = req.session.userId; // Get userId from session
+
+    if (!userId) {
+        return res.status(401).json({ error: 'User not authenticated.' });
+    }
+    if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+        return res.status(400).json({ error: 'Invalid donation amount.' });
+    }
+
+    try {
+        const newDonation = new Donation({
+            userId: userId,
+            amount: parseFloat(amount),
+            currency: 'inr', // Default to INR as per your model
+            status: 'succeeded', // Always 'succeeded' for simulated payments
+            stripePaymentIntentId: `simulated_pi_${Date.now()}_${userId.substring(0, 5)}` // Generate a dummy ID
+        });
+
+        await newDonation.save();
+        console.log(`Simulated donation saved to DB: User ${userId}, Amount ${amount}`);
+
+        // Update user's points for gamification (optional, but good for engagement)
+        const user = await User.findById(userId);
+        if (user) {
+            user.points = (user.points || 0) + Math.floor(parseFloat(amount) / 10); // Example: 1 point per 10 INR donated
+            // You could also ac a badge for first donation, or cumulative donation amounts
+            await user.save();
+            req.session.user = user; // Update session with new points
+        }
+
+        res.status(200).json({ message: 'Simulated donation recorded successfully!', donation: newDonation });
+    } catch (error) {
+        console.error('Error saving simulated donation:', error);
+        res.status(500).json({ error: 'Failed to record simulated donation. Please try again later.' });
+    }
+});
+
 
 // GET route to display donation history (http://localhost:3000/donations/history)
 router.get('/history', async (req, res) => {
@@ -39,24 +76,9 @@ router.get('/history', async (req, res) => {
         }
         const donations = await Donation.find({ userId: userId }).sort({ transactionDate: -1 }).lean();
         
-        // If no donations in DB, inject dummy data for showcase
-        if (donations.length === 0) {
-            donations.push({
-                _id: 'dummy1',
-                amount: 500,
-                currency: 'inr',
-                status: 'succeeded',
-                transactionDate: new Date(new Date().setMonth(new Date().getMonth() - 1)), // Last month
-                stripePaymentIntentId: 'dummy_pi_123_showcase'
-            }, {
-                _id: 'dummy2',
-                amount: 1000,
-                currency: 'inr',
-                status: 'succeeded',
-                transactionDate: new Date(),
-                stripePaymentIntentId: 'dummy_pi_456_showcase'
-            });
-        }
+        // REMOVED: Injecting dummy data here. Now it will only show real data from DB.
+        // If you still want dummy data when DB is empty, you can re-add the logic.
+        // For now, it will show an empty table if no real donations are saved.
 
         res.render('donation_history', { user: user, donations: donations });
     } catch (error) {

@@ -1,45 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>User Login • MyGreenHome</title>
-    <link rel="stylesheet" href="/styles/auth.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ESSENTIAL: This line enables responsiveness -->
+    <title>User Login • MyGreenHome</title>
+    <link rel="stylesheet" href="/styles/auth.css">
+    <style>
+    /* All login-specific styles are now handled in auth.css for better organization and responsiveness. */
+    /* This style block is intentionally left empty. */
+    </style>
 </head>
 <body>
-    <div class="auth-container">
-        <h2>User Login</h2>
-        
-        <% if (error) { %>
-            <p class="error-msg" style="text-align: center;"><%= error %></p>
-        <% } %>
-        <% if (message) { %>
-            <p class="message-success" style="text-align: center; color: green;"><%= message %></p>
-        <% } %>
+    <div class="auth-container">
+        <h2>User Login</h2>
+        
+        <% if (error) { %>
+            <p class="error-msg"><%= error %></p> <!-- Removed inline style, relies on auth.css -->
+        <% } %>
+        <% if (message) { %>
+            <p class="message-success"><%= message %></p> <!-- Removed inline style, relies on auth.css -->
+        <% } %>
 
-        <form id="loginForm" action="/auth/login" method="POST">
-            <div class="form-group">
-                <label for="username">Email</label>
-                <input id="username" name="username" type="email" required>
-            </div>
-            <div class="form-group password-group">
-                <label for="password">Password</label>
-                <input id="password" name="password" type="password" required>
-                <button type="button" id="togglePass" class="toggle-pass">Show</button>
-                <div id="capsAlert" hidden style="color:red; font-size: 12px; margin-top: 5px;">Caps Lock is ON</div>
-            </div>
+        <form id="loginForm" action="/auth/login" method="POST">
+            <div class="form-group">
+                <label for="username">Email</label>
+                <input id="username" name="username" type="email" required>
+            </div>
+            <div class="form-group password-group">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" required>
+                <button type="button" id="togglePass" class="toggle-pass">Show</button>
+                <div id="capsAlert" hidden class="caps-alert">Caps Lock is ON</div> <!-- Removed inline style, added class -->
+            </div>
 
-            <div class="form-actions">
-                <button type="submit">Login</button>
-                <a href="/auth/signup" class="link">Sign Up</a>
-            </div>
-            <p style="text-align: center; margin-top: 20px; font-size: 14px;">
-                <a href="/auth/forgot-password" style="color: #4A90E2; text-decoration: none;">Forgot Password?</a>
-            </p>
-            <p style="text-align: center; margin-top: 10px; font-size: 12px;">
-                Are you an admin? <a href="/admin/login" style="color: #007bff; text-decoration: none;">Admin Login</a>
-            </p>
-        </form>
-    </div>
-    <script src="/scripts/auth.js"></script>
+            <div class="form-actions">
+                <button type="submit">Login</button>
+                <a href="/auth/signup" class="link">Sign Up</a>
+            </div>
+            <p class="auth-link-text"> <!-- Added class for general auth links -->
+                <a href="/auth/forgot-password" class="auth-link">Forgot Password?</a> <!-- Added class for auth links -->
+            </p>
+            <p class="auth-link-text"> <!-- Added class for general auth links -->
+                Are you an admin? <a href="/admin/login" class="auth-link admin-auth-link">Admin Login</a> <!-- Added classes for auth links -->
+            </p>
+        </form>
+    </div>
+    <script src="/scripts/auth.js"></script>
 </body>
 </html>
