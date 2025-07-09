@@ -1,9 +1,9 @@
-/* Full background for body (Desktop/Default) */
+/* Full background for body (Desktop/Default - matches screenshot) */
 body {
   background: url("/images/green.jpg") no-repeat center center fixed;
   background-size: cover;
   margin: 0;
-  font-family: Arial, sans-serif; /* Reverted to Arial as per original */
+  font-family: Arial, sans-serif; /* Keep Arial as per screenshot feel */
   background-color: #eef2f7;
   display: flex;
   justify-content: center;
@@ -11,20 +11,24 @@ body {
   min-height: 100vh;
   box-sizing: border-box;
   padding: 0; /* No padding on desktop body */
+  overflow-y: auto; /* Allow scrolling if content is tall */
 }
 
-/* Auth Container (Desktop/Default) */
+/* Auth Container (Desktop/Default - matches screenshot) */
 .auth-container {
   position: relative;
-  max-width: 320px; /* Original max-width for desktop */
-  margin: 0 auto;
-  padding: 18px 18px; /* Original padding */
+  max-width: 320px; /* Exact width from your original login form */
+  margin: 0 auto; /* Center horizontally */
+  padding: 18px; /* Consistent original padding */
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   background: url("/images/download.jpeg") no-repeat center center;
   background-size: cover;
   box-sizing: border-box;
+  /* Ensure it's vertically centered by flexbox on body */
+  align-self: center;
+  flex-shrink: 0; /* Prevent shrinking if content is small */
 }
 
 /* Overlay for readability (Desktop/Default) */
@@ -50,19 +54,19 @@ h2 {
   margin-bottom: 10px;
   text-align: center;
   color: green;
-  font-size: 19px;
+  font-size: 19px; /* Original font size */
 }
 
 /* General paragraph in auth container (Desktop/Default) */
 .auth-container p {
     text-align: center;
-    margin-bottom: 20px;
-    font-size: 14px;
+    margin-bottom: 20px; /* Original margin */
+    font-size: 14px; /* Original font size */
     color: #555;
 }
 
 /* Specific styles for links within auth container paragraphs (Desktop/Default) */
-.auth-link-text { /* This class was added for consistency in EJS, now styled here */
+.auth-link-text {
     text-align: center;
     margin-top: 20px; /* Original margin */
     font-size: 14px; /* Original font size */
@@ -72,7 +76,7 @@ h2 {
     font-size: 12px; /* Original font size */
 }
 .auth-link {
-    color: #4A90E2; /* Blue */
+    color: #4A90E2; /* Original blue */
     text-decoration: none;
     transition: text-decoration 0.2s ease;
 }
@@ -184,7 +188,7 @@ button:hover:not(:disabled) {
   text-decoration: none;
   border-radius: 5px; /* Original border-radius */
   cursor: pointer;
-  flex-grow: 1; /* Allow links to grow */
+  flex-grow: 1;
   min-width: unset; /* No min-width on desktop */
   text-align: center;
   box-sizing: border-box;
@@ -198,12 +202,12 @@ button:hover:not(:disabled) {
 
 .error-msg,
 #errorMsg,
-.caps-alert { /* Added .caps-alert here */
+.caps-alert {
   color: #e74c3c;
   font-size: 10px; /* Original font size */
   min-height: 1em;
-  margin-top: -3px; /* Original margin */
-  margin-bottom: 3px; /* Original margin */
+  margin-top: -3px;
+  margin-bottom: 3px;
   text-align: left;
 }
 
@@ -223,8 +227,8 @@ input.shake {
   font-size: 9px; /* Original font size */
   color: #666;
   display: block;
-  margin-top: 2px; /* Original margin */
-  margin-bottom: 3px; /* Original margin */
+  margin-top: 2px;
+  margin-bottom: 3px;
 }
 
 /* Message containers (success/error) for auth pages (Desktop/Default) */
@@ -297,8 +301,8 @@ input.shake {
     .password-group .toggle-pass {
         font-size: 0.8em;
         right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
+        top: 50%; /* Revert to 50% for mobile */
+        transform: translateY(-50%); /* For vertical centering */
     }
     .form-actions {
         flex-direction: column; /* Stack buttons vertically */
@@ -308,7 +312,7 @@ input.shake {
     button, .link {
         padding: 10px 15px;
         font-size: 0.9em;
-        min-width: unset; /* Remove min-width */
+        min-width: unset;
         width: 100%; /* Take full width */
         border-radius: 6px;
         transform: translateY(0); /* Ensure no transform */
@@ -333,9 +337,11 @@ input.shake {
     }
     h2 {
         font-size: 1.5em;
+        margin-bottom: 10px;
     }
     .auth-container p {
         font-size: 0.85em;
+        margin-bottom: 10px;
     }
     label {
         font-size: 0.8em;
