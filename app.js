@@ -1,3 +1,4 @@
+// app.js
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -5,10 +6,10 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bodyParser = require('body-parser');
 const path = require('path');
+const flash = require('connect-flash'); // <--- ADD THIS LINE
 
 const app = express();
 
-// Trust the Render proxy to correctly set X-Forwarded-Proto headers
 app.set('trust proxy', 1);
 
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/green_init', {
@@ -32,11 +33,25 @@ app.use(session({
     }),
     cookie: {
         maxAge: 1000 * 60 * 60 * 24,
-        // Set secure to true only if the original request was HTTPS (as indicated by the proxy)
-        secure: process.env.NODE_ENV === 'production' && app.get('env') !== 'development', // Ensure secure is true in production
+        secure: process.env.NODE_ENV === 'production' && app.get('env') !== 'development',
         httpOnly: true
     }
 }));
+
+// --- IMPORTANT: Initialize connect-flash AFTER session middleware ---
+app.use(flash()); // <--- ADD THIS LINE
+
+// --- OPTIONAL: Make flash messages available to all EJS templates ---
+// This middleware makes req.flash messages available as res.locals variables
+// so you can use them directly in your EJS like <%= success_msg %>
+app.use((req, res, next) => {
+    res.locals.success_msg = req.flash('success_msg');
+    res.locals.error_msg = req.flash('error_msg');
+    res.locals.error = req.flash('error'); // Often used for Passport.js errors
+    next();
+});
+// --- END OPTIONAL BLOCK ---
+
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));

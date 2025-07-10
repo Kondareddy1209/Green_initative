@@ -1,196 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Users • Admin Panel</title>
-    <link rel="stylesheet" href="/styles/dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <style>
-        body {
-            background-color: #eef2f7;
-            font-family: Arial, sans-serif;
-        }
-        .admin-users-container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 20px;
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        .section-header {
-            color: #2c3e50;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 15px;
-            text-align: center;
-        }
-        .message-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            font-weight: bold;
-            text-align: center;
-        }
-        .message-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            font-weight: bold;
-            text-align: center;
-        }
-        .user-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        .user-table th, .user-table td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-            vertical-align: middle;
-        }
-        .user-table th {
-            background-color: #f2f2f2;
-            color: #333;
-            font-size: 1em;
-        }
-        .user-table tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        .user-table tbody tr:hover {
-            background-color: #f1f1f1;
-        }
-        .user-table img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-        .user-table select, .user-table button {
-            padding: 8px 12px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .user-table select {
-            width: 100px;
-            margin-right: 5px;
-        }
-        .user-table .update-btn {
-            background-color: #28a745;
-            color: white;
-            border: none;
-        }
-        .user-table .update-btn:hover {
-            background-color: #218838;
-        }
-        .user-table .delete-btn {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            margin-left: 5px;
-        }
-        .user-table .delete-btn:hover {
-            background-color: #c82333;
-        }
-        .no-users {
-            text-align: center;
-            padding: 40px;
-            color: #777;
-            font-style: italic;
-        }
-        .back-to-admin {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 10px 20px;
-            background-color: #6c757d;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .back-to-admin:hover {
-            background-color: #5a6268;
-        }
-    </style>
-</head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Users • Admin Panel</title>
+  <link rel="stylesheet" href="/styles/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  </head>
 <body>
-    <%- include('partials/navbar') %>
+  <%- include('partials/navbar') %>
 
-    <div class="admin-users-container">
-        <h2 class="section-header">👥 Manage Users</h2>
+  <div class="admin-users-container">
+    <h2 class="section-header">👥 Manage Users</h2>
 
-        <% if (message) { %>
-            <div class="message-success"><%= message %></div>
-        <% } %>
-        <% if (error) { %>
-            <div class="message-error"><%= error %></div>
-        <% } %>
+    <% if (message) { %>
+      <div class="message-success"><%= message %></div>
+    <% } %>
+    <% if (error) { %>
+      <div class="message-error"><%= error %></div>
+    <% } %>
 
-        <% if (allUsers && allUsers.length > 0) { %>
-            <table class="user-table">
-                <thead>
-                    <tr>
-                        <th>Profile</th>
-                        <th>Email</th>
-                        <th>Name</th>
-                        <th>Role</th>
-                        <th>Joined</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% allUsers.forEach(userItem => { %>
-                        <tr>
-                            <td><img src="<%= userItem.profilePicture || '/images/default_image.png' %>" alt="<%= userItem.username %>"></td>
-                            <td><%= userItem.email %></td>
-                            <td><%= userItem.firstName || '' %> <%= userItem.lastName || '' %></td>
-                            <td>
-                                <form action="/admin/users/update-role/<%= userItem._id %>" method="POST" style="display:inline;">
-                                    <select name="newRole">
-                                        <option value="user" <%= userItem.role === 'user' ? 'selected' : '' %>>User</option>
-                                        <option value="admin" <%= userItem.role === 'admin' ? 'selected' : '' %>>Admin</option>
-                                    </select>
-                                    <button type="submit" class="update-btn">Update</button>
-                                </form>
-                            </td>
-                            <td><%= new Date(userItem.createdAt).toLocaleDateString() %></td>
-                            <td>
-                                <% if (user._id.toString() !== userItem._id.toString()) { %>
-                                    <form action="/admin/users/delete/<%= userItem._id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete <%= userItem.email %>? This action cannot be undone.');" style="display:inline;">
-                                        <button type="submit" class="delete-btn">Delete</button>
-                                    </form>
-                                <% } else { %>
-                                    <button class="delete-btn" disabled title="Cannot delete your own account">Delete</button>
-                                <% } %>
-                            </td>
-                        </tr>
-                    <% }); %>
-                </tbody>
-            </table>
-        <% } else { %>
-            <div class="no-users">No users found in the system.</div>
-        <% } %>
-
-        <div style="text-align: center;">
-            <a href="/admin" class="back-to-admin">
-                <i class="fas fa-arrow-left"></i> Back to Admin Dashboard
-            </a>
-        </div>
+    <div class="table-responsive-wrapper">
+      <% if (allUsers && allUsers.length > 0) { %>
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>Profile</th>
+              <th>Email</th>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Joined</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% allUsers.forEach(userItem => { %>
+              <tr>
+                <td><img src="<%= userItem.profilePicture || '/images/default_image.png' %>" alt="<%= userItem.username %>"></td>
+                <td><%= userItem.email %></td>
+                <td><%= userItem.firstName || '' %> <%= userItem.lastName || '' %></td>
+                <td>
+                  <form action="/admin/users/update-role/<%= userItem._id %>" method="POST">
+                    <select name="newRole">
+                      <option value="user" <%= userItem.role === 'user' ? 'selected' : '' %>>User</option>
+                      <option value="admin" <%= userItem.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                    </select>
+                    <button type="submit" class="update-btn">Update</button>
+                  </form>
+                </td>
+                <td><%= new Date(userItem.createdAt).toLocaleDateString() %></td>
+                <td>
+                  <% if (user && user._id && userItem._id && user._id.toString() !== userItem._id.toString()) { %>
+                    <form action="/admin/users/delete/<%= userItem._id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete <%= userItem.email %>? This action cannot be undone.');">
+                      <button type="submit" class="delete-btn">Delete</button>
+                    </form>
+                  <% } else { %>
+                    <button class="delete-btn" disabled title="Cannot delete your own account">Delete</button>
+                  <% } %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <div class="no-users">No users found in the system.</div>
+      <% } %>
     </div>
 
-    <%- include('partials/footer') %>
+    <a href="/admin/dashboard" class="back-to-admin">
+      <i class="fas fa-arrow-left"></i> Back to Admin Dashboard
+    </a>
+  </div>
+
+  <%- include('partials/footer') %>
 </body>
 </html>

@@ -12,6 +12,18 @@
     --darker-bg: #2e2e2e;
     --border-dark: #444;
     --login-blue: #007bff;
+
+    --table-header-bg: #f2f2f2;
+    --table-border-color: #ddd;
+    --button-update-bg: #5cb85c;
+    --button-delete-bg: #d9534f;
+  }
+
+  /* General body/page styling for consistent padding */
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f7f6; /* Light gray background for the page content */
   }
 
   .navbar {
@@ -291,10 +303,151 @@
     color: var(--primary-green);
   }
 
+  /* Admin Page Specific Styles - General Layout */
+  .admin-page-container {
+      max-width: 1200px; /* Max width for content on large screens */
+      margin: 20px auto; /* Center content and add vertical margin */
+      padding: 0 15px; /* Horizontal padding for the page content itself */
+  }
+
+  .admin-heading {
+      text-align: center;
+      margin-top: 25px; /* Adjusted margin for heading */
+      margin-bottom: 25px; /* Adjusted margin for heading */
+      font-size: 1.8em;
+      color: #333;
+  }
+
+  .admin-heading i {
+      margin-right: 10px;
+      color: #666; /* Slightly darker icon color */
+  }
+
+  .table-responsive-wrapper {
+      overflow-x: auto;
+      margin: 20px 0; /* Margin only vertical, horizontal handled by page container */
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      background-color: white; /* Ensure wrapper background is white */
+      border: 1px solid var(--table-border-color); /* Added subtle border to wrapper */
+  }
+
+  .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 650px; /* Slightly increased min-width for better spacing */
+      border-radius: 8px; /* Apply border-radius here as well for consistency */
+      overflow: hidden; /* Ensures child borders/shadows conform to border-radius */
+  }
+
+  .admin-table th,
+  .admin-table td {
+      padding: 12px 15px;
+      border: 1px solid var(--table-border-color);
+      text-align: left;
+      vertical-align: middle;
+  }
+
+  .admin-table th {
+      background-color: var(--table-header-bg);
+      font-weight: bold;
+      color: #333;
+      text-transform: uppercase;
+      font-size: 0.9em;
+  }
+
+  .admin-table tbody tr:nth-child(even) {
+      background-color: #f9f9f9;
+  }
+
+  .admin-table tbody tr:hover {
+      background-color: #f1f1f1;
+  }
+
+  .admin-table .profile-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+      vertical-align: middle;
+      margin-right: 5px;
+  }
+
+  .admin-table select {
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 0.9em;
+      min-width: 80px; /* Ensure dropdown has enough width */
+  }
+
+  .admin-table .action-buttons {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 8px; /* Increased gap between buttons */
+      justify-content: flex-start;
+  }
+
+  .admin-table .action-buttons .btn {
+      padding: 8px 12px;
+      border-radius: 5px;
+      border: none;
+      color: white;
+      font-size: 0.85em;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.2s ease, transform 0.1s ease; /* Added transform */
+  }
+
+  .admin-table .action-buttons .btn:active {
+    transform: translateY(1px); /* Simple click effect */
+  }
+
+
+  .admin-table .action-buttons .btn-update {
+      background-color: var(--button-update-bg);
+  }
+  .admin-table .action-buttons .btn-update:hover {
+      background-color: #4CAF50;
+  }
+
+  .admin-table .action-buttons .btn-delete {
+      background-color: var(--button-delete-bg);
+  }
+  .admin-table .action-buttons .btn-delete:hover {
+      background-color: #c9302c;
+  }
+
+  .back-to-dashboard-btn {
+      display: block;
+      width: fit-content;
+      margin: 30px auto 40px auto; /* Increased vertical margins, centered */
+      padding: 12px 25px; /* Larger padding for better tap target and appearance */
+      background-color: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 1.05em; /* Slightly larger font */
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .back-to-dashboard-btn:hover {
+      background-color: #5a6268;
+  }
+  .back-to-dashboard-btn:active {
+      transform: translateY(1px);
+  }
+
   @media screen and (max-width: 768px) {
     .navbar {
-        padding: 10px 15px;
-        font-size: 0.85em;
+        padding: 6px 10px;
+        font-size: 0.75em;
+    }
+
+    .navbar .logo {
+        font-size: 1.1em;
     }
 
     .navbar-links,
@@ -304,13 +457,11 @@
 
     .menu-toggle {
       display: block;
+      font-size: 1.5em;
     }
 
     .navbar-brand-area {
         margin-right: 0;
-    }
-    .navbar .logo {
-        font-size: 1.2em;
     }
     .home-brand-link {
         display: none;
@@ -318,6 +469,56 @@
 
     .side-menu {
         padding-top: 20px;
+    }
+
+    /* Admin Page Mobile Specific Styles */
+    .admin-page-container {
+        margin: 10px auto; /* Reduced margin for mobile */
+        padding: 0 10px; /* Reduced padding for mobile */
+    }
+
+    .admin-heading {
+        margin-top: 15px;
+        margin-bottom: 15px;
+        font-size: 1.5em; /* Smaller heading for mobile */
+    }
+
+    .table-responsive-wrapper {
+        margin: 10px 0; /* Adjusted margin within wrapper */
+        border-radius: 5px; /* Smaller border-radius for mobile table */
+    }
+
+    .admin-table {
+        min-width: 550px; /* Adjusted minimum width to balance scrollability and readability */
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 8px 10px; /* Reduced padding for mobile table cells */
+        font-size: 0.8em; /* Even smaller font for mobile table text */
+    }
+
+    .admin-table .profile-icon {
+        width: 25px;
+        height: 25px;
+    }
+
+    .admin-table select {
+        font-size: 0.8em;
+        padding: 4px 6px;
+        min-width: 70px; /* Adjusted min-width for mobile dropdown */
+    }
+
+    .admin-table .action-buttons .btn {
+        padding: 5px 8px;
+        font-size: 0.75em; /* Slightly larger buttons for better tap targets on mobile */
+        gap: 3px;
+    }
+
+    .back-to-dashboard-btn {
+        font-size: 0.9em;
+        padding: 10px 20px;
+        margin: 20px auto;
     }
   }
 </style>
@@ -388,7 +589,6 @@
     <a href="/admin/login" class="mobile-action-btn mobile-admin-login-btn">Admin Login</a>
   <% } %>
 </div>
-
 <script>
   document.getElementById("menuToggle").addEventListener("click", function () {
     document.getElementById("mySideMenu").style.width = "250px";

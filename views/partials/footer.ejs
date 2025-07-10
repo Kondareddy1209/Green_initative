@@ -1,12 +1,10 @@
-<!-- views/partials/footer.ejs -->
 <style>
-    /* Basic Footer Styling - integrate this into your dashboard.css or style.css */
     .footer {
-        background-color: #333; /* Dark background */
+        background-color: #333;
         color: white;
         text-align: center;
-        padding: 20px 0;
-        margin-top: auto; /* Pushes footer to the bottom when using flex-direction: column on body */
+        padding: 20px 15px;
+        margin-top: auto;
         font-size: 0.9em;
     }
 
@@ -15,12 +13,19 @@
     }
 
     .footer a {
-        color: #4CAF50; /* Green link color */
+        color: #4CAF50;
         text-decoration: none;
     }
 
     .footer a:hover {
         text-decoration: underline;
+    }
+
+    @media screen and (max-width: 768px) {
+        .footer {
+            padding: 8px 10px;
+            font-size: 0.7em;
+        }
     }
 </style>
 
@@ -29,6 +34,4 @@
     <p>Built with 💚 for a sustainable future.</p>
 </footer>
 
-<!-- NEW: Include the navbar.js script here, after the footer HTML -->
-<!-- This script is crucial for the responsive menu (hamburger icon) functionality -->
 <script src="/scripts/navbar.js"></script>
